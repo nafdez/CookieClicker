@@ -24,7 +24,7 @@ public class AdapterItems extends RecyclerView.Adapter<AdapterItems.ViewHolderIt
     private static final String TAG = "AdapterItems";
     ArrayList<Item> itemList;
 
-    public AdapterItems(Activity context, ArrayList<Item> itemList) {
+    public AdapterItems(ArrayList<Item> itemList) {
         this.itemList = itemList;
     }
 

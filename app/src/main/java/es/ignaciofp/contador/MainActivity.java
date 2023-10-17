@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateUI() {
-        adapterItems = new AdapterItems(this, itemList);
+        adapterItems = new AdapterItems(itemList);
         itemRecycler.setAdapter(adapterItems);
     }
 
