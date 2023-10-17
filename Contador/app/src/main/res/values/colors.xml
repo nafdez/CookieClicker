@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="red">#EA3323</color>
+    <color name="transparent">#00000000</color>
+
+    <color name="backgroundColor">#8DC4B7</color>
+    <color name="backgroundShoppingColor">#383541</color>
+
+    <color name="buttonPrimary">#2A64F5</color>
+    <color name="buttonTextSecondary">#123293</color>
+
+    <color name="buttonShoppingEnabled">#59AD67</color>
+    <color name="buttonShoppingDisabled">#868D8E</color>
+
+    <color name="backgroundGeneric">#F2F2F7</color>
+    <color name="containerGenericPrimary">#FFFFFF</color>
+    <color name="containerGenericSecondary">#E3E3E8</color>
+    <color name="switchOff">#E8E8E9</color>
+    <color name="switchOn">#2A64F5</color>
+
+    <!--DARK MODE-->
+    <color name="backgroundColorDark">#493740</color>
+    <color name="backgroundShoppingColorDark">#383541</color>
+
+    <color name="buttonPrimaryDark">#2563EB</color>
+    <color name="buttonTextSecondaryDark">#447aee</color>
+
+    <color name="buttonShoppingEnabledDark">#59AD67</color>
+    <color name="buttonShoppingDisabledDark">#868D8E</color>
+
+    <color name="backgroundGenericDark">#000000</color>
+    <color name="containerGenericPrimaryDark">#1C1C1E</color>
+    <color name="containerGenericSecondaryDark">#1C1C1E</color>
+    <color name="switchOffDark">#39393D</color>
+    <color name="switchOnDark">#2563EB</color>
+</resources>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardBackgroundColor="#767497"
+    app:cardCornerRadius="8dp"
+    app:contentPadding="8dp"
+    app:strokeColor="@color/black"
+    app:strokeWidth="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/textview_style"
+                android:id="@+id/upgradeNameTextView"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="Toque"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                style="@style/textview_style"
+                android:id="@+id/upgradeValueTextView"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="+1" />
+
+        </LinearLayout>
+
+        <Button
+            style="@style/buttonShopping"
+            android:text="100.00M€"
+            android:id="@+id/upgradeButton"
+            />
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:backgroundTint="@color/buttonShoppingEnabled" android:state_enabled="true" />
+    <item android:backgroundTint="@color/buttonShoppingDisabled"
+        android:state_enabled = "false"/>
+
+    <item android:shadowColor="@color/black" android:state_enabled="true"/>
+    <item android:shadowColor="@color/black" android:state_enabled="false"/>
+
+    <item android:shadowDx="1.5" android:state_enabled="true"/>
+    <item android:shadowDx="1.5" android:state_enabled="false"/>
+
+    <item android:shadowDy="1.3" android:state_enabled="true"/>
+    <item android:shadowDy="1.3" android:state_enabled="false"/>
+
+    <item android:shadowRadius="1.6" android:state_enabled="true"/>
+    <item android:shadowRadius="1.6" android:state_enabled="false"/>
+</selector>

@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Contador</string>
+    <string name="number_textview">Touch the picture</string>
+
+    <string name="coin_image_content_description">A coin</string>
+    <string name="money_bag_content_description">Money bag</string>
+    <string name="auto_click_content_description">A robot with a bag of money</string>
+    <string name="money_per_second_content_description">Money per second</string>
+    <string name="money_value_per_click_content_description">A buck</string>
+    <string name="options_title">Options</string>
+    <string name="theme_toggle_button">Toggle</string>
+    <string name="toggle_theme_text">Dark mode</string>
+</resources>
