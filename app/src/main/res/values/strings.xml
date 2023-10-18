@@ -9,5 +9,7 @@
     <string name="money_value_per_click_content_description">A buck</string>
     <string name="options_title">Options</string>
     <string name="theme_toggle_button">Toggle</string>
-    <string name="toggle_theme_text">Dark mode</string>
+    <string name="toggle_theme_option_name">Dark mode</string>
+    <string name="toggle_theme_option_description">Toggle between light and dark mode</string>
+    <string name="sample_text_option">Sample text</string>
 </resources>

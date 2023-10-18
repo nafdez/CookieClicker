@@ -1,4 +1,4 @@
-package es.ignaciofp.contador;
+package es.ignaciofp.contador.models;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;

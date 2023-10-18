@@ -19,18 +19,20 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/options_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="22dp"
             android:text="@string/options_title"
             android:textSize="32sp" />
 
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            style="@style/options"
-            android:id="@+id/themeSwitch"
-            android:text="@string/toggle_theme_text"
-            android:textSize="20sp" />
+        <ListView
+            android:id="@+id/options_listView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:drawSelectorOnTop="false" />
 
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

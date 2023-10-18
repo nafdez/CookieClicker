@@ -1,4 +1,4 @@
-package es.ignaciofp.contador;
+package es.ignaciofp.contador.recyclerview;
 
 import android.graphics.Rect;
 import android.view.View;

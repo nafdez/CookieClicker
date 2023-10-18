@@ -21,6 +21,11 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 
+import es.ignaciofp.contador.models.Item;
+import es.ignaciofp.contador.recyclerview.AdapterItems;
+import es.ignaciofp.contador.recyclerview.ItemDecorator;
+import es.ignaciofp.contador.recyclerview.RecyclerItemClickListener;
+
 public class MainActivity extends AppCompatActivity {
 
     BigInteger basicBasePrice = BigInteger.valueOf(100);
