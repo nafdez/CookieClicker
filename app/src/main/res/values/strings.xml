@@ -13,4 +13,11 @@
     <string name="toggle_theme_option_description">Toggle between light and dark mode</string>
     <string name="sample_text_option">Sample text</string>
     <string name="toggle_theme_tag">toggleTheme</string>
+    <string name="basic_price">basicPrice</string>
+    <string name="mega_price">megaPrice</string>
+    <string name="auto_price">autoPrice</string>
+    <string name="mega_auto_price">megaAutoPrice</string>
+    <string name="coins_value">coins</string>
+    <string name="clickvalue_value">clickValue</string>
+    <string name="autoclickvalue_value">autoClickValue</string>
 </resources>

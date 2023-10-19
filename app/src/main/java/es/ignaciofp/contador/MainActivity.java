@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,6 +27,7 @@ import es.ignaciofp.contador.models.Item;
 import es.ignaciofp.contador.recyclerview.AdapterItems;
 import es.ignaciofp.contador.recyclerview.ItemDecorator;
 import es.ignaciofp.contador.recyclerview.RecyclerItemClickListener;
+import es.ignaciofp.contador.shop.ShopActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,27 +35,18 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor editor;
-    private final BigInteger basicBasePrice = BigInteger.valueOf(100);
-    private final BigInteger megaBasePrice = BigInteger.valueOf(1000);
-    private final BigInteger autoBasePrice = BigInteger.valueOf(450);
-    private final BigInteger megaAutoBasePrice = BigInteger.valueOf(2670);
-    private BigInteger basicPrice = basicBasePrice;
-    private BigInteger megaPrice = megaBasePrice;
-    private BigInteger autoPrice = autoBasePrice;
-    private BigInteger megaAutoPrice = megaAutoBasePrice;
     private BigInteger coinRate = new BigInteger("0");
 
 
     private TextView currentCoinsTextView;
     private TextView clickValueTextView;
     private TextView autoTouchValueTextView;
-    private ImageView clickImageView;
     private TextView coinRateValueTextView;
+    private ImageView clickImageView;
 
-
-    private BigInteger coins = BigInteger.valueOf(0);
-    private BigInteger clickValue = BigInteger.valueOf(1);
-    private BigInteger autoClickValue = BigInteger.valueOf(0);
+    private BigInteger coins;
+    private BigInteger clickValue;
+    private BigInteger autoClickValue;
 
     private ArrayList<Item> itemList;
     private AdapterItems adapterItems;
@@ -68,53 +61,41 @@ public class MainActivity extends AppCompatActivity {
         sharedPref = getPreferences(MODE_PRIVATE);
         editor = sharedPref.edit();
 
+        Bundle bundle = getIntent().getExtras();
+
+        if (bundle != null) {
+            coins = new BigInteger(bundle.getString(getString(R.string.coins_value), "0"));
+            clickValue = new BigInteger(bundle.getString(getString(R.string.clickvalue_value), "1"));
+            autoClickValue = new BigInteger(bundle.getString(getString(R.string.autoclickvalue_value), "0"));
+        } else {
+            coins = new BigInteger(sharedPref.getString(getString(R.string.coins_value), "0"));
+            clickValue = new BigInteger(sharedPref.getString(getString(R.string.clickvalue_value), "1"));
+            autoClickValue = new BigInteger(sharedPref.getString(getString(R.string.autoclickvalue_value), "0"));
+        }
+
         // View assignment
         currentCoinsTextView = findViewById(R.id.numberTextView);
         clickValueTextView = findViewById(R.id.touchValueTextView);
+        clickValueTextView.setText(valueWithSuffix(clickValue, "§/click"));
         autoTouchValueTextView = findViewById(R.id.autoTouchValueTextView);
         autoTouchValueTextView.setText(valueWithSuffix(autoClickValue, "§/s"));
         clickImageView = findViewById(R.id.clickImageView);
         coinRateValueTextView = findViewById(R.id.coinRateValueTextView);
         coinRateValueTextView.setText(valueWithSuffix(coinRate, "§/s"));
 
-        // RecyclerView
-        itemRecycler = findViewById(R.id.itemRecyclerView);
-        itemRecycler.setLayoutManager(new GridLayoutManager(this, 1));
-        itemRecycler.addItemDecoration(new ItemDecorator(8, 6, 0, 0));
-        itemRecycler.addOnItemTouchListener(new RecyclerItemClickListener(this, itemRecycler, new RecyclerItemClickListener.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                Log.d(TAG, String.format("onClickEvent: %s - %s", itemList.get(position), "HOLA"));
-                BigInteger newPrice;
-                if ((newPrice = MainActivity.this.onRecyclerButtonClick(itemList.get(position).getButton())).compareTo(BigInteger.ZERO) > 0) {
-                    itemList.get(position).setPrice(newPrice);
-                }
-            }
-
-            @Override
-            public void onLongItemClick(View view, int position) {
-
-            }
-        }));
-        itemList = new ArrayList<>();
-
-        // Generating upgrade options
-        generateItemButton("basic", "Toque", "+1", basicPrice);
-        generateItemButton("auto", "Auto-toque", "+1", autoPrice);
-        generateItemButton("mega", "Mega toque", "+0.35%", megaPrice);
-        generateItemButton("mega_auto", "Mega auto-toque", "+0.35%", megaAutoPrice);
-
-        clickValueTextView.setText(valueWithSuffix(clickValue, "§/click"));
+        if (!coins.equals(BigInteger.ZERO)) {
+            currentCoinsTextView.setText(valueWithSuffix(coins, "§"));
+        }
 
         gameLoop();
-        updateUI();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-
-        editor.putBoolean(option.getTag(), option.isChecked());
+        editor.putString(getString(R.string.coins_value), coins.toString());
+        editor.putString(getString(R.string.clickvalue_value), clickValue.toString());
+        editor.putString(getString(R.string.autoclickvalue_value), autoClickValue.toString());
         editor.apply();
     }
 
@@ -126,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
             while (true) {
                 try {
                     Thread.sleep(500);
-                    updateDisabledButtons();
+                    runOnUiThread(this::updateClickImageView);
                     if (autoClickValue.compareTo(BigInteger.valueOf(0)) > 0) {
                         coins = coins.add(autoClickValue);
                         coinRate = coinRate.add(autoClickValue);
@@ -143,18 +124,6 @@ public class MainActivity extends AppCompatActivity {
         }).start();
     }
 
-
-    private void generateItemButton(String buttonTag, String name, String description, BigInteger price) {
-        MaterialButton button = new MaterialButton(this);
-        button.setTag(buttonTag);
-        itemList.add(new Item(MainActivity.this, name, description, price, button, false));
-    }
-
-    private void updateUI() {
-        adapterItems = new AdapterItems(itemList);
-        itemRecycler.setAdapter(adapterItems);
-    }
-
     @SuppressLint("DefaultLocale")
     private String valueWithSuffix(BigInteger value, String msg) {
         if (value.compareTo(BigInteger.valueOf(1000)) < 0) {
@@ -167,6 +136,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateClickImageView() {
+        BigInteger basicPrice = new BigInteger(sharedPref.getString(getString(R.string.basic_price), "100")); // Hardcoded por no dar mucha vuelta TODO:
+
         if (coins.compareTo(basicPrice.divide(new BigInteger("2"))) < 0) {
             clickImageView.setImageResource(R.drawable.coin_icon);
         } else if (coins.compareTo(basicPrice) < 0) {
@@ -176,24 +147,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void updateDisabledButtons() {
-        for (int i = 0; i < itemList.size(); i++) {
-            Item item = itemList.get(i);
-            if (coins.compareTo(item.getPrice()) >= 0) {
-                final int position = i;
-                runOnUiThread(() -> {
-                    item.setEnabled(true);
-                    adapterItems.notifyItemChanged(position, item);
-                });
-            } else {
-                final int position = i;
-                runOnUiThread(() -> {
-                    item.setEnabled(false);
-                    adapterItems.notifyItemChanged(position, item);
-                });
-            }
-        }
-    }
 
     public void addOnClick(View view) {
         coins = coins.add(clickValue);
@@ -207,4 +160,11 @@ public class MainActivity extends AppCompatActivity {
         updateClickImageView();
     }
 
+    public void shopImageOnClick(View view) {
+        Intent intent = new Intent(this, ShopActivity.class);
+        intent.putExtra(getString(R.string.coins_value), coins);
+        intent.putExtra(getString(R.string.clickvalue_value), clickValue);
+        intent.putExtra(getString(R.string.autoclickvalue_value), autoClickValue);
+        startActivity(intent);
+    }
 }

@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,6 +21,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import es.ignaciofp.contador.MainActivity;
 import es.ignaciofp.contador.R;
@@ -28,7 +31,7 @@ import es.ignaciofp.contador.recyclerview.AdapterItems;
 import es.ignaciofp.contador.recyclerview.ItemDecorator;
 import es.ignaciofp.contador.recyclerview.RecyclerItemClickListener;
 
-public class ShopActivity extends AppCompatActivity implements RecyclerView.OnItemClickListener {
+public class ShopActivity extends AppCompatActivity implements RecyclerItemClickListener.OnItemClickListener {
 
     private static final String TAG = "ShopActivity";
     private SharedPreferences sharedPref;
@@ -37,18 +40,49 @@ public class ShopActivity extends AppCompatActivity implements RecyclerView.OnIt
     private AdapterItems adapterItems;
     private RecyclerView itemRecycler;
 
+    private final BigInteger basicBasePrice = BigInteger.valueOf(100);
+    private final BigInteger megaBasePrice = BigInteger.valueOf(1000);
+    private final BigInteger autoBasePrice = BigInteger.valueOf(450);
+    private final BigInteger megaAutoBasePrice = BigInteger.valueOf(2670);
+    private BigInteger basicPrice = basicBasePrice;
+    private BigInteger megaPrice = megaBasePrice;
+    private BigInteger autoPrice = autoBasePrice;
+    private BigInteger megaAutoPrice = megaAutoBasePrice;
+    private BigInteger coins;
+    private BigInteger clickValue;
+    private BigInteger autoClickValue;
+
+    private TextView clickValueTextView;
+    private TextView autoTouchValueTextView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shop);
 
+        Bundle bundle = getIntent().getExtras();
+
+        coins = new BigInteger(Objects.requireNonNull(bundle).getString(getString(R.string.coins_value), "0"));
+        clickValue = new BigInteger(Objects.requireNonNull(bundle).getString(getString(R.string.clickvalue_value), "1"));
+        autoClickValue = new BigInteger(Objects.requireNonNull(bundle).getString(getString(R.string.autoclickvalue_value), "0"));
+
         sharedPref = getPreferences(MODE_PRIVATE);
         editor = sharedPref.edit();
+
+        clickValueTextView = findViewById(R.id.touchValueTextView);
+        clickValueTextView.setText(valueWithSuffix(clickValue, "§/click"));
+        autoTouchValueTextView = findViewById(R.id.autoTouchValueTextView);
+        autoTouchValueTextView.setText(valueWithSuffix(autoClickValue, "§/s"));
+
+        basicPrice = new BigInteger(sharedPref.getString(getString(R.string.basic_price), basicBasePrice.toString()));
+        megaPrice = new BigInteger(sharedPref.getString(getString(R.string.mega_price), megaBasePrice.toString()));
+        autoPrice = new BigInteger(sharedPref.getString(getString(R.string.auto_price), autoBasePrice.toString()));
+        megaAutoPrice = new BigInteger(sharedPref.getString(getString(R.string.mega_auto_price), megaAutoBasePrice.toString()));
 
         itemRecycler = findViewById(R.id.itemRecyclerView);
         itemRecycler.setLayoutManager(new GridLayoutManager(this, 1));
         itemRecycler.addItemDecoration(new ItemDecorator(8, 6, 0, 0));
-        itemRecycler.addOnItemTouchListener(new RecyclerItemClickListener(this, itemRecycler, this::onItemClick));
+        itemRecycler.addOnItemTouchListener(new RecyclerItemClickListener(this, itemRecycler, this));
 
         itemList = new ArrayList<>();
 
@@ -58,12 +92,30 @@ public class ShopActivity extends AppCompatActivity implements RecyclerView.OnIt
         generateItemButton("mega", "Mega toque", "+0.35%", megaPrice);
         generateItemButton("mega_auto", "Mega auto-toque", "+0.35%", megaAutoPrice);
 
+        updateUI();
+    }
+
+    private void returnToGame() {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra(getString(R.string.coins_value), coins);
+        intent.putExtra(getString(R.string.clickvalue_value), clickValue);
+        intent.putExtra(getString(R.string.autoclickvalue_value), autoClickValue);
+        startActivity(intent);
+    }
+
+    private void updateUI() {
+        adapterItems = new AdapterItems(itemList);
+        itemRecycler.setAdapter(adapterItems);
+        new Thread(this::updateDisabledButtons).start();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        editor.putBoolean(option.getTag(), option.isChecked());
+        editor.putString(getString(R.string.basic_price), basicPrice.toString());
+        editor.putString(getString(R.string.mega_price), megaPrice.toString());
+        editor.putString(getString(R.string.auto_price), autoPrice.toString());
+        editor.putString(getString(R.string.mega_auto_price), megaAutoPrice.toString());
         editor.apply();
     }
 
@@ -71,6 +123,17 @@ public class ShopActivity extends AppCompatActivity implements RecyclerView.OnIt
         MaterialButton button = new MaterialButton(this);
         button.setTag(buttonTag);
         itemList.add(new Item(this, name, description, price, button, false));
+    }
+
+    @SuppressLint("DefaultLocale")
+    private String valueWithSuffix(BigInteger value, String msg) {
+        if (value.compareTo(BigInteger.valueOf(1000)) < 0) {
+            return String.format("%s%s", value.intValue(), msg);
+        }
+
+        int exp = (int) (Math.log(value.intValue()) / Math.log(1000));
+
+        return String.format("%.2f%c%s", value.intValue() / Math.pow(1000, exp), "kMBTCQ".charAt(exp - 1), msg);
     }
 
 
@@ -82,7 +145,6 @@ public class ShopActivity extends AppCompatActivity implements RecyclerView.OnIt
             actualClickValue = new BigDecimal(actualClickValue).multiply(valueFactor).toBigInteger();
 
             button.setText(valueWithSuffix(price, "§"));
-            currentCoinsTextView.setText(valueWithSuffix(coins, "§"));
             infoTextView.setText(valueWithSuffix(actualClickValue, msg));
 
 
@@ -104,7 +166,6 @@ public class ShopActivity extends AppCompatActivity implements RecyclerView.OnIt
 
 
             button.setText(valueWithSuffix(price, "§"));
-            currentCoinsTextView.setText(valueWithSuffix(coins, "§"));
             infoTextView.setText(valueWithSuffix(actualClickValue, msg));
 
             ScaleAnimation fade_in = new ScaleAnimation(0.7f, 1.0f, 0.7f, 1.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
@@ -148,8 +209,6 @@ public class ShopActivity extends AppCompatActivity implements RecyclerView.OnIt
                 newPrice = megaAutoPrice;
                 break;
         }
-        updateClickImageView();
-        //updateUI();
         return newPrice.compareTo(BigInteger.valueOf(0)) >= 0 ? newPrice : BigInteger.valueOf(-1);
     }
 
@@ -160,10 +219,24 @@ public class ShopActivity extends AppCompatActivity implements RecyclerView.OnIt
 
     @Override
     public void onLongItemClick(View view, int position) {
-        Log.d(TAG, String.format("onClickEvent: %s - %s", itemList.get(position), "HOLA"));
-        BigInteger newPrice;
-        if ((newPrice = MainActivity.this.onRecyclerButtonClick(itemList.get(position).getButton())).compareTo(BigInteger.ZERO) > 0) {
-            itemList.get(position).setPrice(newPrice);
+    }
+
+    private void updateDisabledButtons() {
+        for (int i = 0; i < itemList.size(); i++) {
+            Item item = itemList.get(i);
+            if (coins.compareTo(item.getPrice()) >= 0) {
+                final int position = i;
+                runOnUiThread(() -> {
+                    item.setEnabled(true);
+                    adapterItems.notifyItemChanged(position, item);
+                });
+            } else {
+                final int position = i;
+                runOnUiThread(() -> {
+                    item.setEnabled(false);
+                    adapterItems.notifyItemChanged(position, item);
+                });
+            }
         }
     }
 }
