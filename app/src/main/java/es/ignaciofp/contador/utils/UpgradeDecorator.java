@@ -1,4 +1,4 @@
-package es.ignaciofp.contador.recyclerview;
+package es.ignaciofp.contador.utils;
 
 import android.graphics.Rect;
 import android.view.View;
@@ -6,14 +6,14 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class ItemDecorator extends RecyclerView.ItemDecoration {
+public class UpgradeDecorator extends RecyclerView.ItemDecoration {
 
     private final int topSpaceHeight;
     private final int bottomSpaceHeight;
     private final int leftSpaceHeight;
     private final int rightSpaceHeight;
 
-    public ItemDecorator(int topSpaceHeight, int bottomSpaceHeight, int leftSpaceHeight, int rightSpaceHeight) {
+    public UpgradeDecorator(int topSpaceHeight, int bottomSpaceHeight, int leftSpaceHeight, int rightSpaceHeight) {
         this.topSpaceHeight = topSpaceHeight;
         this.bottomSpaceHeight = bottomSpaceHeight;
         this.leftSpaceHeight = leftSpaceHeight;

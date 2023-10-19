@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/shopping_drawable"
-    tools:context=".shop.ShopActivity">
+    tools:context=".activities.ShopActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,7 +14,6 @@
 
 
         <LinearLayout
-            android:id="@+id/linearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
@@ -30,13 +29,12 @@
                 android:background="@drawable/child_info_bar">
 
                 <ImageView
-                    android:id="@+id/returnImageView"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_marginEnd="4dp"
-                    android:contentDescription="@string/coins_collected_content_description"
-                    app:srcCompat="@drawable/return_icon"
-                    android:onClick="returnOnClick"/>
+                    android:contentDescription="@string/shop_coins_content_description"
+                    android:onClick="returnOnClick"
+                    app:srcCompat="@drawable/ic_gen_return" />
             </LinearLayout>
 
             <LinearLayout
@@ -45,18 +43,16 @@
 
                 <ImageView
 
-                    android:id="@+id/currentCoinsShopImageView"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_marginEnd="4dp"
-                    android:contentDescription="@string/coins_collected_content_description"
-                    app:srcCompat="@drawable/coin_icon_3" />
+                    android:contentDescription="@string/shop_coins_content_description"
+                    app:srcCompat="@drawable/ic_gen_coin_level_3" />
 
                 <TextView
-                    android:id="@+id/currentCoinsShopTextView"
+                    android:id="@+id/text_shop_coins"
                     style="@style/textview_style"
-                    android:text="value"
-                    />
+                    android:text="" />
             </LinearLayout>
 
             <LinearLayout
@@ -64,48 +60,40 @@
                 android:background="@drawable/child_info_bar">
 
                 <ImageView
-
-                    android:id="@+id/touchIconImageView"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_marginEnd="4dp"
-                    android:contentDescription="@string/money_value_per_click_content_description"
-                    app:srcCompat="@drawable/bucks_icon" />
+                    android:contentDescription="@string/game_money_value_per_click_content_description"
+                    app:srcCompat="@drawable/ic_gen_bucks" />
 
                 <TextView
-                    android:id="@+id/touchValueTextView"
-                    style="@style/textview_style"
-                    android:text="value"
-
-                    />
+                    android:id="@+id/text_click_value"
+                    style="@style/textview_style" />
             </LinearLayout>
-
 
             <LinearLayout
                 style="@style/info_bar_child"
                 android:background="@drawable/child_info_bar">
 
                 <ImageView
-                    android:id="@+id/autoTouchImageView"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_marginEnd="4dp"
-                    android:contentDescription="@string/auto_click_content_description"
-                    app:srcCompat="@drawable/robomoney" />
+                    android:contentDescription="@string/game_auto_click_content_description"
+                    app:srcCompat="@drawable/ic_gen_robot_money" />
 
                 <TextView
-                    android:id="@+id/autoTouchValueTextView"
-                    style="@style/textview_style"
-                    android:text="value" />
+                    android:id="@+id/text_auto_click"
+                    style="@style/textview_style" />
             </LinearLayout>
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/itemRecyclerView"
+            android:id="@+id/recycler_upgrades"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="8dp"
             android:layout_marginStart="20dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="20dp"
             android:layout_weight="1" />
 

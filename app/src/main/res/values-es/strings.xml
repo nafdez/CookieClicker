@@ -1,26 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Inflación Tycoon</string>
-    <string name="number_textview">Toca la imagen</string>
-    <string name="coin_image_content_description">Una moneda</string>
-    <string name="money_bag_content_description">Bolsa de dinero</string>
-    <string name="auto_click_content_description">Un robot con una bolsa de dinero</string>
-    <string name="money_per_second_content_description">Dinero por segundo</string>
-    <string name="money_value_per_click_content_description">Un billete</string>
+    <string name="game_coin_text">Toca la imagen</string>
+    <string name="game_coin_image_content_description">Una moneda</string>
+    <string name="game_money_bag_content_description">Bolsa de dinero</string>
+    <string name="game_auto_click_content_description">Un robot con una bolsa de dinero</string>
+    <string name="game_money_per_second_content_description">Dinero por segundo</string>
+    <string name="game_money_value_per_click_content_description">Un billete</string>
     <string name="options_title">Opciones</string>
-    <string name="theme_toggle_button">Alternar</string>
-    <string name="toggle_theme_option_name">Modo oscuro</string>
-    <string name="toggle_theme_option_description">Alternar entre modo claro u oscuro</string>
+    <string name="options_theme_button_text">Alternar</string>
+    <string name="options_theme_name_text">Modo oscuro</string>
+    <string name="options_theme_description">Alternar entre modo claro u oscuro</string>
     <string name="sample_text_option">Texto de ejemplo</string>
-    <string name="coins_value">Monedas</string>
-    <string name="coins_collected_content_description">Valor</string>
-    <string name="basic_upgrade_text">Toque</string>
-    <string name="auto_upgrade_text">Auto toque</string>
-    <string name="mega_upgrade_text">Mega toque</string>
-    <string name="mega_auto_upgrade">Mega auto toque</string>
-    <string name="welcome_message">¡Bienvenido al mejor Cookie Clicker!</string>
-    <string name="play_button_text">Jugar</string>
-    <string name="options_button_text">Opciones</string>
-    <string name="info_button_text">Info</string>
-    <string name="exit_button_text">Salir</string>
+    <string name="shop_coins_content_description">Valor</string>
+    <string name="shop_upgrade_basic_text">Toque</string>
+    <string name="shop_upgrade_auto_text">Auto toque</string>
+    <string name="shop_upgrade_mega_text">Mega toque</string>
+    <string name="shop_upgrade_mega_auto_text">Mega auto toque</string>
+    <string name="launch_welcome_text">¡Bienvenido al mejor Cookie Clicker!</string>
+    <string name="launch_play_button_text">Jugar</string>
+    <string name="launch_options_button_text">Opciones</string>
+    <string name="launch_info_button_text">Info</string>
+    <string name="launch_exit_button_text">Salir</string>
 </resources>

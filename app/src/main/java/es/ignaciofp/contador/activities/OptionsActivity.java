@@ -1,30 +1,26 @@
-package es.ignaciofp.contador;
+package es.ignaciofp.contador.activities;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
-import com.google.android.material.switchmaterial.SwitchMaterial;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import es.ignaciofp.contador.listview.AdapterOptions;
+import es.ignaciofp.contador.R;
+import es.ignaciofp.contador.adapters.AdapterOptions;
 import es.ignaciofp.contador.models.Option;
 
 public class OptionsActivity extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener {
 
-    private List<Option> optionList;
-    boolean checkedDefaultValue = false;
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor editor;
+    private List<Option> optionList;
+    boolean checkedDefaultValue = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,17 +30,15 @@ public class OptionsActivity extends AppCompatActivity implements CompoundButton
         sharedPref = getPreferences(MODE_PRIVATE);
         editor = sharedPref.edit();
 
-        ListView optionListView = findViewById(R.id.options_listView);
+        ListView optionListView = findViewById(R.id.listview_options);
 
         optionList = new ArrayList<>();
 
-        sharedPref.getAll().forEach((key, value) -> Log.d("hola", String.format("%s: %s", key, value)));
-
-        addOption(getResources().getString(R.string.toggle_theme_option_name), getResources().getString(R.string.toggle_theme_option_description), getResources().getString(R.string.toggle_theme_tag));
+        addOption(getResources().getString(R.string.options_theme_name_text), getResources().getString(R.string.options_theme_description), getResources().getString(R.string.PREF_DARK_MODE));
         addOption("Sample name", "Sample desc", "sampleSwitch1");
         addOption("Sample name", "Sample desc", "sampleSwitch2");
 
-        optionListView.setAdapter(new AdapterOptions(this, R.layout.option_list, R.id.blanktxtview, optionList));
+        optionListView.setAdapter(new AdapterOptions(this, R.layout.item_option, R.id.text_blank, optionList));
 
     }
 
@@ -54,25 +48,8 @@ public class OptionsActivity extends AppCompatActivity implements CompoundButton
         for (int i = 0; i < optionList.size(); i++) {
             Option option = optionList.get(i);
             editor.putBoolean(option.getTag(), option.isChecked());
-            Log.d("hola", String.format("[EDITOR]%s: %s", option.getTag(), option.isChecked()));
         }
         editor.apply();
-    }
-
-    /**
-     * Checks if there is a previously saved state of the switch (based in tag) and adds the option
-     * to the list
-     *
-     * @param name name of the option
-     * @param desc description of the option
-     * @param tag tag of the option
-     */
-    private void addOption(String name, String desc, String tag) {
-        boolean isChecked = sharedPref.getBoolean(tag, checkedDefaultValue);
-
-        //TODO: Make sure that each option does what it says if "isChecked" is true
-
-        optionList.add(new Option(name, desc, tag, isChecked));
     }
 
     /**
@@ -89,6 +66,22 @@ public class OptionsActivity extends AppCompatActivity implements CompoundButton
                 break;
         }
         toggleChecked(compoundButton, isChecked);
+    }
+
+    /**
+     * Checks if there is a previously saved state of the switch (based in tag) and adds the option
+     * to the list
+     *
+     * @param name name of the option
+     * @param desc description of the option
+     * @param tag tag of the option
+     */
+    private void addOption(String name, String desc, String tag) {
+        boolean isChecked = sharedPref.getBoolean(tag, checkedDefaultValue);
+
+        //TODO: Make sure that each option does what it says if "isChecked" is true
+
+        optionList.add(new Option(name, desc, tag, isChecked));
     }
 
     /**

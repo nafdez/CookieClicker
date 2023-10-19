@@ -2,91 +2,91 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.Contador" parent="Theme.Material3.Dark.NoActionBar">
         <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
-        <item name="fontFamily">@font/acme</item>
+        <!-- <upgrade name="colorPrimary">@color/my_dark_primary</upgrade> -->
+        <upgrade name="fontFamily">@font/acme</upgrade>
     </style>
 
     <style name="Theme.Contador" parent="Base.Theme.Contador" />
 
     <style name="background">
-        <item name="android:background">@color/backgroundGenericDark</item>
+        <upgrade name="android:background">@color/backgroundGenericDark</upgrade>
     </style>
 
     <style name="background_game">
-        <item name="android:background">@color/backgroundColorDark</item>
+        <upgrade name="android:background">@color/backgroundColorDark</upgrade>
     </style>
 
     <style name="info_bar_child">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_weight">1</item>
-        <item name="android:layout_marginEnd">4dp</item>
-        <item name="android:gravity">center</item>
-        <item name="android:orientation">horizontal</item>
+        <upgrade name="android:layout_width">wrap_content</upgrade>
+        <upgrade name="android:layout_height">wrap_content</upgrade>
+        <upgrade name="android:layout_weight">1</upgrade>
+        <upgrade name="android:layout_marginEnd">4dp</upgrade>
+        <upgrade name="android:gravity">center</upgrade>
+        <upgrade name="android:orientation">horizontal</upgrade>
     </style>
 
     <style name="shopping_container">
-        <item name="android:background">@drawable/shopping_drawable</item>
+        <upgrade name="android:background">@drawable/shopping_drawable</upgrade>
     </style>
 
     <style name="textview_style">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:lines">1</item>
-        <item name="autoSizeTextType">uniform</item>
-        <item name="android:textColor">#050505</item>
+        <upgrade name="android:layout_width">wrap_content</upgrade>
+        <upgrade name="android:layout_height">wrap_content</upgrade>
+        <upgrade name="android:lines">1</upgrade>
+        <upgrade name="autoSizeTextType">uniform</upgrade>
+        <upgrade name="android:textColor">#050505</upgrade>
     </style>
 
     <style name="button" parent="ShapeAppearanceOverlay.Material3.Button">
-        <item name="android:layout_width">343dp</item>
-        <item name="android:layout_height">48dp</item>
-        <item name="android:textSize">16sp</item>
-        <item name="paddingStart">13dp</item>
-        <item name="paddingEnd">13dp</item>
-        <item name="cornerRadius">8dp</item>
+        <upgrade name="android:layout_width">343dp</upgrade>
+        <upgrade name="android:layout_height">48dp</upgrade>
+        <upgrade name="android:textSize">16sp</upgrade>
+        <upgrade name="paddingStart">13dp</upgrade>
+        <upgrade name="paddingEnd">13dp</upgrade>
+        <upgrade name="cornerRadius">8dp</upgrade>
     </style>
 
     <style name="buttonPrimary" parent="button">
-        <item name="backgroundTint">@color/buttonPrimaryDark</item>
-        <item name="android:textColor">#E6E6E6</item>
+        <upgrade name="backgroundTint">@color/buttonPrimaryDark</upgrade>
+        <upgrade name="android:textColor">#E6E6E6</upgrade>
     </style>
 
     <style name="buttonSecondary" parent="button">
-        <item name="backgroundTint">@color/transparent</item>
-        <item name="android:textColor">@color/buttonTextSecondaryDark</item>
-        <item name="strokeColor">@color/buttonPrimaryDark</item>
-        <item name="strokeWidth">2dp</item>
+        <upgrade name="backgroundTint">@color/transparent</upgrade>
+        <upgrade name="android:textColor">@color/buttonTextSecondaryDark</upgrade>
+        <upgrade name="strokeColor">@color/buttonPrimaryDark</upgrade>
+        <upgrade name="strokeWidth">2dp</upgrade>
     </style>
 
     <style name="buttonTernary" parent="button">
-        <item name="backgroundTint">@color/transparent</item>
-        <item name="android:textColor">@color/buttonTextSecondaryDark</item>
+        <upgrade name="backgroundTint">@color/transparent</upgrade>
+        <upgrade name="android:textColor">@color/buttonTextSecondaryDark</upgrade>
     </style>
 
-    <style name="buttonShopping" parent="ShapeAppearanceOverlay.Material3.Button">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
+    <style name="button_buy" parent="ShapeAppearanceOverlay.Material3.Button">
+        <upgrade name="android:layout_width">wrap_content</upgrade>
+        <upgrade name="android:layout_height">wrap_content</upgrade>
 
-        <item name="android:textColor">@color/black</item>
+        <upgrade name="android:textColor">@color/black</upgrade>
 
-        <item name="cornerRadius">8dp</item>
+        <upgrade name="cornerRadius">8dp</upgrade>
 
-        <item name="android:padding">8dp</item>
+        <upgrade name="android:padding">8dp</upgrade>
 
-        <item name="strokeColor">@color/black</item>
-        <item name="strokeWidth">2dp</item>
+        <upgrade name="strokeColor">@color/black</upgrade>
+        <upgrade name="strokeWidth">2dp</upgrade>
 
-        <item name="android:backgroundTint">@color/buttonShoppingEnabledDark</item>
+        <upgrade name="android:backgroundTint">@color/buttonShoppingEnabledDark</upgrade>
     </style>
 
     <style name="options">
-        <item name="android:background">@drawable/options_shape_dark</item>
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:gravity">center</item>
-        <item name="android:layout_marginStart">22dp</item>
-        <item name="android:layout_marginEnd">22dp</item>
-        <item name="android:paddingStart">22dp</item>
-        <item name="android:paddingEnd">22dp</item>
+        <upgrade name="android:background">@drawable/options_shape_dark</upgrade>
+        <upgrade name="android:layout_width">match_parent</upgrade>
+        <upgrade name="android:layout_height">wrap_content</upgrade>
+        <upgrade name="android:gravity">center</upgrade>
+        <upgrade name="android:layout_marginStart">22dp</upgrade>
+        <upgrade name="android:layout_marginEnd">22dp</upgrade>
+        <upgrade name="android:paddingStart">22dp</upgrade>
+        <upgrade name="android:paddingEnd">22dp</upgrade>
     </style>
 </resources>

@@ -13,16 +13,16 @@
         android:theme="@style/Theme.Contador"
         tools:targetApi="31">
         <activity
-            android:name=".shop.ShopActivity"
+            android:name=".activities.ShopActivity"
             android:exported="false" />
         <activity
-            android:name=".InfoActivity"
+            android:name=".activities.InfoActivity"
             android:exported="false" />
         <activity
-            android:name=".OptionsActivity"
+            android:name=".activities.OptionsActivity"
             android:exported="false" />
         <activity
-            android:name=".LaunchActivity"
+            android:name=".activities.LaunchActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,7 +31,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.GameActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true"
             android:screenOrientation="portrait" />

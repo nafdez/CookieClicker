@@ -23,25 +23,22 @@
 
             <TextView
                 style="@style/textview_style"
-                android:id="@+id/upgradeNameTextView"
+                android:id="@+id/text_upgrade_name"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
-                android:text="Toque"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
             <TextView
                 style="@style/textview_style"
-                android:id="@+id/upgradeValueTextView"
+                android:id="@+id/text_upgrade_description"
                 android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:text="+1" />
+                android:layout_marginEnd="8dp" />
 
         </LinearLayout>
 
         <Button
-            style="@style/buttonShopping"
-            android:text="100.00M€"
+            style="@style/button_buy"
             android:id="@+id/upgradeButton"
             />
     </LinearLayout>

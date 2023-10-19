@@ -9,7 +9,7 @@ import com.google.android.material.button.MaterialButton;
 
 import java.math.BigInteger;
 
-public class Item {
+public class Upgrade {
 
     private String name;
     private String description;
@@ -18,7 +18,7 @@ public class Item {
     private boolean isEnabled;
     private Activity context;
 
-    public Item(Activity context, String name, String description, BigInteger price, MaterialButton button, boolean isEnabled) {
+    public Upgrade(Activity context, String name, String description, BigInteger price, MaterialButton button, boolean isEnabled) {
         this.context = context;
         this.name = name;
         this.description = description;
@@ -90,7 +90,7 @@ public class Item {
     @NonNull
     @Override
     public String toString() {
-        return "Item{" +
+        return "Upgrade{" +
                 "name='" + name + '\'' +
                 ", value='" + description + '\'' +
                 ", price=" + price +

@@ -1,8 +1,10 @@
-package es.ignaciofp.contador;
+package es.ignaciofp.contador.activities;
+
+import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.os.Bundle;
+import es.ignaciofp.contador.R;
 
 public class InfoActivity extends AppCompatActivity {
 

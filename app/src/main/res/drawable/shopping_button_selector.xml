@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:backgroundTint="@color/dark_moss_green" android:state_enabled="true" />
-    <item android:backgroundTint="@color/battleship_gray"
+    <upgrade android:backgroundTint="@color/dark_moss_green" android:state_enabled="true" />
+    <upgrade android:backgroundTint="@color/battleship_gray"
         android:state_enabled = "false"/>
 
-    <item android:shadowColor="@color/black" android:state_enabled="true"/>
-    <item android:shadowColor="@color/black" android:state_enabled="false"/>
+    <upgrade android:shadowColor="@color/black" android:state_enabled="true"/>
+    <upgrade android:shadowColor="@color/black" android:state_enabled="false"/>
 
-    <item android:shadowDx="1.5" android:state_enabled="true"/>
-    <item android:shadowDx="1.5" android:state_enabled="false"/>
+    <upgrade android:shadowDx="1.5" android:state_enabled="true"/>
+    <upgrade android:shadowDx="1.5" android:state_enabled="false"/>
 
-    <item android:shadowDy="1.3" android:state_enabled="true"/>
-    <item android:shadowDy="1.3" android:state_enabled="false"/>
+    <upgrade android:shadowDy="1.3" android:state_enabled="true"/>
+    <upgrade android:shadowDy="1.3" android:state_enabled="false"/>
 
-    <item android:shadowRadius="1.6" android:state_enabled="true"/>
-    <item android:shadowRadius="1.6" android:state_enabled="false"/>
+    <upgrade android:shadowRadius="1.6" android:state_enabled="true"/>
+    <upgrade android:shadowRadius="1.6" android:state_enabled="false"/>
 </selector>
