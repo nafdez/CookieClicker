@@ -32,9 +32,6 @@ public class LaunchActivity extends AppCompatActivity {
         startActivity(new Intent(this, InfoActivity.class));
     }
 
-    public void googleButtonOnClick(View view) {
-        Toast.makeText(this, "Compìlation error", Toast.LENGTH_SHORT).show();
-    }
 
     public void closeApp(View view) {
         finishAffinity();

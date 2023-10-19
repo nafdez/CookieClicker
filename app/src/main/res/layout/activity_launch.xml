@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"
             android:autoSizeTextType="uniform"
             android:lines="1"
-            android:text="Welcome to the best Cookie Clicker!"
+            android:text="@string/welcome_message"
             android:textSize="32sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -46,12 +46,12 @@
             style="@style/buttonPrimary"
             android:layout_marginBottom="2dp"
             android:onClick="openearMainActivity"
-            android:text="Play" />
+            android:text="@string/play_button_text" />
 
         <Button
             style="@style/buttonSecondary"
             android:onClick="openOptionsActivity"
-            android:text="Options" />
+            android:text="@string/options_button_text" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -64,7 +64,7 @@
                 android:layout_marginEnd="4dp"
                 android:layout_weight="1"
                 android:onClick="openInfoActivity"
-                android:text="Info" />
+                android:text="@string/info_button_text" />
 
             <Button
                 style="@style/buttonTernary"
@@ -72,7 +72,7 @@
                 android:layout_marginStart="4dp"
                 android:layout_weight="1"
                 android:onClick="closeApp"
-                android:text="Salir" />
+                android:text="@string/exit_button_text" />
         </LinearLayout>
 
     </LinearLayout>

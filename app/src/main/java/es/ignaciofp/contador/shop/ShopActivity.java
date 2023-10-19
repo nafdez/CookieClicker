@@ -90,10 +90,10 @@ public class ShopActivity extends AppCompatActivity implements RecyclerItemClick
         itemList = new ArrayList<>();
 
         // Generating upgrade options
-        generateItemButton("basic", "Toque", "+1", basicPrice);
-        generateItemButton("auto", "Auto-toque", "+1", autoPrice);
-        generateItemButton("mega", "Mega toque", "+0.35%", megaPrice);
-        generateItemButton("mega_auto", "Mega auto-toque", "+0.35%", megaAutoPrice);
+        generateItemButton("basic", getString(R.string.basic_upgrade_text), "+1", basicPrice);
+        generateItemButton("auto", getString(R.string.auto_upgrade_text), "+1", autoPrice);
+        generateItemButton("mega", getString(R.string.mega_upgrade_text), "+0.35%", megaPrice);
+        generateItemButton("mega_auto", getString(R.string.mega_auto_upgrade), "+0.35%", megaAutoPrice);
 
         updateUI();
     }

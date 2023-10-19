@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Contador</string>
+    <string name="app_name">InflationTycoon</string>
     <string name="number_textview">Touch the picture</string>
 
     <string name="coin_image_content_description">A coin</string>
@@ -12,13 +12,22 @@
     <string name="toggle_theme_option_name">Dark mode</string>
     <string name="toggle_theme_option_description">Toggle between light and dark mode</string>
     <string name="sample_text_option">Sample text</string>
-    <string name="toggle_theme_tag">toggleTheme</string>
-    <string name="basic_price">basicPrice</string>
-    <string name="mega_price">megaPrice</string>
-    <string name="auto_price">autoPrice</string>
-    <string name="mega_auto_price">megaAutoPrice</string>
+    <string name="toggle_theme_tag" translatable="false">toggleTheme</string>
+    <string name="basic_price" translatable="false">basicPrice</string>
+    <string name="mega_price" translatable="false">megaPrice</string>
+    <string name="auto_price" translatable="false">autoPrice</string>
+    <string name="mega_auto_price" translatable="false">megaAutoPrice</string>
     <string name="coins_value">coins</string>
-    <string name="clickvalue_value">clickValue</string>
-    <string name="autoclickvalue_value">autoClickValue</string>
+    <string name="clickvalue_value" translatable="false">clickValue</string>
+    <string name="autoclickvalue_value" translatable="false">autoClickValue</string>
     <string name="coins_collected_content_description">value</string>
+    <string name="basic_upgrade_text">Click</string>
+    <string name="auto_upgrade_text">Auto click</string>
+    <string name="mega_upgrade_text">Mega click</string>
+    <string name="mega_auto_upgrade">Mega auto click</string>
+    <string name="welcome_message">Welcome to the best Cookie Clicker!</string>
+    <string name="play_button_text">Play</string>
+    <string name="options_button_text">Options</string>
+    <string name="info_button_text">Info</string>
+    <string name="exit_button_text">Exit</string>
 </resources>
