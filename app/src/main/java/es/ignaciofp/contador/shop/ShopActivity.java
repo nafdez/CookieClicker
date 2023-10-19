@@ -52,6 +52,7 @@ public class ShopActivity extends AppCompatActivity implements RecyclerItemClick
     private BigInteger clickValue;
     private BigInteger autoClickValue;
 
+    TextView coinsTextView;
     private TextView clickValueTextView;
     private TextView autoTouchValueTextView;
 
@@ -69,6 +70,8 @@ public class ShopActivity extends AppCompatActivity implements RecyclerItemClick
         sharedPref = getPreferences(MODE_PRIVATE);
         editor = sharedPref.edit();
 
+        coinsTextView = findViewById(R.id.currentCoinsShopTextView);
+        coinsTextView.setText(valueWithSuffix(coins, "§"));
         clickValueTextView = findViewById(R.id.touchValueTextView);
         clickValueTextView.setText(valueWithSuffix(clickValue, "§/click"));
         autoTouchValueTextView = findViewById(R.id.autoTouchValueTextView);
@@ -95,20 +98,6 @@ public class ShopActivity extends AppCompatActivity implements RecyclerItemClick
         updateUI();
     }
 
-    private void returnToGame() {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra(getString(R.string.coins_value), coins);
-        intent.putExtra(getString(R.string.clickvalue_value), clickValue);
-        intent.putExtra(getString(R.string.autoclickvalue_value), autoClickValue);
-        startActivity(intent);
-    }
-
-    private void updateUI() {
-        adapterItems = new AdapterItems(itemList);
-        itemRecycler.setAdapter(adapterItems);
-        new Thread(this::updateDisabledButtons).start();
-    }
-
     @Override
     protected void onPause() {
         super.onPause();
@@ -117,6 +106,12 @@ public class ShopActivity extends AppCompatActivity implements RecyclerItemClick
         editor.putString(getString(R.string.auto_price), autoPrice.toString());
         editor.putString(getString(R.string.mega_auto_price), megaAutoPrice.toString());
         editor.apply();
+    }
+
+    private void updateUI() {
+        adapterItems = new AdapterItems(itemList);
+        itemRecycler.setAdapter(adapterItems);
+        new Thread(this::updateDisabledButtons).start();
     }
 
     private void generateItemButton(String buttonTag, String name, String description, BigInteger price) {
@@ -144,9 +139,9 @@ public class ShopActivity extends AppCompatActivity implements RecyclerItemClick
             price = basePrice.add(new BigDecimal(price).multiply(priceFactor).toBigInteger());
             actualClickValue = new BigDecimal(actualClickValue).multiply(valueFactor).toBigInteger();
 
+            coinsTextView.setText(valueWithSuffix(coins, "§"));
             button.setText(valueWithSuffix(price, "§"));
             infoTextView.setText(valueWithSuffix(actualClickValue, msg));
-
 
             ScaleAnimation fade_in = new ScaleAnimation(0.7f, 1.0f, 0.7f, 1.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
             fade_in.setDuration(100);
@@ -164,7 +159,7 @@ public class ShopActivity extends AppCompatActivity implements RecyclerItemClick
             price = basePrice.add(new BigDecimal(price).divide(priceFactor, 0, RoundingMode.CEILING).toBigInteger());
             actualClickValue = actualClickValue.add(toAddValue);
 
-
+            coinsTextView.setText(valueWithSuffix(coins, "§"));
             button.setText(valueWithSuffix(price, "§"));
             infoTextView.setText(valueWithSuffix(actualClickValue, msg));
 
@@ -176,8 +171,9 @@ public class ShopActivity extends AppCompatActivity implements RecyclerItemClick
         return new BigInteger[]{actualClickValue, price};
     }
 
-    public BigInteger onRecyclerButtonClick(View view) {
-        Button button = (Button) view;
+    @Override
+    public void onItemClick(View view, int position) {
+        Button button = (Button) itemList.get(position).getButton();
         BigInteger[] values;
         BigInteger newPrice = new BigInteger("0");
 
@@ -209,12 +205,10 @@ public class ShopActivity extends AppCompatActivity implements RecyclerItemClick
                 newPrice = megaAutoPrice;
                 break;
         }
-        return newPrice.compareTo(BigInteger.valueOf(0)) >= 0 ? newPrice : BigInteger.valueOf(-1);
-    }
 
-    @Override
-    public void onItemClick(View view, int position) {
-
+        if (newPrice.compareTo(BigInteger.valueOf(0)) >= 0) {
+            itemList.get(position).setPrice(newPrice);
+        }
     }
 
     @Override
@@ -238,5 +232,14 @@ public class ShopActivity extends AppCompatActivity implements RecyclerItemClick
                 });
             }
         }
+    }
+
+    public void returnOnClick(View view) {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra(getString(R.string.coins_value), coins.toString());
+        intent.putExtra(getString(R.string.clickvalue_value), clickValue.toString());
+        intent.putExtra(getString(R.string.autoclickvalue_value), autoClickValue.toString());
+        startActivity(intent);
+        finish();
     }
 }

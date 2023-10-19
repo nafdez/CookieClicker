@@ -87,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
             currentCoinsTextView.setText(valueWithSuffix(coins, "§"));
         }
 
+        updateClickImageView();
         gameLoop();
     }
 
@@ -162,9 +163,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void shopImageOnClick(View view) {
         Intent intent = new Intent(this, ShopActivity.class);
-        intent.putExtra(getString(R.string.coins_value), coins);
-        intent.putExtra(getString(R.string.clickvalue_value), clickValue);
-        intent.putExtra(getString(R.string.autoclickvalue_value), autoClickValue);
+        intent.putExtra(getString(R.string.coins_value), coins.toString());
+        intent.putExtra(getString(R.string.clickvalue_value), clickValue.toString());
+        intent.putExtra(getString(R.string.autoclickvalue_value), autoClickValue.toString());
         startActivity(intent);
+        finish();
     }
 }

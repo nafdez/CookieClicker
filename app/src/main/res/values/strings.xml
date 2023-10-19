@@ -20,4 +20,5 @@
     <string name="coins_value">coins</string>
     <string name="clickvalue_value">clickValue</string>
     <string name="autoclickvalue_value">autoClickValue</string>
+    <string name="coins_collected_content_description">value</string>
 </resources>

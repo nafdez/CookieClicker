@@ -5,8 +5,21 @@
     <color name="red">#EA3323</color>
     <color name="transparent">#00000000</color>
 
+    <color name="cambridge_blue">#99C2A2</color>
+    <color name="jet">#383541</color>
+    <color name="pomp_and_power">#767497</color>
+
+    <color name="dark_moss_green">#58641D</color>
+    <color name="drab_dark_brown">#343b11</color>
+    <color name="orange_peel">#FF9F1C</color>
+    <color name="battleship_gray">#868D8E</color>
+    <color name="honeydew">#DFECE2</color>
+
+    <!--
     <color name="backgroundColor">#8DC4B7</color>
     <color name="backgroundShoppingColor">#383541</color>
+
+    <color name="cardBackgroundColor">#767497</color>
 
     <color name="buttonPrimary">#2A64F5</color>
     <color name="buttonTextSecondary">#123293</color>
@@ -14,11 +27,11 @@
     <color name="buttonShoppingEnabled">#59AD67</color>
     <color name="buttonShoppingDisabled">#868D8E</color>
 
-    <color name="backgroundGeneric">#F2F2F7</color>
+    <color name="backgroundGeneric">#F2F2F7</color>-->
     <color name="containerGenericPrimary">#FFFFFF</color>
     <color name="containerGenericSecondary">#E3E3E8</color>
-    <color name="switchOff">#E8E8E9</color>
-    <color name="switchOn">#2A64F5</color>
+    <!--<color name="switchOff">#E8E8E9</color>
+    <color name="switchOn">#2A64F5</color> -->
 
     <!--DARK MODE-->
     <color name="backgroundColorDark">#493740</color>

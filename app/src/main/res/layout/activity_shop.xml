@@ -30,6 +30,40 @@
                 android:background="@drawable/child_info_bar">
 
                 <ImageView
+                    android:id="@+id/returnImageView"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginEnd="4dp"
+                    android:contentDescription="@string/coins_collected_content_description"
+                    app:srcCompat="@drawable/return_icon"
+                    android:onClick="returnOnClick"/>
+            </LinearLayout>
+
+            <LinearLayout
+                style="@style/info_bar_child"
+                android:background="@drawable/child_info_bar">
+
+                <ImageView
+
+                    android:id="@+id/currentCoinsShopImageView"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginEnd="4dp"
+                    android:contentDescription="@string/coins_collected_content_description"
+                    app:srcCompat="@drawable/coin_icon_3" />
+
+                <TextView
+                    android:id="@+id/currentCoinsShopTextView"
+                    style="@style/textview_style"
+                    android:text="value"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                style="@style/info_bar_child"
+                android:background="@drawable/child_info_bar">
+
+                <ImageView
 
                     android:id="@+id/touchIconImageView"
                     android:layout_width="32dp"

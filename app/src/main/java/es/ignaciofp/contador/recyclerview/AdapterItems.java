@@ -71,10 +71,10 @@ public class AdapterItems extends RecyclerView.Adapter<AdapterItems.ViewHolderIt
             button.setEnabled(item.isEnabled());
 
             if(!button.isEnabled()) {
-                button.setBackgroundColor(item.getContext().getColor(R.color.buttonShoppingDisabled));
+                button.setBackgroundColor(item.getContext().getColor(R.color.battleship_gray));
                 button.setShadowLayer(1.6f, 1.5f, 1.3f, Color.RED);
             } else {
-                button.setBackgroundColor(item.getContext().getColor(R.color.buttonShoppingEnabled));
+                button.setBackgroundColor(item.getContext().getColor(R.color.dark_moss_green));
                 button.setShadowLayer(0,0,0, Color.BLACK);
             }
         }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:backgroundTint="@color/buttonShoppingEnabled" android:state_enabled="true" />
-    <item android:backgroundTint="@color/buttonShoppingDisabled"
+    <item android:backgroundTint="@color/dark_moss_green" android:state_enabled="true" />
+    <item android:backgroundTint="@color/battleship_gray"
         android:state_enabled = "false"/>
 
     <item android:shadowColor="@color/black" android:state_enabled="true"/>
