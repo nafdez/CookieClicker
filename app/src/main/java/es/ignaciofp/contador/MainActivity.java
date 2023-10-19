@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -28,38 +29,44 @@ import es.ignaciofp.contador.recyclerview.RecyclerItemClickListener;
 
 public class MainActivity extends AppCompatActivity {
 
-    BigInteger basicBasePrice = BigInteger.valueOf(100);
-    BigInteger megaBasePrice = BigInteger.valueOf(1000);
-    BigInteger autoBasePrice = BigInteger.valueOf(450);
-    BigInteger megaAutoBasePrice = BigInteger.valueOf(2670);
-    BigInteger basicPrice = basicBasePrice;
-    BigInteger megaPrice = megaBasePrice;
-    BigInteger autoPrice = autoBasePrice;
-    BigInteger megaAutoPrice = megaAutoBasePrice;
-    BigInteger coinRate = new BigInteger("0");
+
+    private static final String TAG = "MainActivity";
+    private SharedPreferences sharedPref;
+    private SharedPreferences.Editor editor;
+    private final BigInteger basicBasePrice = BigInteger.valueOf(100);
+    private final BigInteger megaBasePrice = BigInteger.valueOf(1000);
+    private final BigInteger autoBasePrice = BigInteger.valueOf(450);
+    private final BigInteger megaAutoBasePrice = BigInteger.valueOf(2670);
+    private BigInteger basicPrice = basicBasePrice;
+    private BigInteger megaPrice = megaBasePrice;
+    private BigInteger autoPrice = autoBasePrice;
+    private BigInteger megaAutoPrice = megaAutoBasePrice;
+    private BigInteger coinRate = new BigInteger("0");
 
 
-    TextView currentCoinsTextView;
-    TextView clickValueTextView;
-    TextView autoTouchValueTextView;
-    ImageView clickImageView;
-    TextView coinRateValueTextView;
+    private TextView currentCoinsTextView;
+    private TextView clickValueTextView;
+    private TextView autoTouchValueTextView;
+    private ImageView clickImageView;
+    private TextView coinRateValueTextView;
 
 
-    BigInteger coins = BigInteger.valueOf(0);
-    BigInteger clickValue = BigInteger.valueOf(1);
-    BigInteger autoClickValue = BigInteger.valueOf(0);
+    private BigInteger coins = BigInteger.valueOf(0);
+    private BigInteger clickValue = BigInteger.valueOf(1);
+    private BigInteger autoClickValue = BigInteger.valueOf(0);
 
-    ArrayList<Item> itemList;
-    AdapterItems adapterItems;
-    RecyclerView itemRecycler;
-    private static final String TAG = "MainActivityTAGcv";
+    private ArrayList<Item> itemList;
+    private AdapterItems adapterItems;
+    private RecyclerView itemRecycler;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        sharedPref = getPreferences(MODE_PRIVATE);
+        editor = sharedPref.edit();
 
         // View assignment
         currentCoinsTextView = findViewById(R.id.numberTextView);
@@ -101,6 +108,14 @@ public class MainActivity extends AppCompatActivity {
 
         gameLoop();
         updateUI();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        editor.putBoolean(option.getTag(), option.isChecked());
+        editor.apply();
     }
 
     /**
@@ -192,83 +207,4 @@ public class MainActivity extends AppCompatActivity {
         updateClickImageView();
     }
 
-    public BigInteger[] onPurchaseAction(Button button, TextView infoTextView, String msg, BigInteger actualClickValue, BigInteger price, BigInteger basePrice, BigDecimal priceFactor, BigDecimal valueFactor) {
-        if (coins.compareTo(price) >= 0) {
-            coins = coins.subtract(price);
-
-            price = basePrice.add(new BigDecimal(price).multiply(priceFactor).toBigInteger());
-            actualClickValue = new BigDecimal(actualClickValue).multiply(valueFactor).toBigInteger();
-
-            button.setText(valueWithSuffix(price, "§"));
-            currentCoinsTextView.setText(valueWithSuffix(coins, "§"));
-            infoTextView.setText(valueWithSuffix(actualClickValue, msg));
-
-
-            ScaleAnimation fade_in = new ScaleAnimation(0.7f, 1.0f, 0.7f, 1.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-            fade_in.setDuration(100);
-            button.startAnimation(fade_in);
-            new Thread(this::updateDisabledButtons).start();
-        }
-        return new BigInteger[]{actualClickValue, price};
-    }
-
-    // -1 <; 0 ==; 1 >;
-    public BigInteger[] onPurchaseAction(Button button, TextView infoTextView, String msg, BigInteger actualClickValue, BigInteger price, BigInteger basePrice, BigDecimal priceFactor, BigInteger toAddValue) {
-        if (coins.compareTo(price) >= 0) {
-            coins = coins.subtract(price);
-
-            price = basePrice.add(new BigDecimal(price).divide(priceFactor, 0, RoundingMode.CEILING).toBigInteger());
-            actualClickValue = actualClickValue.add(toAddValue);
-
-
-            button.setText(valueWithSuffix(price, "§"));
-            currentCoinsTextView.setText(valueWithSuffix(coins, "§"));
-            infoTextView.setText(valueWithSuffix(actualClickValue, msg));
-
-            ScaleAnimation fade_in = new ScaleAnimation(0.7f, 1.0f, 0.7f, 1.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-            fade_in.setDuration(100);
-            button.startAnimation(fade_in);
-            new Thread(this::updateDisabledButtons).start();
-        }
-        return new BigInteger[]{actualClickValue, price};
-    }
-
-    public BigInteger onRecyclerButtonClick(View view) {
-        String TAG = "MainActivityClick";
-        Button button = (Button) view;
-        BigInteger[] values;
-        BigInteger newPrice = new BigInteger("0");
-
-        Log.e(TAG, "onClick: " + view.getTag());
-
-        switch (button.getTag().toString()) {
-            case "basic":
-                values = onPurchaseAction(button, clickValueTextView, "§/click", clickValue, basicPrice, basicBasePrice, new BigDecimal("1.03"), new BigInteger("1"));
-                clickValue = values[0];
-                basicPrice = values[1];
-                newPrice = basicPrice;
-                break;
-            case "mega":
-                values = onPurchaseAction(button, clickValueTextView, "§/click", clickValue, megaPrice, megaBasePrice, new BigDecimal("1.07"), new BigDecimal("1.35"));
-                clickValue = values[0];
-                megaPrice = values[1];
-                newPrice = megaPrice;
-                break;
-            case "auto":
-                values = onPurchaseAction(button, autoTouchValueTextView, "§/s", autoClickValue, autoPrice, autoBasePrice, new BigDecimal("1.05"), new BigInteger("1"));
-                autoClickValue = values[0];
-                autoPrice = values[1];
-                newPrice = autoPrice;
-                break;
-            case "mega_auto":
-                values = onPurchaseAction(button, autoTouchValueTextView, "§/s", autoClickValue, megaAutoPrice, megaAutoBasePrice, new BigDecimal("1.08"), new BigDecimal("1.35"));
-                autoClickValue = values[0];
-                megaAutoPrice = values[1];
-                newPrice = megaAutoPrice;
-                break;
-        }
-        updateClickImageView();
-        //updateUI();
-        return newPrice.compareTo(BigInteger.valueOf(0)) >= 0 ? newPrice : BigInteger.valueOf(-1);
-    }
 }

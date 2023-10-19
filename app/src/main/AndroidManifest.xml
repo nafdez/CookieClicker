@@ -13,6 +13,9 @@
         android:theme="@style/Theme.Contador"
         tools:targetApi="31">
         <activity
+            android:name=".shop.ShopActivity"
+            android:exported="false" />
+        <activity
             android:name=".InfoActivity"
             android:exported="false" />
         <activity

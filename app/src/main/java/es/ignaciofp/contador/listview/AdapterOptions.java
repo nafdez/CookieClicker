@@ -21,10 +21,6 @@ import es.ignaciofp.contador.models.Option;
 
 public class AdapterOptions extends ArrayAdapter<Option> {
 
-    public AdapterOptions(@NonNull Context context, int resource, @NonNull List<Option> options) {
-        super(context, resource, options);
-    }
-
     public AdapterOptions(@NonNull Context context, int resource, int textViewResourceId, @NonNull List<Option> options) {
         super(context, resource, textViewResourceId, options);
     }
@@ -41,9 +37,11 @@ public class AdapterOptions extends ArrayAdapter<Option> {
 
         ((TextView)convertView.findViewById(R.id.option_name)).setText(option.getName());
         ((TextView)convertView.findViewById(R.id.option_description)).setText(option.getDescription());
-        ((TextView)convertView.findViewById(R.id.option_description)).setTag(option.getTag());
-        ((SwitchMaterial)convertView.findViewById(R.id.option_switch)).setTag(option.getTag());
+        convertView.findViewById(R.id.option_description).setTag(option.getTag());
+
+        convertView.findViewById(R.id.option_switch).setTag(option.getTag());
         ((SwitchMaterial)convertView.findViewById(R.id.option_switch)).setOnCheckedChangeListener(((OptionsActivity)getContext()));
+        ((SwitchMaterial)convertView.findViewById(R.id.option_switch)).setChecked(option.isChecked());
 
         return super.getView(position, convertView, parent);
     }

@@ -12,4 +12,5 @@
     <string name="toggle_theme_option_name">Dark mode</string>
     <string name="toggle_theme_option_description">Toggle between light and dark mode</string>
     <string name="sample_text_option">Sample text</string>
+    <string name="toggle_theme_tag">toggleTheme</string>
 </resources>
