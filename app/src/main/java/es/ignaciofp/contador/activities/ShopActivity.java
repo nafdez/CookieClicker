@@ -25,10 +25,10 @@ import java.util.Objects;
 import es.ignaciofp.contador.R;
 import es.ignaciofp.contador.adapters.AdapterUpgrade;
 import es.ignaciofp.contador.models.Upgrade;
-import es.ignaciofp.contador.utils.RecyclerItemClickListener;
+import es.ignaciofp.contador.utils.RecyclerUpgradeClickListener;
 import es.ignaciofp.contador.utils.UpgradeDecorator;
 
-public class ShopActivity extends AppCompatActivity implements RecyclerItemClickListener.OnItemClickListener {
+public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeClickListener.OnItemClickListener {
 
     private static final String TAG = "ShopActivity";
 
@@ -90,7 +90,7 @@ public class ShopActivity extends AppCompatActivity implements RecyclerItemClick
         upgradesRecycler = findViewById(R.id.recycler_upgrades);
         upgradesRecycler.setLayoutManager(new GridLayoutManager(this, 1));
         upgradesRecycler.addItemDecoration(new UpgradeDecorator(8, 6, 0, 0));
-        upgradesRecycler.addOnItemTouchListener(new RecyclerItemClickListener(this, upgradesRecycler, this));
+        upgradesRecycler.addOnItemTouchListener(new RecyclerUpgradeClickListener(this, upgradesRecycler, this));
 
         upgradeList = new ArrayList<>();
 

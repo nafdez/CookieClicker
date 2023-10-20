@@ -17,9 +17,8 @@ import java.util.ArrayList;
 import es.ignaciofp.contador.R;
 import es.ignaciofp.contador.models.Upgrade;
 
-public class AdapterUpgrade extends RecyclerView.Adapter<AdapterUpgrade.ViewHolderItems> {
+public class AdapterUpgrade extends RecyclerView.Adapter<AdapterUpgrade.ViewHolderUpgrade> {
 
-    private static final String TAG = "AdapterUpgrade";
     ArrayList<Upgrade> upgradeList;
 
     public AdapterUpgrade(ArrayList<Upgrade> upgradeList) {
@@ -32,15 +31,13 @@ public class AdapterUpgrade extends RecyclerView.Adapter<AdapterUpgrade.ViewHold
 
     @NonNull
     @Override
-    public ViewHolderItems onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolderUpgrade onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_upgrade, parent, false);
-        Log.d(TAG, "onCreateViewHolder");
-        return new ViewHolderItems(view);
+        return new ViewHolderUpgrade(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolderItems holder, int position) {
-        Log.d(TAG, String.format("onBindViewHolder: %s", upgradeList.get(position)));
+    public void onBindViewHolder(@NonNull ViewHolderUpgrade holder, int position) {
         holder.assignItem(upgradeList.get(position));
     }
 
@@ -49,22 +46,20 @@ public class AdapterUpgrade extends RecyclerView.Adapter<AdapterUpgrade.ViewHold
         return upgradeList.size();
     }
 
-    public static class ViewHolderItems extends RecyclerView.ViewHolder {
+    public static class ViewHolderUpgrade extends RecyclerView.ViewHolder {
 
         TextView name;
         TextView description;
         MaterialButton button;
 
-        public ViewHolderItems(@NonNull View itemView) {
+        public ViewHolderUpgrade(@NonNull View itemView) {
             super(itemView);
-            Log.d(TAG, "Creating: ViewHolderItems");
             name = itemView.findViewById(R.id.text_upgrade_name);
             description = itemView.findViewById(R.id.text_upgrade_description);
             button = itemView.findViewById(R.id.upgradeButton);
         }
 
         public void assignItem(@NonNull Upgrade upgrade) {
-            Log.d(TAG, String.format("Assigning upgrade: %s", upgrade));
             name.setText(upgrade.getName());
             description.setText(upgrade.getDescription());
             button.setText(upgrade.getFormatedPrice());
