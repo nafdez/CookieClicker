@@ -101,6 +101,7 @@ public class ShopActivity extends AppCompatActivity implements RecyclerItemClick
         generateUpgradeButton("mega_auto", getString(R.string.shop_upgrade_mega_auto_text), "+0.35%", megaAutoPrice);
 
         updateUI();
+        gameLoop();
     }
 
     @Override
@@ -188,6 +189,26 @@ public class ShopActivity extends AppCompatActivity implements RecyclerItemClick
         editor.putString(getString(R.string.PREF_AUTO_PRICE), autoPrice.toString());
         editor.putString(getString(R.string.PREF_MEGA_AUTO_PRICE), megaAutoPrice.toString());
         editor.apply();
+    }
+
+    /**
+     * Each second adds the auto click value to the coins.
+     */
+    private void gameLoop() {
+        new Thread(() -> {
+            while (true) {
+                try {
+                    Thread.sleep(1000);
+                    if (autoClickValue.compareTo(BigInteger.valueOf(0)) > 0) {
+                        coins = coins.add(autoClickValue);
+                        runOnUiThread(() -> textCoins.setText(valueWithSuffix(coins, "§")));
+                        new Thread(this::updateDisabledButtons).start();
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     /**

@@ -122,7 +122,6 @@ public class GameActivity extends AppCompatActivity {
      * Also within the same second adds to the coins the amount of them being auto-generated and
      * calculates the amount of money is being added up each second.
      */
-    @SuppressWarnings("busy-waiting")
     private void gameLoop() {
         new Thread(() -> {
             while (true) {
