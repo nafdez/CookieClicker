@@ -6,6 +6,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
@@ -18,13 +19,16 @@ import es.ignaciofp.contador.R;
 
 public class GameActivity extends AppCompatActivity {
 
+    // Shared preferences
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor editor;
 
+    // Views
     private TextView textCoins;
     private TextView textCoinRateValue;
     private ImageView image_coin;
 
+    // Values
     private BigInteger coins;
     private BigInteger clickValue;
     private BigInteger autoClickValue;
@@ -36,12 +40,13 @@ public class GameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
+        // Getting prefs
         sharedPref = getPreferences(MODE_PRIVATE);
         editor = sharedPref.edit();
 
         Bundle bundle = getIntent().getExtras();
 
-        // bundle is null always but when coming back from the shop
+        // Bundle is null always but when coming back from the shop
         if (bundle != null) {
             coins = new BigInteger(bundle.getString(getString(R.string.PREF_COINS), "0"));
             clickValue = new BigInteger(bundle.getString(getString(R.string.PREF_CLICK_VALUE), "1"));
@@ -93,13 +98,17 @@ public class GameActivity extends AppCompatActivity {
      * @param view the view that has been clicked
      */
     public void addOnClick(View view) {
+        Log.d("gaming", "old: " + coins.toString());
         coins = coins.add(clickValue);
+        Log.d("gaming", "new: " + coins.toString());
         coinRate = coinRate.add(clickValue);
 
+        // Image animation
         ScaleAnimation fade_in = new ScaleAnimation(0.7f, 1.2f, 0.7f, 1.2f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         fade_in.setDuration(100);
         image_coin.startAnimation(fade_in);
 
+        // Updating the coins text view value
         textCoins.setText(valueWithSuffix(coins, "§"));
         updateClickImageView();
     }
@@ -127,16 +136,17 @@ public class GameActivity extends AppCompatActivity {
             while (true) {
                 try {
                     Thread.sleep(500);
-                    runOnUiThread(this::updateClickImageView);
-                    if (autoClickValue.compareTo(BigInteger.valueOf(0)) > 0) {
+                    runOnUiThread(this::updateClickImageView); // Updating the coin image
+
+                    if (autoClickValue.compareTo(BigInteger.valueOf(0)) > 0) { // Auto-click
                         coins = coins.add(autoClickValue);
                         coinRate = coinRate.add(autoClickValue);
                         runOnUiThread(() -> textCoins.setText(valueWithSuffix(coins, "§")));
                     }
 
-                    runOnUiThread(() -> textCoinRateValue.setText(valueWithSuffix(coinRate, "§/s")));
+                    runOnUiThread(() -> textCoinRateValue.setText(valueWithSuffix(coinRate, "§/s"))); // Coin rate
                     Thread.sleep(500);
-                    coinRate = BigInteger.valueOf(0);
+                    coinRate = BigInteger.valueOf(0); // Resetting coin rate value
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -168,11 +178,11 @@ public class GameActivity extends AppCompatActivity {
      */
     private void updateClickImageView() {
 
-        if (coins.compareTo(basicPrice.divide(new BigInteger("2"))) < 0) {
+        if (coins.compareTo(basicPrice.divide(new BigInteger("2"))) < 0) { // Basic image
             image_coin.setImageResource(R.drawable.ic_gen_coin_level_1);
-        } else if (coins.compareTo(basicPrice) < 0) {
+        } else if (coins.compareTo(basicPrice) < 0) { // Upper half image
             image_coin.setImageResource(R.drawable.ic_gen_coin_level_2);
-        } else {
+        } else { // Over basic price image
             image_coin.setImageResource(R.drawable.ic_gen_coin_level_3);
         }
     }

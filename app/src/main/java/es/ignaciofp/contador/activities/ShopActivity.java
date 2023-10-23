@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
@@ -30,11 +31,11 @@ import es.ignaciofp.contador.utils.UpgradeDecorator;
 
 public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeClickListener.OnItemClickListener {
 
-    private static final String TAG = "ShopActivity";
-
+    // Shared preferences
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor editor;
 
+    // Recycler view
     private ArrayList<Upgrade> upgradeList;
     private AdapterUpgrade adapterUpgrade;
     private RecyclerView upgradesRecycler;
@@ -66,15 +67,17 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shop);
 
+        sharedPref = getPreferences(MODE_PRIVATE);
+        editor = sharedPref.edit();
+
+        // Getting values from bundle
         Bundle bundle = getIntent().getExtras();
 
         coins = new BigInteger(Objects.requireNonNull(bundle).getString(getString(R.string.PREF_COINS), "0"));
         clickValue = new BigInteger(Objects.requireNonNull(bundle).getString(getString(R.string.PREF_CLICK_VALUE), "1"));
         autoClickValue = new BigInteger(Objects.requireNonNull(bundle).getString(getString(R.string.PREF_AUTO_CLICK_VALUE), "0"));
 
-        sharedPref = getPreferences(MODE_PRIVATE);
-        editor = sharedPref.edit();
-
+        // View Assignment
         textCoins = findViewById(R.id.text_shop_coins);
         textCoins.setText(valueWithSuffix(coins, "§"));
         textClickValue = findViewById(R.id.text_click_value);
@@ -82,11 +85,13 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
         textAutoClickValue = findViewById(R.id.text_auto_click);
         textAutoClickValue.setText(valueWithSuffix(autoClickValue, "§/s"));
 
+        // Restoring prices
         basicPrice = new BigInteger(sharedPref.getString(getString(R.string.PREF_BASIC_PRICE), basicBasePrice.toString()));
         megaPrice = new BigInteger(sharedPref.getString(getString(R.string.PREF_MEGA_PRICE), megaBasePrice.toString()));
         autoPrice = new BigInteger(sharedPref.getString(getString(R.string.PREF_AUTO_PRICE), autoBasePrice.toString()));
         megaAutoPrice = new BigInteger(sharedPref.getString(getString(R.string.PREF_MEGA_AUTO_PRICE), megaAutoBasePrice.toString()));
 
+        // Setting recycler view
         upgradesRecycler = findViewById(R.id.recycler_upgrades);
         upgradesRecycler.setLayoutManager(new GridLayoutManager(this, 1));
         upgradesRecycler.addItemDecoration(new UpgradeDecorator(8, 6, 0, 0));
