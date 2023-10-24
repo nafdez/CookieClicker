@@ -3,8 +3,10 @@ package es.ignaciofp.contador.activities;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -115,6 +117,7 @@ public class GameActivity extends AppCompatActivity {
 
     /**
      * Starts the ShopActivity when the user clicks on the shop icon
+     *
      * @param view the view that has been clicked
      */
     public void shopImageOnClick(View view) {
@@ -157,8 +160,9 @@ public class GameActivity extends AppCompatActivity {
     /**
      * Converts a BigInteger value to a formatted string which simplifies the reading
      * reducing the number to five digits at most and assigning it a numeric scale and a suffix
+     *
      * @param value the value to be formatted
-     * @param msg the suffix being added
+     * @param msg   the suffix being added
      * @return the formatted string
      */
     @SuppressLint("DefaultLocale")
@@ -185,5 +189,23 @@ public class GameActivity extends AppCompatActivity {
         } else { // Over basic price image
             image_coin.setImageResource(R.drawable.ic_gen_coin_level_3);
         }
+    }
+
+    public void infoImageOnClick(View view) {
+        AlertDialog.Builder dialogConstructor = new AlertDialog.Builder(this);
+        dialogConstructor.setMessage(getString(R.string.game_info_message_dialog))
+                .setTitle(getString(R.string.game_info_title_dialog))
+                .setIcon(R.drawable.ic_info)
+                .setNeutralButton("Github", (dialog, which) -> {
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/nafdez"));
+                    startActivity(browserIntent);
+                })
+                .setNegativeButton(getString(R.string.game_info_donate_dialog), (dialog, which) -> {
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://revolut.me/ignaciyu00"));
+                    startActivity(browserIntent);
+                })
+                .setPositiveButton("Ok", (dialog, which) -> {
+                    // do nothing
+                }).show();
     }
 }

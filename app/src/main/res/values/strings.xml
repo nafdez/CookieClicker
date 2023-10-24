@@ -36,4 +36,7 @@
     <string name="shop_upgrade_auto_text">Auto click</string>
     <string name="shop_upgrade_mega_text">Mega click</string>
     <string name="shop_upgrade_mega_auto_text">Mega auto click</string>
+    <string name="game_info_message_dialog">This a basic CookieClicker project for an android course</string>
+    <string name="game_info_title_dialog">Info</string>
+    <string name="game_info_donate_dialog">donate</string>
 </resources>

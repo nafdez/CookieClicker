@@ -111,4 +111,17 @@
         app:layout_constraintVertical_bias="0.117"
         app:srcCompat="@drawable/ic_gen_money_bag" />
 
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:onClick="infoImageOnClick"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.956"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.117"
+        app:srcCompat="@drawable/ic_info" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
