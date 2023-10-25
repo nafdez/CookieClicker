@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
@@ -21,6 +20,7 @@ import es.ignaciofp.contador.R;
 
 public class GameActivity extends AppCompatActivity {
 
+    private static final BigInteger GAME_BI_MAX_VALUE = new BigInteger("999999999999999999999999999999999");
     private SharedPreferences.Editor editor;
 
     // Views
@@ -60,7 +60,7 @@ public class GameActivity extends AppCompatActivity {
             autoClickValue = new BigInteger(sharedPref.getString(getString(R.string.PREF_AUTO_CLICK_VALUE), "0"));
             basicPrice = new BigInteger(sharedPref.getString(getString(R.string.PREF_BASIC_PRICE), "100")); // Hardcoded por no dar mucha vuelta TODO:
         }
-        hasReachedMaxValue = sharedPref.getBoolean("PREF_HAS_MAX_VALUE", true);
+        hasReachedMaxValue = sharedPref.getBoolean("PREF_HAS_MAX_VALUE", false);
 
         // View assignment
         TextView textClickValue = findViewById(R.id.text_click_value);
@@ -82,7 +82,7 @@ public class GameActivity extends AppCompatActivity {
         }
 
         updateClickImageView();
-        if(hasReachedMaxValue) onGameEnd();
+        if(hasReachedMaxValue) onGameEndDialogCreator();
         gameLoop();
     }
 
@@ -180,7 +180,7 @@ public class GameActivity extends AppCompatActivity {
             result = String.format("%.2f%c%s", value.doubleValue() / Math.pow(1000, exp), "kMGTPEZYRQ".charAt(exp - 1), msg);
         } catch (StringIndexOutOfBoundsException e) {
             result = "MAX";
-            if (coins.compareTo(new BigInteger("999999999999999999999999999999999")) >= 0) onGameEnd();
+            if (coins.compareTo(GAME_BI_MAX_VALUE) >= 0) onGameEndDialogCreator();
         }
         return result;
     }
@@ -200,6 +200,10 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Creates a dialog that shows information and multiple buttons that redirect to different websites
+     * @param view the view being clicked
+     */
     public void infoImageOnClick(View view) {
         AlertDialog.Builder dialogConstructor = new AlertDialog.Builder(this);
         dialogConstructor.setMessage(getString(R.string.game_info_message_dialog))
@@ -218,20 +222,29 @@ public class GameActivity extends AppCompatActivity {
                 }).show();
     }
 
-    public void onGameEnd() {
+    private void onGameEndDialogCreator() {
         AlertDialog.Builder dialogConstructor = new AlertDialog.Builder(this);
         dialogConstructor.setMessage("Congratulations, you've finished the game but please, get a life")
                 .setTitle("Game end")
                 .setIcon(R.drawable.ic_info)
                 .setNegativeButton("Reset", (dialog, which) -> {
-                    editor.putString(getString(R.string.PREF_COINS), "0");
-                    editor.putString(getString(R.string.PREF_CLICK_VALUE), "1");
-                    editor.putString(getString(R.string.PREF_AUTO_CLICK_VALUE), "0");
-                    editor.putBoolean("PREF_HAS_MAX_VALUE", false);
-                    finishAffinity();
+                    resetValues();
+                    recreate();
                 })
-                .setPositiveButton("Ok", (dialog, which) -> {
-                    finishAffinity();
-                }).show();
+                .setPositiveButton("Ok", (dialog, which) -> finish()).show();
+    }
+
+    private void resetValues() {
+        editor.putString(getString(R.string.PREF_COINS), "0");
+        editor.putString(getString(R.string.PREF_CLICK_VALUE), "1");
+        editor.putString(getString(R.string.PREF_AUTO_CLICK_VALUE), "0");
+        editor.putString(getString(R.string.PREF_BASIC_PRICE), "100");
+        editor.putString(getString(R.string.PREF_MEGA_PRICE), "1000");
+        editor.putString(getString(R.string.PREF_AUTO_PRICE), "450");
+        editor.putString(getString(R.string.PREF_MEGA_AUTO_PRICE), "2670");
+        editor.putBoolean("PREF_HAS_MAX_VALUE", false);
+        hasReachedMaxValue = false;
+        editor.commit();
+        editor.apply();
     }
 }
