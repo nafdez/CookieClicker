@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
@@ -31,8 +30,6 @@ import es.ignaciofp.contador.utils.UpgradeDecorator;
 
 public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeClickListener.OnItemClickListener {
 
-    // Shared preferences
-    private SharedPreferences sharedPref;
     private SharedPreferences.Editor editor;
 
     // Recycler view
@@ -67,7 +64,8 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shop);
 
-        sharedPref = getPreferences(MODE_PRIVATE);
+        // Shared preferences
+        SharedPreferences sharedPref = getPreferences(MODE_PRIVATE);
         editor = sharedPref.edit();
 
         // Getting values from bundle
@@ -199,6 +197,7 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
     /**
      * Each second adds the auto click value to the coins.
      */
+    @SuppressWarnings("BusyWait")
     private void gameLoop() {
         new Thread(() -> {
             while (true) {
@@ -251,12 +250,18 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
     @SuppressLint("DefaultLocale")
     private String valueWithSuffix(BigInteger value, String msg) {
         if (value.compareTo(BigInteger.valueOf(1000)) < 0) {
-            return String.format("%s%s", value.intValue(), msg);
+            return String.format("%s%s", value, msg);
         }
 
-        int exp = (int) (Math.log(value.intValue()) / Math.log(1000));
+        int exp = (int) (Math.log(value.doubleValue()) / Math.log(1000));
 
-        return String.format("%.2f%c%s", value.intValue() / Math.pow(1000, exp), "kMBTCQ".charAt(exp - 1), msg);
+        String result;
+        try {
+            result = String.format("%.2f%c%s", value.doubleValue() / Math.pow(1000, exp), "kMGTPEZYRQ".charAt(exp - 1), msg);
+        } catch (StringIndexOutOfBoundsException e) {
+            result = "MAX";
+        }
+        return result;
     }
 
 
@@ -316,5 +321,7 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
                 });
             }
         }
+
     }
+
 }

@@ -52,7 +52,7 @@ public class Upgrade {
     }
 
     public String getFormatedPrice() {
-        return valueWithSuffix(price, "§");
+        return valueWithSuffix(price);
     }
 
     public void setPrice(BigInteger price) {
@@ -77,14 +77,27 @@ public class Upgrade {
     }
 
     @SuppressLint("DefaultLocale")
-    public String valueWithSuffix(BigInteger value, String msg) {
+    private String valueWithSuffix(BigInteger value) {
+        if (hasReachedMaxValue(value)) {
+            return "MAX";
+        }
         if (value.compareTo(BigInteger.valueOf(1000)) < 0) {
-            return String.format("%s%s", value.intValue(), msg);
+            return String.format("%s§", value);
         }
 
-        int exp = (int) (Math.log(value.intValue()) / Math.log(1000));
+        int exp = (int) (Math.log(value.doubleValue()) / Math.log(1000));
 
-        return String.format("%.2f%c%s", value.intValue() / Math.pow(1000, exp), "kMBTCQ".charAt(exp - 1), msg);
+        String result;
+        try {
+            result = String.format("%.2f%c§", value.doubleValue() / Math.pow(1000, exp), "kMGTPEZYRQ".charAt(exp - 1));
+        } catch (StringIndexOutOfBoundsException e) {
+            result = "MAX";
+        }
+        return result;
+    }
+
+    private boolean hasReachedMaxValue(BigInteger value) {
+        return value.compareTo(new BigInteger("999999999999999999999999999999999")) >= 0;
     }
 
     @NonNull

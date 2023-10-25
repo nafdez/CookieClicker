@@ -25,10 +25,6 @@ public class AdapterUpgrade extends RecyclerView.Adapter<AdapterUpgrade.ViewHold
         this.upgradeList = upgradeList;
     }
 
-    public void clear() {
-        upgradeList.clear();
-    }
-
     @NonNull
     @Override
     public ViewHolderUpgrade onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

@@ -21,8 +21,6 @@ import es.ignaciofp.contador.R;
 
 public class GameActivity extends AppCompatActivity {
 
-    // Shared preferences
-    private SharedPreferences sharedPref;
     private SharedPreferences.Editor editor;
 
     // Views
@@ -36,6 +34,7 @@ public class GameActivity extends AppCompatActivity {
     private BigInteger autoClickValue;
     private BigInteger coinRate = new BigInteger("0");
     private BigInteger basicPrice;
+    private boolean hasReachedMaxValue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +42,8 @@ public class GameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_game);
 
         // Getting prefs
-        sharedPref = getPreferences(MODE_PRIVATE);
+        // Shared preferences
+        SharedPreferences sharedPref = getPreferences(MODE_PRIVATE);
         editor = sharedPref.edit();
 
         Bundle bundle = getIntent().getExtras();
@@ -60,6 +60,7 @@ public class GameActivity extends AppCompatActivity {
             autoClickValue = new BigInteger(sharedPref.getString(getString(R.string.PREF_AUTO_CLICK_VALUE), "0"));
             basicPrice = new BigInteger(sharedPref.getString(getString(R.string.PREF_BASIC_PRICE), "100")); // Hardcoded por no dar mucha vuelta TODO:
         }
+        hasReachedMaxValue = sharedPref.getBoolean("PREF_HAS_MAX_VALUE", true);
 
         // View assignment
         TextView textClickValue = findViewById(R.id.text_click_value);
@@ -81,6 +82,7 @@ public class GameActivity extends AppCompatActivity {
         }
 
         updateClickImageView();
+        if(hasReachedMaxValue) onGameEnd();
         gameLoop();
     }
 
@@ -90,19 +92,18 @@ public class GameActivity extends AppCompatActivity {
         editor.putString(getString(R.string.PREF_COINS), coins.toString());
         editor.putString(getString(R.string.PREF_CLICK_VALUE), clickValue.toString());
         editor.putString(getString(R.string.PREF_AUTO_CLICK_VALUE), autoClickValue.toString());
+        editor.putBoolean("PREF_HAS_MAX_VALUE", hasReachedMaxValue);
         editor.apply();
     }
 
     /**
      * If the user touches the coin image, then coins value will be the clickValue at that
-     * momemnt added to the coins the user collected. Also plays an animation on the image
+     * moment added to the coins the user collected. Also plays an animation on the image
      *
      * @param view the view that has been clicked
      */
     public void addOnClick(View view) {
-        Log.d("gaming", "old: " + coins.toString());
         coins = coins.add(clickValue);
-        Log.d("gaming", "new: " + coins.toString());
         coinRate = coinRate.add(clickValue);
 
         // Image animation
@@ -134,6 +135,7 @@ public class GameActivity extends AppCompatActivity {
      * Also within the same second adds to the coins the amount of them being auto-generated and
      * calculates the amount of money is being added up each second.
      */
+    @SuppressWarnings("BusyWait")
     private void gameLoop() {
         new Thread(() -> {
             while (true) {
@@ -168,12 +170,19 @@ public class GameActivity extends AppCompatActivity {
     @SuppressLint("DefaultLocale")
     private String valueWithSuffix(BigInteger value, String msg) {
         if (value.compareTo(BigInteger.valueOf(1000)) < 0) {
-            return String.format("%s%s", value.intValue(), msg);
+            return String.format("%s%s", value, msg);
         }
 
-        int exp = (int) (Math.log(value.intValue()) / Math.log(1000));
+        int exp = (int) (Math.log(value.doubleValue()) / Math.log(1000));
 
-        return String.format("%.2f%c%s", value.intValue() / Math.pow(1000, exp), "kMBTCQ".charAt(exp - 1), msg);
+        String result;
+        try {
+            result = String.format("%.2f%c%s", value.doubleValue() / Math.pow(1000, exp), "kMGTPEZYRQ".charAt(exp - 1), msg);
+        } catch (StringIndexOutOfBoundsException e) {
+            result = "MAX";
+            if (coins.compareTo(new BigInteger("999999999999999999999999999999999")) >= 0) onGameEnd();
+        }
+        return result;
     }
 
     /**
@@ -206,6 +215,23 @@ public class GameActivity extends AppCompatActivity {
                 })
                 .setPositiveButton("Ok", (dialog, which) -> {
                     // do nothing
+                }).show();
+    }
+
+    public void onGameEnd() {
+        AlertDialog.Builder dialogConstructor = new AlertDialog.Builder(this);
+        dialogConstructor.setMessage("Congratulations, you've finished the game but please, get a life")
+                .setTitle("Game end")
+                .setIcon(R.drawable.ic_info)
+                .setNegativeButton("Reset", (dialog, which) -> {
+                    editor.putString(getString(R.string.PREF_COINS), "0");
+                    editor.putString(getString(R.string.PREF_CLICK_VALUE), "1");
+                    editor.putString(getString(R.string.PREF_AUTO_CLICK_VALUE), "0");
+                    editor.putBoolean("PREF_HAS_MAX_VALUE", false);
+                    finishAffinity();
+                })
+                .setPositiveButton("Ok", (dialog, which) -> {
+                    finishAffinity();
                 }).show();
     }
 }
