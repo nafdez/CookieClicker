@@ -1,6 +1,5 @@
 package es.ignaciofp.contador.activities;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -25,6 +24,7 @@ import java.util.Objects;
 import es.ignaciofp.contador.R;
 import es.ignaciofp.contador.adapters.AdapterUpgrade;
 import es.ignaciofp.contador.models.Upgrade;
+import es.ignaciofp.contador.services.CustomBigInteger;
 import es.ignaciofp.contador.utils.RecyclerUpgradeClickListener;
 import es.ignaciofp.contador.utils.UpgradeDecorator;
 
@@ -38,21 +38,21 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
     private RecyclerView upgradesRecycler;
 
     // Base prices
-    private final BigInteger basicBasePrice = BigInteger.valueOf(100);
-    private final BigInteger megaBasePrice = BigInteger.valueOf(1000);
-    private final BigInteger autoBasePrice = BigInteger.valueOf(450);
-    private final BigInteger megaAutoBasePrice = BigInteger.valueOf(2670);
+    private final CustomBigInteger basicBasePrice = new CustomBigInteger("100");
+    private final CustomBigInteger megaBasePrice = new CustomBigInteger("1000");
+    private final CustomBigInteger autoBasePrice = new CustomBigInteger("450");
+    private final CustomBigInteger megaAutoBasePrice = new CustomBigInteger("2670");
 
     // Actual prices
-    private BigInteger basicPrice = basicBasePrice;
-    private BigInteger megaPrice = megaBasePrice;
-    private BigInteger autoPrice = autoBasePrice;
-    private BigInteger megaAutoPrice = megaAutoBasePrice;
+    private CustomBigInteger basicPrice = basicBasePrice;
+    private CustomBigInteger megaPrice = megaBasePrice;
+    private CustomBigInteger autoPrice = autoBasePrice;
+    private CustomBigInteger megaAutoPrice = megaAutoBasePrice;
 
     // Values
-    private BigInteger coins;
-    private BigInteger clickValue;
-    private BigInteger autoClickValue;
+    private CustomBigInteger coins;
+    private CustomBigInteger clickValue;
+    private CustomBigInteger autoClickValue;
 
     // Views
     TextView textCoins;
@@ -71,23 +71,23 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
         // Getting values from bundle
         Bundle bundle = getIntent().getExtras();
 
-        coins = new BigInteger(Objects.requireNonNull(bundle).getString(getString(R.string.PREF_COINS), "0"));
-        clickValue = new BigInteger(Objects.requireNonNull(bundle).getString(getString(R.string.PREF_CLICK_VALUE), "1"));
-        autoClickValue = new BigInteger(Objects.requireNonNull(bundle).getString(getString(R.string.PREF_AUTO_CLICK_VALUE), "0"));
+        coins = new CustomBigInteger(Objects.requireNonNull(bundle).getString(getString(R.string.PREF_COINS), "0"));
+        clickValue = new CustomBigInteger(Objects.requireNonNull(bundle).getString(getString(R.string.PREF_CLICK_VALUE), "1"));
+        autoClickValue = new CustomBigInteger(Objects.requireNonNull(bundle).getString(getString(R.string.PREF_AUTO_CLICK_VALUE), "0"));
 
         // View Assignment
         textCoins = findViewById(R.id.text_shop_coins);
-        textCoins.setText(valueWithSuffix(coins, "§"));
+        textCoins.setText(coins.withSuffix("§"));
         textClickValue = findViewById(R.id.text_click_value);
-        textClickValue.setText(valueWithSuffix(clickValue, "§/click"));
+        textClickValue.setText(clickValue.withSuffix("§/click"));
         textAutoClickValue = findViewById(R.id.text_auto_click);
-        textAutoClickValue.setText(valueWithSuffix(autoClickValue, "§/s"));
+        textAutoClickValue.setText(autoClickValue.withSuffix("§/s"));
 
         // Restoring prices
-        basicPrice = new BigInteger(sharedPref.getString(getString(R.string.PREF_BASIC_PRICE), basicBasePrice.toString()));
-        megaPrice = new BigInteger(sharedPref.getString(getString(R.string.PREF_MEGA_PRICE), megaBasePrice.toString()));
-        autoPrice = new BigInteger(sharedPref.getString(getString(R.string.PREF_AUTO_PRICE), autoBasePrice.toString()));
-        megaAutoPrice = new BigInteger(sharedPref.getString(getString(R.string.PREF_MEGA_AUTO_PRICE), megaAutoBasePrice.toString()));
+        basicPrice = new CustomBigInteger(sharedPref.getString(getString(R.string.PREF_BASIC_PRICE), basicBasePrice.toString()));
+        megaPrice = new CustomBigInteger(sharedPref.getString(getString(R.string.PREF_MEGA_PRICE), megaBasePrice.toString()));
+        autoPrice = new CustomBigInteger(sharedPref.getString(getString(R.string.PREF_AUTO_PRICE), autoBasePrice.toString()));
+        megaAutoPrice = new CustomBigInteger(sharedPref.getString(getString(R.string.PREF_MEGA_AUTO_PRICE), megaAutoBasePrice.toString()));
 
         // Setting recycler view
         upgradesRecycler = findViewById(R.id.recycler_upgrades);
@@ -123,8 +123,8 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
     @Override
     public void onItemClick(View view, int position) {
         Button button = upgradeList.get(position).getButton();
-        BigInteger[] values;
-        BigInteger newPrice = new BigInteger("0");
+        CustomBigInteger[] values;
+        CustomBigInteger newPrice = new CustomBigInteger("0");
 
         switch (button.getTag().toString()) {
             case "basic":
@@ -205,7 +205,7 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
                     Thread.sleep(1000);
                     if (autoClickValue.compareTo(BigInteger.valueOf(0)) > 0) {
                         coins = coins.add(autoClickValue);
-                        runOnUiThread(() -> textCoins.setText(valueWithSuffix(coins, "§")));
+                        runOnUiThread(() -> textCoins.setText(coins.withSuffix("§")));
                         new Thread(this::updateDisabledButtons).start();
                     }
                 } catch (InterruptedException e) {
@@ -233,75 +233,49 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
      * @param description the description of the upgrade
      * @param price       the price of the upgrade
      */
-    private void generateUpgradeButton(String buttonTag, String name, String description, BigInteger price) {
+    private void generateUpgradeButton(String buttonTag, String name, String description, CustomBigInteger price) {
         MaterialButton button = new MaterialButton(this);
         button.setTag(buttonTag);
         upgradeList.add(new Upgrade(this, name, description, price, button, false));
     }
 
-    /**
-     * Converts a BigInteger value to a formatted string which simplifies the reading
-     * reducing the number to five digits at most and assigning it a numeric scale and a suffix
-     *
-     * @param value the value to be formatted
-     * @param msg   the suffix being added
-     * @return the formatted string
-     */
-    @SuppressLint("DefaultLocale")
-    private String valueWithSuffix(BigInteger value, String msg) {
-        if (value.compareTo(BigInteger.valueOf(1000)) < 0) {
-            return String.format("%s%s", value, msg);
-        }
-
-        int exp = (int) (Math.log(value.doubleValue()) / Math.log(1000));
-
-        String result;
-        try {
-            result = String.format("%.2f%c%s", value.doubleValue() / Math.pow(1000, exp), "kMGTPEZYRQ".charAt(exp - 1), msg);
-        } catch (StringIndexOutOfBoundsException e) {
-            result = "MAX";
-        }
-        return result;
-    }
-
-
-    private BigInteger[] onPurchaseAction(Button button, TextView infoTextView, String msg, BigInteger actualClickValue, BigInteger price, BigInteger basePrice, BigDecimal priceFactor, BigDecimal valueFactor) {
+    private CustomBigInteger[] onPurchaseAction(Button button, TextView infoTextView, String msg, CustomBigInteger actualClickValue, CustomBigInteger price, CustomBigInteger basePrice, BigDecimal priceFactor, BigDecimal valueFactor) {
         if (coins.compareTo(price) >= 0) {
             coins = coins.subtract(price);
 
             price = basePrice.add(new BigDecimal(price).multiply(priceFactor).toBigInteger());
-            actualClickValue = new BigDecimal(actualClickValue).multiply(valueFactor).toBigInteger();
+            actualClickValue = CustomBigInteger.toCustomBigInteger(new BigDecimal(actualClickValue).multiply(valueFactor));
 
-            textCoins.setText(valueWithSuffix(coins, "§"));
-            button.setText(valueWithSuffix(price, "§"));
-            infoTextView.setText(valueWithSuffix(actualClickValue, msg));
+            textCoins.setText(coins.withSuffix("§"));
+            button.setText(price.withSuffix("§"));
+            infoTextView.setText(actualClickValue.withSuffix(msg));
 
             ScaleAnimation fade_in = new ScaleAnimation(0.7f, 1.0f, 0.7f, 1.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
             fade_in.setDuration(100);
             button.startAnimation(fade_in);
             new Thread(this::updateDisabledButtons).start();
         }
-        return new BigInteger[]{actualClickValue, price};
+        return new CustomBigInteger[]{actualClickValue, price};
     }
 
     // -1 <; 0 ==; 1 >;
-    private BigInteger[] onPurchaseAction(Button button, TextView infoTextView, String msg, BigInteger actualClickValue, BigInteger price, BigInteger basePrice, BigDecimal priceFactor, BigInteger toAddValue) {
+    private CustomBigInteger[] onPurchaseAction(Button button, TextView infoTextView, String msg, CustomBigInteger actualClickValue, CustomBigInteger price, CustomBigInteger basePrice, BigDecimal priceFactor, BigInteger toAddValue) {
         if (coins.compareTo(price) >= 0) {
             coins = coins.subtract(price);
 
             price = basePrice.add(new BigDecimal(price).divide(priceFactor, 0, RoundingMode.CEILING).toBigInteger());
             actualClickValue = actualClickValue.add(toAddValue);
 
-            textCoins.setText(valueWithSuffix(coins, "§"));
-            button.setText(valueWithSuffix(price, "§"));
-            infoTextView.setText(valueWithSuffix(actualClickValue, msg));
+            textCoins.setText(coins.withSuffix("§"));
+            button.setText(price.withSuffix("§"));
+            infoTextView.setText(actualClickValue.withSuffix(msg));
 
             ScaleAnimation fade_in = new ScaleAnimation(0.7f, 1.0f, 0.7f, 1.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
             fade_in.setDuration(100);
             button.startAnimation(fade_in);
             new Thread(this::updateDisabledButtons).start();
         }
-        return new BigInteger[]{actualClickValue, price};
+        return new CustomBigInteger[]{actualClickValue, price};
     }
 
     private void updateDisabledButtons() {

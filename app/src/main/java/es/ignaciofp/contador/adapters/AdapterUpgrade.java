@@ -1,7 +1,6 @@
 package es.ignaciofp.contador.adapters;
 
 import android.graphics.Color;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,7 +57,7 @@ public class AdapterUpgrade extends RecyclerView.Adapter<AdapterUpgrade.ViewHold
         public void assignItem(@NonNull Upgrade upgrade) {
             name.setText(upgrade.getName());
             description.setText(upgrade.getDescription());
-            button.setText(upgrade.getFormatedPrice());
+            button.setText(upgrade.getFormattedPrice());
             button.setEnabled(upgrade.isEnabled());
 
             if(!button.isEnabled()) {

@@ -1,24 +1,23 @@
 package es.ignaciofp.contador.models;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 
 import androidx.annotation.NonNull;
 
 import com.google.android.material.button.MaterialButton;
 
-import java.math.BigInteger;
+import es.ignaciofp.contador.services.CustomBigInteger;
 
 public class Upgrade {
 
     private String name;
     private String description;
-    private BigInteger price;
+    private CustomBigInteger price;
     private MaterialButton button;
     private boolean isEnabled;
-    private Activity context;
+    private final Activity context;
 
-    public Upgrade(Activity context, String name, String description, BigInteger price, MaterialButton button, boolean isEnabled) {
+    public Upgrade(Activity context, String name, String description, CustomBigInteger price, MaterialButton button, boolean isEnabled) {
         this.context = context;
         this.name = name;
         this.description = description;
@@ -47,15 +46,11 @@ public class Upgrade {
         this.description = description;
     }
 
-    public BigInteger getPrice() {
+    public CustomBigInteger getPrice() {
         return price;
     }
 
-    public String getFormatedPrice() {
-        return valueWithSuffix(price);
-    }
-
-    public void setPrice(BigInteger price) {
+    public void setPrice(CustomBigInteger price) {
         this.price = price;
     }
 
@@ -71,33 +66,13 @@ public class Upgrade {
         return isEnabled;
     }
 
+    public String getFormattedPrice() {
+        return price.withSuffix("§");
+    }
+
     public void setEnabled(boolean isEnabled) {
         this.isEnabled = isEnabled;
         button.setEnabled(isEnabled);
-    }
-
-    @SuppressLint("DefaultLocale")
-    private String valueWithSuffix(BigInteger value) {
-        if (hasReachedMaxValue(value)) {
-            return "MAX";
-        }
-        if (value.compareTo(BigInteger.valueOf(1000)) < 0) {
-            return String.format("%s§", value);
-        }
-
-        int exp = (int) (Math.log(value.doubleValue()) / Math.log(1000));
-
-        String result;
-        try {
-            result = String.format("%.2f%c§", value.doubleValue() / Math.pow(1000, exp), "kMGTPEZYRQ".charAt(exp - 1));
-        } catch (StringIndexOutOfBoundsException e) {
-            result = "MAX";
-        }
-        return result;
-    }
-
-    private boolean hasReachedMaxValue(BigInteger value) {
-        return value.compareTo(new BigInteger("999999999999999999999999999999999")) >= 0;
     }
 
     @NonNull

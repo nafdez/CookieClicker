@@ -1,8 +1,5 @@
 package es.ignaciofp.contador.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,13 +11,16 @@ import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import java.math.BigInteger;
 
 import es.ignaciofp.contador.R;
+import es.ignaciofp.contador.services.CustomBigInteger;
 
 public class GameActivity extends AppCompatActivity {
 
-    private static final BigInteger GAME_BI_MAX_VALUE = new BigInteger("999999999999999999999999999999999");
+    private static final BigInteger GAME_BI_MAX_VALUE = new BigInteger("999999999999999999999999999999999"); // Hardcoded BigInteger limit
     private SharedPreferences.Editor editor;
 
     // Views
@@ -29,11 +29,11 @@ public class GameActivity extends AppCompatActivity {
     private ImageView image_coin;
 
     // Values
-    private BigInteger coins;
-    private BigInteger clickValue;
-    private BigInteger autoClickValue;
-    private BigInteger coinRate = new BigInteger("0");
-    private BigInteger basicPrice;
+    private CustomBigInteger coins;
+    private CustomBigInteger clickValue;
+    private CustomBigInteger autoClickValue;
+    private CustomBigInteger coinRate = new CustomBigInteger("0");
+    private CustomBigInteger basicPrice;
     private boolean hasReachedMaxValue;
 
     @Override
@@ -50,27 +50,27 @@ public class GameActivity extends AppCompatActivity {
 
         // Bundle is null always but when coming back from the shop
         if (bundle != null) {
-            coins = new BigInteger(bundle.getString(getString(R.string.PREF_COINS), "0"));
-            clickValue = new BigInteger(bundle.getString(getString(R.string.PREF_CLICK_VALUE), "1"));
-            autoClickValue = new BigInteger(bundle.getString(getString(R.string.PREF_AUTO_CLICK_VALUE), "0"));
-            basicPrice = new BigInteger(bundle.getString(getString(R.string.PREF_BASIC_PRICE), "100")); // Hardcoded por no dar mucha vuelta TODO:
+            coins = new CustomBigInteger(bundle.getString(getString(R.string.PREF_COINS), "0"));
+            clickValue = new CustomBigInteger(bundle.getString(getString(R.string.PREF_CLICK_VALUE), "1"));
+            autoClickValue = new CustomBigInteger(bundle.getString(getString(R.string.PREF_AUTO_CLICK_VALUE), "0"));
+            basicPrice = new CustomBigInteger(bundle.getString(getString(R.string.PREF_BASIC_PRICE), "100")); // Hardcoded por no dar mucha vuelta TODO:
         } else {
-            coins = new BigInteger(sharedPref.getString(getString(R.string.PREF_COINS), "0"));
-            clickValue = new BigInteger(sharedPref.getString(getString(R.string.PREF_CLICK_VALUE), "1"));
-            autoClickValue = new BigInteger(sharedPref.getString(getString(R.string.PREF_AUTO_CLICK_VALUE), "0"));
-            basicPrice = new BigInteger(sharedPref.getString(getString(R.string.PREF_BASIC_PRICE), "100")); // Hardcoded por no dar mucha vuelta TODO:
+            coins = new CustomBigInteger(sharedPref.getString(getString(R.string.PREF_COINS), "0"));
+            clickValue = new CustomBigInteger(sharedPref.getString(getString(R.string.PREF_CLICK_VALUE), "1"));
+            autoClickValue = new CustomBigInteger(sharedPref.getString(getString(R.string.PREF_AUTO_CLICK_VALUE), "0"));
+            basicPrice = new CustomBigInteger(sharedPref.getString(getString(R.string.PREF_BASIC_PRICE), "100")); // Hardcoded por no dar mucha vuelta TODO:
         }
         hasReachedMaxValue = sharedPref.getBoolean("PREF_HAS_MAX_VALUE", false);
 
         // View assignment
         TextView textClickValue = findViewById(R.id.text_click_value);
-        textClickValue.setText(valueWithSuffix(clickValue, "§/click"));
+        textClickValue.setText(clickValue.withSuffix("§/click"));
 
         TextView textAutoTouchValue = findViewById(R.id.text_auto_click);
-        textAutoTouchValue.setText(valueWithSuffix(autoClickValue, "§/s"));
+        textAutoTouchValue.setText(autoClickValue.withSuffix("§/s"));
 
         textCoinRateValue = findViewById(R.id.text_coin_rate);
-        textCoinRateValue.setText(valueWithSuffix(coinRate, "§/s"));
+        textCoinRateValue.setText(coinRate.withSuffix("§/s"));
 
         textCoins = findViewById(R.id.text_coins);
         image_coin = findViewById(R.id.image_actionable_coins);
@@ -78,11 +78,11 @@ public class GameActivity extends AppCompatActivity {
         // If the actual quantity of coins is 0 them the text value of text_coins will be
         // the assigned in the strings.xml file
         if (!coins.equals(BigInteger.ZERO)) {
-            textCoins.setText(valueWithSuffix(coins, "§"));
+            textCoins.setText(coins.withSuffix("§"));
         }
 
         updateClickImageView();
-        if(hasReachedMaxValue) onGameEndDialogCreator();
+        if (hasReachedMaxValue) onGameEndDialogCreator();
         gameLoop();
     }
 
@@ -112,7 +112,8 @@ public class GameActivity extends AppCompatActivity {
         image_coin.startAnimation(fade_in);
 
         // Updating the coins text view value
-        textCoins.setText(valueWithSuffix(coins, "§"));
+        textCoins.setText(coins.withSuffix("§"));
+        if (coins.compareTo(GAME_BI_MAX_VALUE) >= 0) onGameEndDialogCreator();
         updateClickImageView();
     }
 
@@ -146,43 +147,16 @@ public class GameActivity extends AppCompatActivity {
                     if (autoClickValue.compareTo(BigInteger.valueOf(0)) > 0) { // Auto-click
                         coins = coins.add(autoClickValue);
                         coinRate = coinRate.add(autoClickValue);
-                        runOnUiThread(() -> textCoins.setText(valueWithSuffix(coins, "§")));
+                        runOnUiThread(() -> textCoins.setText(coins.withSuffix("§")));
                     }
 
-                    runOnUiThread(() -> textCoinRateValue.setText(valueWithSuffix(coinRate, "§/s"))); // Coin rate
+                    runOnUiThread(() -> textCoinRateValue.setText(coinRate.withSuffix("§/s"))); // Coin rate
                     Thread.sleep(500);
-                    coinRate = BigInteger.valueOf(0); // Resetting coin rate value
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    coinRate = new CustomBigInteger(BigInteger.valueOf(0).toString()); // Resetting coin rate value
+                } catch (InterruptedException ignored) {
                 }
             }
         }).start();
-    }
-
-    /**
-     * Converts a BigInteger value to a formatted string which simplifies the reading
-     * reducing the number to five digits at most and assigning it a numeric scale and a suffix
-     *
-     * @param value the value to be formatted
-     * @param msg   the suffix being added
-     * @return the formatted string
-     */
-    @SuppressLint("DefaultLocale")
-    private String valueWithSuffix(BigInteger value, String msg) {
-        if (value.compareTo(BigInteger.valueOf(1000)) < 0) {
-            return String.format("%s%s", value, msg);
-        }
-
-        int exp = (int) (Math.log(value.doubleValue()) / Math.log(1000));
-
-        String result;
-        try {
-            result = String.format("%.2f%c%s", value.doubleValue() / Math.pow(1000, exp), "kMGTPEZYRQ".charAt(exp - 1), msg);
-        } catch (StringIndexOutOfBoundsException e) {
-            result = "MAX";
-            if (coins.compareTo(GAME_BI_MAX_VALUE) >= 0) onGameEndDialogCreator();
-        }
-        return result;
     }
 
     /**
@@ -202,6 +176,7 @@ public class GameActivity extends AppCompatActivity {
 
     /**
      * Creates a dialog that shows information and multiple buttons that redirect to different websites
+     *
      * @param view the view being clicked
      */
     public void infoImageOnClick(View view) {
