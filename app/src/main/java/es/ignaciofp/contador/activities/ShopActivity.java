@@ -24,7 +24,7 @@ import java.util.Objects;
 import es.ignaciofp.contador.R;
 import es.ignaciofp.contador.adapters.AdapterUpgrade;
 import es.ignaciofp.contador.models.Upgrade;
-import es.ignaciofp.contador.services.CustomBigInteger;
+import es.ignaciofp.contador.utils.CustomBigInteger;
 import es.ignaciofp.contador.utils.RecyclerUpgradeClickListener;
 import es.ignaciofp.contador.utils.UpgradeDecorator;
 
@@ -121,7 +121,7 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
      * @param position the position on the list of the view being clicked
      */
     @Override
-    public void onItemClick(View view, int position) {
+    public synchronized void onItemClick(View view, int position) {
         Button button = upgradeList.get(position).getButton();
         CustomBigInteger[] values;
         CustomBigInteger newPrice = new CustomBigInteger("0");
@@ -144,12 +144,14 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
                 autoClickValue = values[0];
                 autoPrice = values[1];
                 newPrice = autoPrice;
+                notifyAll();
                 break;
             case "mega_auto":
                 values = onPurchaseAction(button, textAutoClickValue, "§/s", autoClickValue, megaAutoPrice, megaAutoBasePrice, new BigDecimal("1.08"), new BigDecimal("1.35"));
                 autoClickValue = values[0];
                 megaAutoPrice = values[1];
                 newPrice = megaAutoPrice;
+                notifyAll();
                 break;
         }
 

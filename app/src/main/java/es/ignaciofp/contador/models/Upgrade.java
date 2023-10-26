@@ -6,7 +6,7 @@ import androidx.annotation.NonNull;
 
 import com.google.android.material.button.MaterialButton;
 
-import es.ignaciofp.contador.services.CustomBigInteger;
+import es.ignaciofp.contador.utils.CustomBigInteger;
 
 public class Upgrade {
 

@@ -1,4 +1,4 @@
-package es.ignaciofp.contador.ustils;
+package es.ignaciofp.contador.utils;
 
 import android.annotation.SuppressLint;
 

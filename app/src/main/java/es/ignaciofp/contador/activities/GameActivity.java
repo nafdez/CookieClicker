@@ -16,7 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.math.BigInteger;
 
 import es.ignaciofp.contador.R;
-import es.ignaciofp.contador.services.CustomBigInteger;
+import es.ignaciofp.contador.utils.CustomBigInteger;
 
 public class GameActivity extends AppCompatActivity {
 
@@ -83,7 +83,8 @@ public class GameActivity extends AppCompatActivity {
 
         updateClickImageView();
         if (hasReachedMaxValue) onGameEndDialogCreator();
-        gameLoop();
+        new Thread(this::coinRateLoop).start();
+        new Thread(this::autoClickLoop).start();
     }
 
     @Override
@@ -137,26 +138,41 @@ public class GameActivity extends AppCompatActivity {
      * calculates the amount of money is being added up each second.
      */
     @SuppressWarnings("BusyWait")
-    private void gameLoop() {
-        new Thread(() -> {
-            while (true) {
-                try {
-                    Thread.sleep(500);
-                    runOnUiThread(this::updateClickImageView); // Updating the coin image
+    private void coinRateLoop() {
+        while (true) {
+            try {
+                Thread.sleep(500);
+                runOnUiThread(this::updateClickImageView); // Updating the coin image
 
-                    if (autoClickValue.compareTo(BigInteger.valueOf(0)) > 0) { // Auto-click
-                        coins = coins.add(autoClickValue);
-                        coinRate = coinRate.add(autoClickValue);
-                        runOnUiThread(() -> textCoins.setText(coins.withSuffix("§")));
-                    }
-
-                    runOnUiThread(() -> textCoinRateValue.setText(coinRate.withSuffix("§/s"))); // Coin rate
-                    Thread.sleep(500);
-                    coinRate = new CustomBigInteger(BigInteger.valueOf(0).toString()); // Resetting coin rate value
-                } catch (InterruptedException ignored) {
+                if (autoClickValue.compareTo(BigInteger.valueOf(0)) > 0) { // Auto-click
+                    coins = coins.add(autoClickValue);
+                    coinRate = coinRate.add(autoClickValue);
+                    runOnUiThread(() -> textCoins.setText(coins.withSuffix("§")));
                 }
+
+                runOnUiThread(() -> textCoinRateValue.setText(coinRate.withSuffix("§/s"))); // Coin rate
+                Thread.sleep(500);
+                coinRate = new CustomBigInteger(BigInteger.valueOf(0).toString()); // Resetting coin rate value
+            } catch (InterruptedException ignored) {
             }
-        }).start();
+        }
+    }
+
+    @SuppressWarnings("BusyWait")
+    private synchronized void autoClickLoop() {
+        try {
+            if (autoClickValue.compareTo(BigInteger.ZERO) <= 0) {
+                wait();
+            }
+
+            while (true) {
+                Thread.sleep(1000);
+                coins = coins.add(autoClickValue);
+                coinRate = coinRate.add(autoClickValue);
+                runOnUiThread(() -> textCoins.setText(coins.withSuffix("§")));
+            }
+        } catch (InterruptedException ignored) {
+        }
     }
 
     /**

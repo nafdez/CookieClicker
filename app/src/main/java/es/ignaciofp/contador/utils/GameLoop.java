@@ -1,2 +1,5 @@
-package es.ignaciofp.contador.utils;public class GameLoop {
+package es.ignaciofp.contador.utils;
+
+public class GameLoop {
+
 }
