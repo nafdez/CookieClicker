@@ -18,10 +18,10 @@ public class GameService {
     private final GameData GAME_DATA = GameData.getInstance();
 
     // Keys
-    public final String PREFS_NAME = "game_prefs";
-    private final String COINS_KEY = "coins";
-    private final String CLICK_VALUE_KEY = "click_value";
-    private final String AUTO_CLICK_VALUE_KEY = "auto_click_value";
+    private static final String PREFS_NAME = AppConstants.GAME_PREFS_NAME;
+    private static final String COINS_KEY = AppConstants.COINS_KEY;
+    private static final String CLICK_VALUE_KEY = AppConstants.CLICK_VALUE_KEY;
+    private static final String AUTO_CLICK_VALUE_KEY = AppConstants.AUTO_CLICK_VALUE_KEY;
 
     /**
      * Constructor of this class. It needs the context in order to initialize all the data.
@@ -44,6 +44,20 @@ public class GameService {
             instance = new GameService(context);
         }
         return instance;
+    }
+
+    /**
+     * Get a value from de GAME_DATA
+     * @param key the key of the value
+     * @return the value
+     */
+    public CustomBigInteger getValue(String key) {
+        CustomBigInteger value = new CustomBigInteger("-1");
+        try {
+            value = GAME_DATA.toMap().get(key);
+        } catch (IllegalAccessException ignored) {}
+
+        return value;
     }
 
     /**
