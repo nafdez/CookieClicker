@@ -1,4 +1,4 @@
-package es.ignaciofp.contador.services;
+package es.ignaciofp.contador.utils;
 
 import android.annotation.SuppressLint;
 
@@ -6,6 +6,8 @@ import androidx.annotation.NonNull;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class CustomBigInteger extends BigInteger {
 
@@ -28,6 +30,10 @@ public class CustomBigInteger extends BigInteger {
 
     public static CustomBigInteger toCustomBigInteger(BigDecimal val) {
         return new CustomBigInteger(val.toBigInteger().toString());
+    }
+
+    public static CustomBigInteger toCustomBigInteger(BigInteger val) {
+        return new CustomBigInteger(val.toString());
     }
 
     /**

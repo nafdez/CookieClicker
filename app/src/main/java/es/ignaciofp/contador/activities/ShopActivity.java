@@ -24,7 +24,7 @@ import java.util.Objects;
 import es.ignaciofp.contador.R;
 import es.ignaciofp.contador.adapters.AdapterUpgrade;
 import es.ignaciofp.contador.models.Upgrade;
-import es.ignaciofp.contador.services.CustomBigInteger;
+import es.ignaciofp.contador.utils.CustomBigInteger;
 import es.ignaciofp.contador.utils.RecyclerUpgradeClickListener;
 import es.ignaciofp.contador.utils.UpgradeDecorator;
 

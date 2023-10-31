@@ -16,7 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.math.BigInteger;
 
 import es.ignaciofp.contador.R;
-import es.ignaciofp.contador.services.CustomBigInteger;
+import es.ignaciofp.contador.utils.CustomBigInteger;
 
 public class GameActivity extends AppCompatActivity {
 
