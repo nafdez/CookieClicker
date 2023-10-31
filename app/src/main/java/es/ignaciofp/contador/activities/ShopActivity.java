@@ -110,49 +110,17 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
      * @param position the position on the list of the view being clicked
      */
     @Override
-    public synchronized void onItemClick(View view, int position) {
+    public void onItemClick(View view, int position) {
         Button button = upgradeList.get(position).getButton();
         CustomBigInteger newPrice = new CustomBigInteger("0");
+        Map<String, CustomBigInteger> values = SHOP_SERVICE.onButtonClick(upgradeList.get(position));
 
-        Map<String, CustomBigInteger> values = SHOP_SERVICE.onButtonClick(button);
 
-        if(!values.isEmpty()) {
-
+        if (newPrice.compareTo(BigInteger.valueOf(0)) >= 0) {
+            upgradeList.get(position).setPrice(newPrice);
         }
 
-        /*switch (button.getTag().toString()) {
-            case "basic":
-                values = onPurchaseAction(button, textClickValue, "§/click", clickValue, basicPrice, basicBasePrice, new BigDecimal("1.03"), new BigInteger("1"));
-                clickValue = values[0];
-                basicPrice = values[1];
-                newPrice = basicPrice;
-                break;
-            case "mega":
-                values = onPurchaseAction(button, textClickValue, "§/click", clickValue, megaPrice, megaBasePrice, new BigDecimal("1.07"), new BigDecimal("1.35"));
-                clickValue = values[0];
-                megaPrice = values[1];
-                newPrice = megaPrice;
-                break;
-            case "auto":
-                values = onPurchaseAction(button, textAutoClickValue, "§/s", autoClickValue, autoPrice, autoBasePrice, new BigDecimal("1.05"), new BigInteger("1"));
-                autoClickValue = values[0];
-                autoPrice = values[1];
-                newPrice = autoPrice;
-                notifyAll();
-                break;
-            case "mega_auto":
-                values = onPurchaseAction(button, textAutoClickValue, "§/s", autoClickValue, megaAutoPrice, megaAutoBasePrice, new BigDecimal("1.08"), new BigDecimal("1.35"));
-                autoClickValue = values[0];
-                megaAutoPrice = values[1];
-                newPrice = megaAutoPrice;
-                notifyAll();
-                break;
-        }*/
-
         new Thread(this::updateDisabledButtons).start();
-        //if (newPrice.compareTo(BigInteger.valueOf(0)) >= 0) {
-            upgradeList.get(position).setPrice(newPrice);
-        //}
     }
 
     @Override
@@ -234,39 +202,6 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
         MaterialButton button = new MaterialButton(this);
         button.setTag(buttonTag);
         upgradeList.add(new Upgrade(this, name, description, price, button, false));
-    }
-
-    private CustomBigInteger[] onPurchaseAction(Button button, TextView infoTextView, String msg, CustomBigInteger actualClickValue, CustomBigInteger price, CustomBigInteger basePrice, BigDecimal priceFactor, BigDecimal valueFactor) {
-        if (coins.compareTo(price) >= 0) {
-            coins = coins.subtract(price);
-
-            price = basePrice.add(new BigDecimal(price).multiply(priceFactor).toBigInteger());
-            actualClickValue = CustomBigInteger.toCustomBigInteger(new BigDecimal(actualClickValue).multiply(valueFactor));
-
-            textCoins.setText(coins.withSuffix("§"));
-            button.setText(price.withSuffix("§"));
-            infoTextView.setText(actualClickValue.withSuffix(msg));
-
-            new Thread(this::updateDisabledButtons).start();
-        }
-        return new CustomBigInteger[]{actualClickValue, price};
-    }
-
-    // -1 <; 0 ==; 1 >;
-    private CustomBigInteger[] onPurchaseAction(Button button, TextView infoTextView, String msg, CustomBigInteger actualClickValue, CustomBigInteger price, CustomBigInteger basePrice, BigDecimal priceFactor, BigInteger toAddValue) {
-        if (coins.compareTo(price) >= 0) {
-            coins = coins.subtract(price);
-
-            price = basePrice.add(new BigDecimal(price).divide(priceFactor, 0, RoundingMode.CEILING).toBigInteger());
-            actualClickValue = actualClickValue.add(toAddValue);
-
-            textCoins.setText(coins.withSuffix("§"));
-            button.setText(price.withSuffix("§"));
-            infoTextView.setText(actualClickValue.withSuffix(msg));
-
-            new Thread(this::updateDisabledButtons).start();
-        }
-        return new CustomBigInteger[]{actualClickValue, price};
     }
 
     private void updateDisabledButtons() {
