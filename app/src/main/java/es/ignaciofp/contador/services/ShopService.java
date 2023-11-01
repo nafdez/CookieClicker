@@ -3,6 +3,7 @@ package es.ignaciofp.contador.services;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -100,11 +101,12 @@ public class ShopService {
         SharedPreferences prefs = cntx.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
 
-        editor.remove(UPGRADE_BASIC_KEY);
-        editor.remove(UPGRADE_MEGA_KEY);
-        editor.remove(UPGRADE_AUTO_KEY);
-        editor.remove(UPGRADE_MEGA_AUTO_KEY);
+        SHOP_DATA.setBasicPrice(AppConstants.UPGRADE_BASIC_BASE_PRICE);
+        SHOP_DATA.setMegaPrice(AppConstants.UPGRADE_MEGA_BASE_PRICE);
+        SHOP_DATA.setAutoPrice(AppConstants.UPGRADE_AUTO_BASE_PRICE);
+        SHOP_DATA.setMegaAutoPrice(AppConstants.UPGRADE_MEGA_AUTO_BASE_PRICE);
 
+        editor.clear();
         editor.apply();
     }
 
@@ -131,69 +133,78 @@ public class ShopService {
         SHOP_DATA.setMegaAutoPrice(new CustomBigInteger(megaAuto));
     }
 
-    private Map<String, CustomBigInteger> onPurchaseAction(String priceKey, String valueToUpdateKey, CustomBigInteger basePrice, BigDecimal priceMultiplyFactor, BigDecimal toMultiply) {
+    private Map<String, CustomBigInteger> onPurchaseAction(String priceKey, String valueToUpdateKey, CustomBigInteger basePrice, BigDecimal priceMultiplyFactor, BigDecimal factor, boolean hasToMultipy) {
         Map<String, CustomBigInteger> data = new HashMap<>();
         try {
             CustomBigInteger coins = GAME_DATA.getCoins();
             CustomBigInteger currentPrice = SHOP_DATA.toMap().get(priceKey);
-            CustomBigInteger currentValue = SHOP_DATA.toMap().get(valueToUpdateKey);
+            CustomBigInteger currentValue = GAME_DATA.toMap().get(valueToUpdateKey);
 
 
             if (coins.compareTo(currentPrice) >= 0) {
                 coins = coins.subtract(currentPrice);
                 GAME_DATA.setCoins(coins);
 
-                CustomBigInteger newValue = CustomBigInteger.toCustomBigInteger(new BigDecimal(currentValue).multiply(toMultiply));
+                CustomBigInteger newValue;
+                if (hasToMultipy) {
+                    newValue = CustomBigInteger.toCustomBigInteger(new BigDecimal(currentValue).multiply(factor));
+                } else {
+                    newValue = currentValue.add(factor.toBigInteger());
+                }
+
                 CustomBigInteger newPrice = basePrice.add(new BigDecimal(currentPrice).multiply(priceMultiplyFactor).toBigInteger());
+
                 data = new HashMap<>();
                 data.put(AppConstants.AUX_VALUE_KEY, newValue);
                 data.put(AppConstants.AUX_PRICE_KEY, newPrice);
 
             }
 
-        } catch (IllegalAccessException ignored) {
+        } catch (
+                IllegalAccessException ignored) {
         }
 
         return data;
     }
 
-    public Map<String, CustomBigInteger> onButtonClick(Upgrade upgrade) {
+    // This two methods are killing me
+    public Map<String, CustomBigInteger> onButtonClick(Button button) {
         Map<String, CustomBigInteger> values = new HashMap<>();
 
-        switch (upgrade.getButton().getTag().toString()) {
+        switch (button.getTag().toString()) {
             case AppConstants.UPGRADE_BASIC_KEY:
-                values = onPurchaseAction(AppConstants.UPGRADE_BASIC_KEY, AppConstants.CLICK_VALUE_KEY, AppConstants.UPGRADE_BASIC_BASE_PRICE, new BigDecimal("1.03"), new BigDecimal("1"));
+                values = onPurchaseAction(AppConstants.UPGRADE_BASIC_KEY, AppConstants.CLICK_VALUE_KEY, AppConstants.UPGRADE_BASIC_BASE_PRICE, new BigDecimal("1.03"), new BigDecimal("1"), false);
                 if (!values.isEmpty()) {
                     GAME_DATA.setClickValue(values.get(AppConstants.AUX_VALUE_KEY));
                     SHOP_DATA.setBasicPrice(values.get(AppConstants.AUX_PRICE_KEY));
-                    upgrade.setPrice(SHOP_DATA.getBasicPrice());
                 }
                 break;
             case AppConstants.UPGRADE_MEGA_KEY:
-                values = onPurchaseAction(AppConstants.UPGRADE_MEGA_KEY, AppConstants.CLICK_VALUE_KEY, AppConstants.UPGRADE_MEGA_BASE_PRICE, new BigDecimal("1.07"), new BigDecimal("1.35"));
+                values = onPurchaseAction(AppConstants.UPGRADE_MEGA_KEY, AppConstants.CLICK_VALUE_KEY, AppConstants.UPGRADE_MEGA_BASE_PRICE, new BigDecimal("1.07"), new BigDecimal("1.35"), true);
                 if (!values.isEmpty()) {
                     GAME_DATA.setClickValue(values.get(AppConstants.AUX_VALUE_KEY));
                     SHOP_DATA.setMegaPrice(values.get(AppConstants.AUX_PRICE_KEY));
-                    upgrade.setPrice(SHOP_DATA.getMegaPrice());
                 }
                 break;
             case AppConstants.UPGRADE_AUTO_KEY:
-                values = onPurchaseAction(AppConstants.UPGRADE_AUTO_KEY, AppConstants.AUTO_CLICK_VALUE_KEY, AppConstants.UPGRADE_AUTO_BASE_PRICE, new BigDecimal("1.05"), new BigDecimal("1"));
+                values = onPurchaseAction(AppConstants.UPGRADE_AUTO_KEY, AppConstants.AUTO_CLICK_VALUE_KEY, AppConstants.UPGRADE_AUTO_BASE_PRICE, new BigDecimal("1.05"), new BigDecimal("1"), false);
                 if (!values.isEmpty()) {
                     GAME_DATA.setAutoClickValue(values.get(AppConstants.AUX_VALUE_KEY));
                     SHOP_DATA.setAutoPrice(values.get(AppConstants.AUX_PRICE_KEY));
-                    upgrade.setPrice(SHOP_DATA.getAutoPrice());
                 }
                 break;
             case AppConstants.UPGRADE_MEGA_AUTO_KEY:
-                values = onPurchaseAction(AppConstants.UPGRADE_MEGA_AUTO_KEY, AppConstants.AUTO_CLICK_VALUE_KEY, AppConstants.UPGRADE_MEGA_AUTO_BASE_PRICE, new BigDecimal("1.08"), new BigDecimal("1.35"));
+                values = onPurchaseAction(AppConstants.UPGRADE_MEGA_AUTO_KEY, AppConstants.AUTO_CLICK_VALUE_KEY, AppConstants.UPGRADE_MEGA_AUTO_BASE_PRICE, new BigDecimal("1.08"), new BigDecimal("1.35"), true);
                 if (!values.isEmpty()) {
                     GAME_DATA.setAutoClickValue(values.get(AppConstants.AUX_VALUE_KEY));
                     SHOP_DATA.setMegaAutoPrice(values.get(AppConstants.AUX_PRICE_KEY));
-                    upgrade.setPrice(SHOP_DATA.getMegaAutoPrice());
                 }
                 break;
         }
         return values;
+    }
+
+    protected void updateDisabledButtons() {
+        // TODO
     }
 }

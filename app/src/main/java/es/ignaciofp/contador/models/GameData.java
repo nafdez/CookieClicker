@@ -1,10 +1,15 @@
 package es.ignaciofp.contador.models;
 
+import android.util.Log;
+
+import androidx.appcompat.app.AppCompatDelegate;
+
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import es.ignaciofp.contador.utils.AppConstants;
 import es.ignaciofp.contador.utils.CustomBigInteger;
 
 public class GameData implements Serializable {
@@ -13,6 +18,8 @@ public class GameData implements Serializable {
     private CustomBigInteger coins;
     private CustomBigInteger clickValue;
     private CustomBigInteger autoClickValue;
+    private CustomBigInteger coinRate;
+    private boolean hasReachedMaxValue;
 
     public static GameData getInstance() {
         if (instance == null) {
@@ -22,9 +29,11 @@ public class GameData implements Serializable {
     }
 
     private GameData() {
-        coins = new CustomBigInteger("0");
-        clickValue = new CustomBigInteger("1");
-        autoClickValue = new CustomBigInteger("0");
+        coins = AppConstants.DEFAULT_COINS;
+        clickValue = AppConstants.DEFAULT_CLICK_VALUE;
+        autoClickValue = AppConstants.DEFAULT_AUTO_CLICK_VALUE;
+        coinRate = new CustomBigInteger("0");
+        hasReachedMaxValue = AppConstants.DEFAULT_HAS_REACHED_MAX_VALUE;
     }
 
     public CustomBigInteger getCoins() {
@@ -51,6 +60,22 @@ public class GameData implements Serializable {
         this.autoClickValue = autoClickValue;
     }
 
+    public CustomBigInteger getCoinRate() {
+        return coinRate;
+    }
+
+    public void setCoinRate(CustomBigInteger coinRate) {
+        this.coinRate = coinRate;
+    }
+
+    public boolean hasReachedMaxValue() {
+        return hasReachedMaxValue;
+    }
+
+    public void setHasReachedMaxValue(boolean hasReachedMaxValue) {
+        this.hasReachedMaxValue = hasReachedMaxValue;
+    }
+
     /**
      * Takes all fields that are CustomBigInteger on this class and converts them into a map.
      * Big code theft case here.
@@ -65,6 +90,7 @@ public class GameData implements Serializable {
         for (Field field : this.getClass().getDeclaredFields()) {
             field.setAccessible(true);
             if (field.getType().equals(CustomBigInteger.class)) {
+                Log.d("GAME_DATA", String.format("%s: %s", field.getName(), field.get(this)));
                 map.put(field.getName(), new CustomBigInteger(field.get(this).toString()));
             }
         }

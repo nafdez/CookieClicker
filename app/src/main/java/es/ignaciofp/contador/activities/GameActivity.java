@@ -16,6 +16,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.math.BigInteger;
 
 import es.ignaciofp.contador.R;
+import es.ignaciofp.contador.services.GameService;
+import es.ignaciofp.contador.services.ShopService;
+import es.ignaciofp.contador.utils.AppConstants;
 import es.ignaciofp.contador.utils.CustomBigInteger;
 
 public class GameActivity extends AppCompatActivity {
@@ -23,44 +26,30 @@ public class GameActivity extends AppCompatActivity {
     private static final BigInteger GAME_BI_MAX_VALUE = new BigInteger("999999999999999999999999999999999"); // Hardcoded BigInteger limit
     private SharedPreferences.Editor editor;
 
+    // Services
+    private GameService GAME_SERVICE;
+
     // Views
     private TextView textCoins;
     private TextView textCoinRateValue;
     private ImageView image_coin;
-
-    // Values
-    private CustomBigInteger coins;
-    private CustomBigInteger clickValue;
-    private CustomBigInteger autoClickValue;
-    private CustomBigInteger coinRate = new CustomBigInteger("0");
-    private CustomBigInteger basicPrice;
-    private boolean hasReachedMaxValue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
+        GAME_SERVICE = GameService.getInstance(this);
+
         // Getting prefs
         // Shared preferences
         SharedPreferences sharedPref = getPreferences(MODE_PRIVATE);
         editor = sharedPref.edit();
 
-        Bundle bundle = getIntent().getExtras();
-
-        // Bundle is null always but when coming back from the shop
-        if (bundle != null) {
-            coins = new CustomBigInteger(bundle.getString(getString(R.string.PREF_COINS), "0"));
-            clickValue = new CustomBigInteger(bundle.getString(getString(R.string.PREF_CLICK_VALUE), "1"));
-            autoClickValue = new CustomBigInteger(bundle.getString(getString(R.string.PREF_AUTO_CLICK_VALUE), "0"));
-            basicPrice = new CustomBigInteger(bundle.getString(getString(R.string.PREF_BASIC_PRICE), "100")); // Hardcoded por no dar mucha vuelta TODO:
-        } else {
-            coins = new CustomBigInteger(sharedPref.getString(getString(R.string.PREF_COINS), "0"));
-            clickValue = new CustomBigInteger(sharedPref.getString(getString(R.string.PREF_CLICK_VALUE), "1"));
-            autoClickValue = new CustomBigInteger(sharedPref.getString(getString(R.string.PREF_AUTO_CLICK_VALUE), "0"));
-            basicPrice = new CustomBigInteger(sharedPref.getString(getString(R.string.PREF_BASIC_PRICE), "100")); // Hardcoded por no dar mucha vuelta TODO:
-        }
-        hasReachedMaxValue = sharedPref.getBoolean("PREF_HAS_MAX_VALUE", false);
+        CustomBigInteger coins = GAME_SERVICE.getValue(AppConstants.COINS_KEY);
+        CustomBigInteger clickValue = GAME_SERVICE.getValue(AppConstants.CLICK_VALUE_KEY);
+        CustomBigInteger autoClickValue = GAME_SERVICE.getValue(AppConstants.AUTO_CLICK_VALUE_KEY);
+        CustomBigInteger coinRate = GAME_SERVICE.getValue(AppConstants.COIN_RATE_KEY);
 
         // View assignment
         TextView textClickValue = findViewById(R.id.text_click_value);
@@ -82,19 +71,14 @@ public class GameActivity extends AppCompatActivity {
         }
 
         updateClickImageView();
-        if (hasReachedMaxValue) onGameEndDialogCreator();
-        new Thread(this::coinRateLoop).start();
-        new Thread(this::autoClickLoop).start();
+        //if (GAME_SERVICE.getValue(AppConstants.HAS_REACHED_MAX_VALUE_KEY)) onGameEndDialogCreator();
+        gameLoop();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        editor.putString(getString(R.string.PREF_COINS), coins.toString());
-        editor.putString(getString(R.string.PREF_CLICK_VALUE), clickValue.toString());
-        editor.putString(getString(R.string.PREF_AUTO_CLICK_VALUE), autoClickValue.toString());
-        editor.putBoolean("PREF_HAS_MAX_VALUE", hasReachedMaxValue);
-        editor.apply();
+        GAME_SERVICE.saveData(this);
     }
 
     /**
@@ -104,17 +88,16 @@ public class GameActivity extends AppCompatActivity {
      * @param view the view that has been clicked
      */
     public void addOnClick(View view) {
-        coins = coins.add(clickValue);
-        coinRate = coinRate.add(clickValue);
-
         // Image animation
         ScaleAnimation fade_in = new ScaleAnimation(0.7f, 1.2f, 0.7f, 1.2f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         fade_in.setDuration(100);
         image_coin.startAnimation(fade_in);
 
+        CustomBigInteger updatedCoins = GAME_SERVICE.addCoins(GAME_SERVICE.getValue(AppConstants.CLICK_VALUE_KEY));
+
         // Updating the coins text view value
-        textCoins.setText(coins.withSuffix("§"));
-        if (coins.compareTo(GAME_BI_MAX_VALUE) >= 0) onGameEndDialogCreator();
+        textCoins.setText(updatedCoins.withSuffix("§"));
+        if (updatedCoins.compareTo(GAME_BI_MAX_VALUE) >= 0) onGameEndDialogCreator();
         updateClickImageView();
     }
 
@@ -125,11 +108,13 @@ public class GameActivity extends AppCompatActivity {
      */
     public void shopImageOnClick(View view) {
         Intent intent = new Intent(this, ShopActivity.class);
-        intent.putExtra(getString(R.string.PREF_COINS), coins.toString());
-        intent.putExtra(getString(R.string.PREF_CLICK_VALUE), clickValue.toString());
-        intent.putExtra(getString(R.string.PREF_AUTO_CLICK_VALUE), autoClickValue.toString());
         startActivity(intent);
         finish();
+    }
+
+    private void gameLoop() {
+        new Thread(this::coinRateLoop).start();
+        new Thread(this::autoClickLoop).start();
     }
 
     /**
@@ -144,34 +129,28 @@ public class GameActivity extends AppCompatActivity {
                 Thread.sleep(500);
                 runOnUiThread(this::updateClickImageView); // Updating the coin image
 
-                if (autoClickValue.compareTo(BigInteger.valueOf(0)) > 0) { // Auto-click
-                    coins = coins.add(autoClickValue);
-                    coinRate = coinRate.add(autoClickValue);
-                    runOnUiThread(() -> textCoins.setText(coins.withSuffix("§")));
-                }
+                GAME_SERVICE.coinRateLoop();
 
-                runOnUiThread(() -> textCoinRateValue.setText(coinRate.withSuffix("§/s"))); // Coin rate
+                //runOnUiThread(() -> textCoins.setText(GAME_SERVICE.getValue(AppConstants.COINS_KEY).withSuffix("§")));
+                runOnUiThread(() -> textCoinRateValue.setText(GAME_SERVICE.getValue(AppConstants.COIN_RATE_KEY).withSuffix("§/s"))); // Coin rate
+
                 Thread.sleep(500);
-                coinRate = new CustomBigInteger(BigInteger.valueOf(0).toString()); // Resetting coin rate value
+
+                GAME_SERVICE.resetCoinRate();
             } catch (InterruptedException ignored) {
             }
         }
     }
 
     @SuppressWarnings("BusyWait")
-    private synchronized void autoClickLoop() {
-        try {
-            if (autoClickValue.compareTo(BigInteger.ZERO) <= 0) {
-                wait();
-            }
-
-            while (true) {
+    private void autoClickLoop() {
+        while (true) {
+            try {
                 Thread.sleep(1000);
-                coins = coins.add(autoClickValue);
-                coinRate = coinRate.add(autoClickValue);
-                runOnUiThread(() -> textCoins.setText(coins.withSuffix("§")));
+            } catch (InterruptedException ignored) {
             }
-        } catch (InterruptedException ignored) {
+            String coins = GAME_SERVICE.autoClickLoop();
+            runOnUiThread(() -> textCoins.setText(coins));
         }
     }
 
@@ -180,6 +159,8 @@ public class GameActivity extends AppCompatActivity {
      * the user has sets an image. Just a visual reminder of how much buying power the user has.
      */
     private void updateClickImageView() {
+        CustomBigInteger coins = GAME_SERVICE.getValue(AppConstants.COINS_KEY);
+        CustomBigInteger basicPrice = ShopService.getInstance(this).getValue(AppConstants.UPGRADE_BASIC_KEY);
 
         if (coins.compareTo(basicPrice.divide(new BigInteger("2"))) < 0) { // Basic image
             image_coin.setImageResource(R.drawable.ic_gen_coin_level_1);
@@ -226,16 +207,12 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void resetValues() {
-        editor.putString(getString(R.string.PREF_COINS), "0");
-        editor.putString(getString(R.string.PREF_CLICK_VALUE), "1");
-        editor.putString(getString(R.string.PREF_AUTO_CLICK_VALUE), "0");
-        editor.putString(getString(R.string.PREF_BASIC_PRICE), "100");
-        editor.putString(getString(R.string.PREF_MEGA_PRICE), "1000");
-        editor.putString(getString(R.string.PREF_AUTO_PRICE), "450");
-        editor.putString(getString(R.string.PREF_MEGA_AUTO_PRICE), "2670");
-        editor.putBoolean("PREF_HAS_MAX_VALUE", false);
-        hasReachedMaxValue = false;
-        editor.commit();
-        editor.apply();
+        GAME_SERVICE.resetData(this);
+        ShopService.getInstance(this).resetData(this);
+    }
+
+    public void resetOnClick(View view) {
+        resetValues();
+        recreate();
     }
 }

@@ -2,7 +2,13 @@ package es.ignaciofp.contador.services;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
 import android.widget.TextView;
+
+import java.lang.reflect.Field;
+import java.math.BigInteger;
 
 import es.ignaciofp.contador.R;
 import es.ignaciofp.contador.models.GameData;
@@ -22,6 +28,7 @@ public class GameService {
     private static final String COINS_KEY = AppConstants.COINS_KEY;
     private static final String CLICK_VALUE_KEY = AppConstants.CLICK_VALUE_KEY;
     private static final String AUTO_CLICK_VALUE_KEY = AppConstants.AUTO_CLICK_VALUE_KEY;
+    private static final String HAS_REACHED_MAX_VALUE_KEY = AppConstants.HAS_REACHED_MAX_VALUE_KEY;
 
     /**
      * Constructor of this class. It needs the context in order to initialize all the data.
@@ -47,7 +54,8 @@ public class GameService {
     }
 
     /**
-     * Get a value from de GAME_DATA
+     * Get a value from GAME_DATA
+     *
      * @param key the key of the value
      * @return the value
      */
@@ -55,7 +63,8 @@ public class GameService {
         CustomBigInteger value = new CustomBigInteger("-1");
         try {
             value = GAME_DATA.toMap().get(key);
-        } catch (IllegalAccessException ignored) {}
+        } catch (IllegalAccessException ignored) {
+        }
 
         return value;
     }
@@ -73,6 +82,7 @@ public class GameService {
         editor.putString(COINS_KEY, GAME_DATA.getCoins().toString());
         editor.putString(CLICK_VALUE_KEY, GAME_DATA.getClickValue().toString());
         editor.putString(AUTO_CLICK_VALUE_KEY, GAME_DATA.getAutoClickValue().toString());
+        editor.putBoolean(HAS_REACHED_MAX_VALUE_KEY, GAME_DATA.hasReachedMaxValue());
         editor.apply();
     }
 
@@ -86,10 +96,12 @@ public class GameService {
         SharedPreferences prefs = cntx.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
 
-        editor.remove(COINS_KEY);
-        editor.remove(CLICK_VALUE_KEY);
-        editor.remove(AUTO_CLICK_VALUE_KEY);
+        GAME_DATA.setCoins(AppConstants.DEFAULT_COINS);
+        GAME_DATA.setClickValue(AppConstants.DEFAULT_CLICK_VALUE);
+        GAME_DATA.setAutoClickValue(AppConstants.DEFAULT_AUTO_CLICK_VALUE);
+        GAME_DATA.setHasReachedMaxValue(AppConstants.DEFAULT_HAS_REACHED_MAX_VALUE);
 
+        editor.clear();
         editor.apply();
     }
 
@@ -109,9 +121,41 @@ public class GameService {
         String coins = prefs.getString(COINS_KEY, GAME_DATA.getCoins().toString());
         String clickValue = prefs.getString(CLICK_VALUE_KEY, GAME_DATA.getClickValue().toString());
         String autoClickValue = prefs.getString(AUTO_CLICK_VALUE_KEY, GAME_DATA.getAutoClickValue().toString());
+        boolean hasReachedMaxValue = prefs.getBoolean(HAS_REACHED_MAX_VALUE_KEY, GAME_DATA.hasReachedMaxValue());
 
         GAME_DATA.setCoins(new CustomBigInteger(coins));
         GAME_DATA.setClickValue(new CustomBigInteger(clickValue));
         GAME_DATA.setAutoClickValue(new CustomBigInteger(autoClickValue));
+        GAME_DATA.setHasReachedMaxValue(hasReachedMaxValue);
+    }
+
+    /**
+     * Each second adds the auto click value to the coins.
+     */
+    public String autoClickLoop() {
+        while(GAME_DATA.getAutoClickValue().compareTo(BigInteger.valueOf(0)) <= 0);
+        addCoins(GAME_DATA.getAutoClickValue());
+        String val = GAME_DATA.getCoins().withSuffix("§");
+        //new Thread(this::updateDisabledButtons).start();
+        return val;
+    }
+
+    ////////////////////////////////COINRATE////////////////////////////////////////
+    public void coinRateLoop() {
+        if (GAME_DATA.getAutoClickValue().compareTo(BigInteger.valueOf(0)) > 0) { // Auto-click
+            GAME_DATA.setCoinRate(GAME_DATA.getCoinRate().add(GAME_DATA.getAutoClickValue()));
+        }
+
+    }
+
+    public void resetCoinRate() {
+        GAME_DATA.setCoinRate(new CustomBigInteger("0"));
+    }
+
+    // TODO: Doc
+    public CustomBigInteger addCoins(CustomBigInteger val) {
+        GAME_DATA.setCoins(GAME_DATA.getCoins().add(val)); // Adding coins
+        GAME_DATA.setCoinRate(GAME_DATA.getCoinRate().add(val)); // Adding to coin rate
+        return GAME_DATA.getCoins();
     }
 }

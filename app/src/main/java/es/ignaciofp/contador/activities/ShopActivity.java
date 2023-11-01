@@ -1,12 +1,8 @@
 package es.ignaciofp.contador.activities;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.ScaleAnimation;
-import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,12 +11,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Objects;
 
 import es.ignaciofp.contador.R;
 import es.ignaciofp.contador.adapters.AdapterUpgrade;
@@ -35,8 +27,8 @@ import es.ignaciofp.contador.utils.UpgradeDecorator;
 public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeClickListener.OnItemClickListener {
 
     // Services
-    private final ShopService SHOP_SERVICE = ShopService.getInstance(this);
-    private final GameService GAME_SERVICE = GameService.getInstance(this);
+    private ShopService SHOP_SERVICE;
+    private GameService GAME_SERVICE;
 
     // Recycler view
     private ArrayList<Upgrade> upgradeList;
@@ -53,12 +45,8 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shop);
 
-        // Getting values from bundle
-        /*Bundle bundle = getIntent().getExtras();
-
-        coins = new CustomBigInteger(Objects.requireNonNull(bundle).getString(getString(R.string.PREF_COINS), "0"));
-        clickValue = new CustomBigInteger(Objects.requireNonNull(bundle).getString(getString(R.string.PREF_CLICK_VALUE), "1"));
-        autoClickValue = new CustomBigInteger(Objects.requireNonNull(bundle).getString(getString(R.string.PREF_AUTO_CLICK_VALUE), "0"));*/
+        SHOP_SERVICE = ShopService.getInstance(this);
+        GAME_SERVICE = GameService.getInstance(this);
 
         CustomBigInteger coins = GAME_SERVICE.getValue(AppConstants.COINS_KEY);
         CustomBigInteger clickValue = GAME_SERVICE.getValue(AppConstants.CLICK_VALUE_KEY);
@@ -93,13 +81,14 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
         generateUpgradeButton(AppConstants.UPGRADE_MEGA_AUTO_KEY, getString(R.string.shop_upgrade_mega_auto_text), "+0.35%", autoMegaAutoPrice);
 
         updateUI();
-        gameLoop();
+        new Thread(this::autoClickLoop).start();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        savePrefs();
+        SHOP_SERVICE.saveData(this);
+        GAME_SERVICE.saveData(this);
     }
 
     /**
@@ -111,13 +100,11 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
      */
     @Override
     public void onItemClick(View view, int position) {
-        Button button = upgradeList.get(position).getButton();
-        CustomBigInteger newPrice = new CustomBigInteger("0");
-        Map<String, CustomBigInteger> values = SHOP_SERVICE.onButtonClick(upgradeList.get(position));
+        Map<String, CustomBigInteger> values = SHOP_SERVICE.onButtonClick(upgradeList.get(position).getButton());
 
-
-        if (newPrice.compareTo(BigInteger.valueOf(0)) >= 0) {
-            upgradeList.get(position).setPrice(newPrice);
+        if (!values.isEmpty()) {
+            // Price
+            upgradeList.get(position).setPrice(values.get(AppConstants.AUX_PRICE_KEY));
         }
 
         new Thread(this::updateDisabledButtons).start();
@@ -136,48 +123,23 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
      */
     public void returnOnClick(View view) {
         Intent intent = new Intent(this, GameActivity.class);
-        intent.putExtra(getString(R.string.PREF_COINS), coins.toString());
-        intent.putExtra(getString(R.string.PREF_CLICK_VALUE), clickValue.toString());
-        intent.putExtra(getString(R.string.PREF_AUTO_CLICK_VALUE), autoClickValue.toString());
-        intent.putExtra(getString(R.string.PREF_BASIC_PRICE), basicPrice.toString());
         startActivity(intent);
-        savePrefs();
         finish();
-    }
-
-    /**
-     * Saves all the prices and click values to the sharedPrefs
-     */
-    public void savePrefs() {
-        editor.putString(getString(R.string.PREF_COINS), coins.toString());
-        editor.putString(getString(R.string.PREF_CLICK_VALUE), clickValue.toString());
-        editor.putString(getString(R.string.PREF_AUTO_CLICK_VALUE), autoClickValue.toString());
-        editor.putString(getString(R.string.PREF_BASIC_PRICE), basicPrice.toString());
-        editor.putString(getString(R.string.PREF_MEGA_PRICE), megaPrice.toString());
-        editor.putString(getString(R.string.PREF_AUTO_PRICE), autoPrice.toString());
-        editor.putString(getString(R.string.PREF_MEGA_AUTO_PRICE), megaAutoPrice.toString());
-        editor.apply();
     }
 
     /**
      * Each second adds the auto click value to the coins.
      */
     @SuppressWarnings("BusyWait")
-    private void gameLoop() {
-        new Thread(() -> {
-            while (true) {
-                try {
-                    Thread.sleep(1000);
-                    if (autoClickValue.compareTo(BigInteger.valueOf(0)) > 0) {
-                        coins = coins.add(autoClickValue);
-                        runOnUiThread(() -> textCoins.setText(coins.withSuffix("§")));
-                        new Thread(this::updateDisabledButtons).start();
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+    private void autoClickLoop() {
+        while (true) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ignored) {
             }
-        }).start();
+            String coins = GAME_SERVICE.autoClickLoop();
+            runOnUiThread(() -> textCoins.setText(coins));
+        }
     }
 
     /**
@@ -207,7 +169,7 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
     private void updateDisabledButtons() {
         for (int i = 0; i < upgradeList.size(); i++) {
             Upgrade upgrade = upgradeList.get(i);
-            if (coins.compareTo(upgrade.getPrice()) >= 0) {
+            if (GAME_SERVICE.getValue(AppConstants.COINS_KEY).compareTo(upgrade.getPrice()) >= 0) {
                 final int position = i;
                 runOnUiThread(() -> {
                     upgrade.setEnabled(true);
