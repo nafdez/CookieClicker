@@ -1,11 +1,10 @@
 package es.ignaciofp.contador.models;
 
-import android.util.Log;
-
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import es.ignaciofp.contador.utils.AppConstants;
 import es.ignaciofp.contador.utils.CustomBigInteger;
@@ -77,8 +76,7 @@ public class ShopData implements Serializable {
         for (Field field : this.getClass().getDeclaredFields()) {
             field.setAccessible(true);
             if (field.getType().equals(CustomBigInteger.class)) {
-                Log.d("SHOP_DATA", String.format("%s: %s", field.getName(), field.get(this)));
-                map.put(field.getName(), new CustomBigInteger(field.get(this).toString()));
+                map.put(field.getName(), new CustomBigInteger(Objects.requireNonNull(field.get(this)).toString()));
             }
         }
         return map;
