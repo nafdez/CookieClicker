@@ -63,6 +63,14 @@ public class GameService {
         return value;
     }
 
+    public boolean hasReachedMaxValue() {
+        return GAME_DATA.hasReachedMaxValue();
+    }
+
+    public void setHasReachedMaxValue(boolean value) {
+        GAME_DATA.setHasReachedMaxValue(value);
+    }
+
     /**
      * Saves the current state of the shop to the preferences.
      *
@@ -128,7 +136,7 @@ public class GameService {
      */
     @SuppressWarnings("all")
     public String calculateAutoCoins() {
-        while(GAME_DATA.getAutoClickValue().compareTo(BigInteger.valueOf(0)) <= 0);
+        while (GAME_DATA.getAutoClickValue().compareTo(BigInteger.valueOf(0)) <= 0) ;
         addCoins(GAME_DATA.getAutoClickValue());
         return GAME_DATA.getCoins().withSuffix("§");
     }

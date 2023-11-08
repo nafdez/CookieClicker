@@ -22,7 +22,7 @@
             android:name=".activities.OptionsActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.LaunchActivity"
+            android:name=".activities.HomeActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

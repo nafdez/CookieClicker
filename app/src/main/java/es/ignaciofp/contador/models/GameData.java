@@ -2,12 +2,11 @@ package es.ignaciofp.contador.models;
 
 import android.util.Log;
 
-import androidx.appcompat.app.AppCompatDelegate;
-
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import es.ignaciofp.contador.utils.AppConstants;
 import es.ignaciofp.contador.utils.CustomBigInteger;
@@ -91,7 +90,7 @@ public class GameData implements Serializable {
             field.setAccessible(true);
             if (field.getType().equals(CustomBigInteger.class)) {
                 Log.d("GAME_DATA", String.format("%s: %s", field.getName(), field.get(this)));
-                map.put(field.getName(), new CustomBigInteger(field.get(this).toString()));
+                map.put(field.getName(), new CustomBigInteger(Objects.requireNonNull(field.get(this)).toString()));
             }
         }
         return map;

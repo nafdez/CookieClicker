@@ -1,6 +1,5 @@
 package es.ignaciofp.contador.utils;
 
-import android.app.Activity;
 import android.content.Context;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -9,7 +8,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class RecyclerUpgradeClickListener implements RecyclerView.OnItemTouchListener{
+public class RecyclerUpgradeClickListener implements RecyclerView.OnItemTouchListener {
 
     private final OnItemClickListener mListener;
     private final GestureDetector mGestureDetector;
@@ -24,14 +23,14 @@ public class RecyclerUpgradeClickListener implements RecyclerView.OnItemTouchLis
         mListener = listener;
         mGestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
             @Override
-            public boolean onSingleTapUp(MotionEvent e) {
+            public boolean onSingleTapUp(@NonNull MotionEvent e) {
                 return true;
             }
 
             @Override
-            public void onLongPress(MotionEvent e) {
+            public void onLongPress(@NonNull MotionEvent e) {
                 View child = recyclerView.findChildViewUnder(e.getX(), e.getY());
-                if (child!= null && mListener!= null) {
+                if (child != null && mListener != null) {
                     mListener.onLongItemClick(child, recyclerView.getChildAdapterPosition(child));
                 }
             }
@@ -41,7 +40,7 @@ public class RecyclerUpgradeClickListener implements RecyclerView.OnItemTouchLis
     @Override
     public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
         View child = rv.findChildViewUnder(e.getX(), e.getY());
-        if (child!= null && mListener!= null && mGestureDetector.onTouchEvent(e)) {
+        if (child != null && mListener != null && mGestureDetector.onTouchEvent(e)) {
             mListener.onItemClick(child, rv.getChildAdapterPosition(child));
             return true;
         }

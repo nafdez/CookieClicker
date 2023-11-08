@@ -60,12 +60,12 @@ public class AdapterUpgrade extends RecyclerView.Adapter<AdapterUpgrade.ViewHold
             button.setText(upgrade.getFormattedPrice());
             button.setEnabled(upgrade.isEnabled());
 
-            if(!button.isEnabled()) {
+            if (!button.isEnabled()) {
                 button.setBackgroundColor(upgrade.getContext().getColor(R.color.battleship_gray));
                 button.setShadowLayer(1.6f, 1.5f, 1.3f, Color.RED);
             } else {
                 button.setBackgroundColor(upgrade.getContext().getColor(R.color.dark_moss_green));
-                button.setShadowLayer(0,0,0, Color.BLACK);
+                button.setShadowLayer(0, 0, 0, Color.BLACK);
             }
         }
     }

@@ -56,8 +56,9 @@ public class OptionsActivity extends AppCompatActivity implements CompoundButton
 
     /**
      * Checks which switch was activated (or deactivated) and perform an action based on that
+     *
      * @param compoundButton the switch that is being clicked
-     * @param isChecked whether the switch is checked or not
+     * @param isChecked      whether the switch is checked or not
      */
     @Override
     public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
@@ -65,6 +66,8 @@ public class OptionsActivity extends AppCompatActivity implements CompoundButton
             case "toggleTheme":
                 toggleTheme(isChecked);
                 toggleChecked(compoundButton, isChecked);
+                break;
+            default:
                 break;
         }
         toggleChecked(compoundButton, isChecked);
@@ -76,7 +79,7 @@ public class OptionsActivity extends AppCompatActivity implements CompoundButton
      *
      * @param name name of the option
      * @param desc description of the option
-     * @param tag tag of the option
+     * @param tag  tag of the option
      */
     private void addOption(String name, String desc, String tag) {
         boolean isChecked = sharedPref.getBoolean(tag, checkedDefaultValue);
@@ -103,6 +106,7 @@ public class OptionsActivity extends AppCompatActivity implements CompoundButton
     /**
      * If isChecked is true sets the dark theme for the application and if not then sets the light
      * mode
+     *
      * @param isChecked whether the switch is checked or not
      */
     private void toggleTheme(boolean isChecked) {
@@ -116,7 +120,7 @@ public class OptionsActivity extends AppCompatActivity implements CompoundButton
     }
 
     public void returnOnClick(View view) {
-        Intent intent = new Intent(this, LaunchActivity.class);
+        Intent intent = new Intent(this, HomeActivity.class);
         startActivity(intent);
         finish();
     }

@@ -36,5 +36,4 @@ public class AppConstants {
     public static final String AUX_PRICE_KEY = "new_price";
 
 
-
 }

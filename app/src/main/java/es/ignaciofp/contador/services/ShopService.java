@@ -1,21 +1,16 @@
 package es.ignaciofp.contador.services;
 
-import android.content.ClipData;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import es.ignaciofp.contador.models.GameData;
 import es.ignaciofp.contador.models.ShopData;
-import es.ignaciofp.contador.models.Upgrade;
 import es.ignaciofp.contador.utils.AppConstants;
 import es.ignaciofp.contador.utils.CustomBigInteger;
 
@@ -141,7 +136,7 @@ public class ShopService {
             CustomBigInteger currentValue = GAME_DATA.toMap().get(valueToUpdateKey);
 
 
-            if (coins.compareTo(currentPrice) >= 0) {
+            if (coins.compareTo(Objects.requireNonNull(currentPrice)) >= 0) {
                 coins = coins.subtract(currentPrice);
                 GAME_DATA.setCoins(coins);
 
@@ -149,7 +144,7 @@ public class ShopService {
                 if (hasToMultipy) {
                     newValue = CustomBigInteger.toCustomBigInteger(new BigDecimal(currentValue).multiply(factor));
                 } else {
-                    newValue = currentValue.add(factor.toBigInteger());
+                    newValue = Objects.requireNonNull(currentValue).add(factor.toBigInteger());
                 }
 
                 CustomBigInteger newPrice = basePrice.add(new BigDecimal(currentPrice).multiply(priceMultiplyFactor).toBigInteger());
@@ -160,8 +155,7 @@ public class ShopService {
 
             }
 
-        } catch (
-                IllegalAccessException ignored) {
+        } catch (IllegalAccessException ignored) {
         }
 
         return data;
@@ -204,7 +198,4 @@ public class ShopService {
         return values;
     }
 
-    protected void updateDisabledButtons() {
-        // TODO
-    }
 }

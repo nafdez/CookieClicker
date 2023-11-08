@@ -17,7 +17,7 @@ public class InfoActivity extends AppCompatActivity {
     }
 
     public void returnOnClick(View view) {
-        Intent intent = new Intent(this, LaunchActivity.class);
+        Intent intent = new Intent(this, HomeActivity.class);
         startActivity(intent);
         finish();
     }

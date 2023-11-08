@@ -11,9 +11,9 @@ import es.ignaciofp.contador.utils.CustomBigInteger;
 public class Upgrade {
 
     private String name;
-    private String description;
+    private final String description;
     private CustomBigInteger price;
-    private MaterialButton button;
+    private final MaterialButton button;
     private boolean isEnabled;
     private final Activity context;
 
@@ -42,10 +42,6 @@ public class Upgrade {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public CustomBigInteger getPrice() {
         return price;
     }
@@ -56,10 +52,6 @@ public class Upgrade {
 
     public MaterialButton getButton() {
         return button;
-    }
-
-    public void setButton(MaterialButton button) {
-        this.button = button;
     }
 
     public boolean isEnabled() {
@@ -78,10 +70,6 @@ public class Upgrade {
     @NonNull
     @Override
     public String toString() {
-        return "Upgrade{" +
-                "name='" + name + '\'' +
-                ", value='" + description + '\'' +
-                ", price=" + price +
-                '}';
+        return "Upgrade{" + "name='" + name + '\'' + ", value='" + description + '\'' + ", price=" + price + '}';
     }
 }

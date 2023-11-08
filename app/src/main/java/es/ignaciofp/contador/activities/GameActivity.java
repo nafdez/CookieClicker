@@ -22,8 +22,6 @@ import es.ignaciofp.contador.utils.CustomBigInteger;
 
 public class GameActivity extends AppCompatActivity {
 
-    private static final BigInteger GAME_BI_MAX_VALUE = new BigInteger("999999999999999999999999999999999"); // Hardcoded BigInteger limit
-
     // Services
     private GameService GAME_SERVICE;
 
@@ -65,7 +63,7 @@ public class GameActivity extends AppCompatActivity {
         }
 
         updateClickImageView();
-        //if (GAME_SERVICE.getValue(AppConstants.HAS_REACHED_MAX_VALUE_KEY)) onGameEndDialogCreator();
+        if (GAME_SERVICE.hasReachedMaxValue()) onGameEndDialogCreator();
         gameLoop();
     }
 
@@ -91,7 +89,7 @@ public class GameActivity extends AppCompatActivity {
 
         // Updating the coins text view value
         textCoins.setText(updatedCoins.withSuffix("§"));
-        if (updatedCoins.compareTo(GAME_BI_MAX_VALUE) >= 0) onGameEndDialogCreator();
+        if (updatedCoins.compareTo(AppConstants.BIG_INTEGER_MAX_VALUE) >= 0) onGameEndDialogCreator();
         updateClickImageView();
     }
 
@@ -175,39 +173,30 @@ public class GameActivity extends AppCompatActivity {
      */
     public void infoImageOnClick(View view) {
         AlertDialog.Builder dialogConstructor = new AlertDialog.Builder(this);
-        dialogConstructor.setMessage(getString(R.string.game_info_message_dialog))
-                .setTitle(getString(R.string.game_info_title_dialog))
-                .setIcon(R.drawable.ic_info)
-                .setNeutralButton("Github", (dialog, which) -> {
-                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/nafdez"));
-                    startActivity(browserIntent);
-                })
-                .setNegativeButton(getString(R.string.game_info_donate_dialog), (dialog, which) -> {
-                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://revolut.me/ignaciyu00"));
-                    startActivity(browserIntent);
-                })
-                .setPositiveButton(getString(R.string.gen_dialog_pos_button), (dialog, which) -> {
-                    // do nothing
-                }).show();
+        dialogConstructor.setMessage(getString(R.string.game_info_message_dialog)).setTitle(getString(R.string.game_info_title_dialog)).setIcon(R.drawable.ic_info).setNeutralButton("Github", (dialog, which) -> {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/nafdez"));
+            startActivity(browserIntent);
+        }).setNegativeButton(getString(R.string.game_info_donate_dialog), (dialog, which) -> {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://revolut.me/ignaciyu00"));
+            startActivity(browserIntent);
+        }).setPositiveButton(getString(R.string.gen_dialog_pos_button), (dialog, which) -> {
+            // do nothing
+        }).show();
     }
 
     /**
      * Called when the user clicks on the reset button. Just making sure the user clicked on purpose
      * before resetting all values
      *
-     * @param view
+     * @param view the view where it's being called
      */
     public void resetOnClick(View view) {
         AlertDialog.Builder dialogConstructor = new AlertDialog.Builder(this);
-        dialogConstructor.setTitle(getString(R.string.game_reset_dialog_title))
-                .setMessage(getString(R.string.game_reset_dialog_message))
-                .setIcon(R.drawable.ic_reset)
-                .setPositiveButton(getString(R.string.gen_dialog_pos_button), (dialog, which) -> {
-                    resetValues();
-                    recreate();
-                })
-                .setNegativeButton(getString(R.string.gen_dialog_neg_button), (dialog, which) -> {
-                }).show();
+        dialogConstructor.setTitle(getString(R.string.game_reset_dialog_title)).setMessage(getString(R.string.game_reset_dialog_message)).setIcon(R.drawable.ic_reset).setPositiveButton(getString(R.string.gen_dialog_pos_button), (dialog, which) -> {
+            resetValues();
+            recreate();
+        }).setNegativeButton(getString(R.string.gen_dialog_neg_button), (dialog, which) -> {
+        }).show();
     }
 
     /**
@@ -216,14 +205,11 @@ public class GameActivity extends AppCompatActivity {
      */
     private void onGameEndDialogCreator() {
         AlertDialog.Builder dialogConstructor = new AlertDialog.Builder(this);
-        dialogConstructor.setMessage(getString(R.string.game_max_value_dialog_message))
-                .setTitle(getString(R.string.game_max_value_dialog_title))
-                .setIcon(R.drawable.ic_info)
-                .setPositiveButton(getString(R.string.gen_dialog_pos_button), (dialog, which) -> finish())
-                .setNegativeButton(getString(R.string.game_max_value_dialog_neg_button), (dialog, which) -> {
-                    resetValues();
-                    recreate();
-                }).show();
+        dialogConstructor.setMessage(getString(R.string.game_max_value_dialog_message)).setTitle(getString(R.string.game_max_value_dialog_title)).setIcon(R.drawable.ic_info).setPositiveButton(getString(R.string.gen_dialog_pos_button), (dialog, which) -> finish()).setNegativeButton(getString(R.string.game_max_value_dialog_neg_button), (dialog, which) -> {
+            GAME_SERVICE.setHasReachedMaxValue(false);
+            resetValues();
+            recreate();
+        }).show();
     }
 
     /**
@@ -235,7 +221,7 @@ public class GameActivity extends AppCompatActivity {
     }
 
     public void returnOnClick(View view) {
-        Intent intent = new Intent(this, LaunchActivity.class);
+        Intent intent = new Intent(this, HomeActivity.class);
         startActivity(intent);
         finish();
     }

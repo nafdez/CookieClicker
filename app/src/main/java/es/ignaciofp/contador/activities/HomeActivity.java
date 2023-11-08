@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import es.ignaciofp.contador.R;
 
-public class LaunchActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,6 +18,7 @@ public class LaunchActivity extends AppCompatActivity {
 
     /**
      * Launches GameActivity
+     *
      * @param view the view being clicked
      */
     public void launchGameActivity(View view) {
@@ -26,6 +27,7 @@ public class LaunchActivity extends AppCompatActivity {
 
     /**
      * Launches OptionsActivity
+     *
      * @param view the view being clicked
      */
     public void launchOptionsActivity(View view) {
@@ -34,6 +36,7 @@ public class LaunchActivity extends AppCompatActivity {
 
     /**
      * Launches InfoActivity
+     *
      * @param view the view being clicked
      */
     public void launchInfoActivity(View view) {
@@ -42,6 +45,7 @@ public class LaunchActivity extends AppCompatActivity {
 
     /**
      * Finishes all the activities and exits the application
+     *
      * @param view the view being clicked
      */
     public void closeApp(View view) {
