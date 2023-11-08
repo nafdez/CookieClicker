@@ -24,6 +24,8 @@
     <string name="options_theme_name_text">Dark mode</string>
     <string name="options_theme_description">Toggle between light and dark mode</string>
 
+    <string name="info_title">Ranking</string>
+
     <string name="game_coin_text">Touch the picture</string>
     <string name="game_coin_image_content_description">A coin</string>
     <string name="game_money_bag_content_description">Money bag</string>
@@ -39,4 +41,12 @@
     <string name="game_info_message_dialog">This a basic CookieClicker project for an android course</string>
     <string name="game_info_title_dialog">Info</string>
     <string name="game_info_donate_dialog">donate</string>
+    <string name="game_max_value_dialog_message">Congratulations, you\'ve finished the game but please, get a life</string>
+    <string name="game_max_value_dialog_title">Game end</string>
+    <string name="gen_dialog_pos_button">Ok</string>
+    <string name="game_max_value_dialog_neg_button">Reset</string>
+    <string name="gen_dialog_neg_button">Cancel</string>
+    <string name="game_reset_dialog_title">Reset</string>
+    <string name="game_reset_dialog_message">Are you sure you want to reset the game?</string>
+
 </resources>

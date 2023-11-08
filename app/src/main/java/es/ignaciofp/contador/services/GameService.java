@@ -126,15 +126,15 @@ public class GameService {
     /**
      * Each second adds the auto click value to the coins.
      */
-    public String autoClickLoop() {
+    @SuppressWarnings("all")
+    public String calculateAutoCoins() {
         while(GAME_DATA.getAutoClickValue().compareTo(BigInteger.valueOf(0)) <= 0);
         addCoins(GAME_DATA.getAutoClickValue());
         return GAME_DATA.getCoins().withSuffix("§");
-        //new Thread(this::updateDisabledButtons).start();
     }
 
     ////////////////////////////////COINRATE////////////////////////////////////////
-    public void coinRateLoop() {
+    public void coinRate() {
         if (GAME_DATA.getAutoClickValue().compareTo(BigInteger.valueOf(0)) > 0) { // Auto-click
             GAME_DATA.setCoinRate(GAME_DATA.getCoinRate().add(GAME_DATA.getAutoClickValue()));
         }

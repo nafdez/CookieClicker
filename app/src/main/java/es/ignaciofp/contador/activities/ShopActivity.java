@@ -48,31 +48,18 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
         SHOP_SERVICE = ShopService.getInstance(this);
         GAME_SERVICE = GameService.getInstance(this);
 
-        CustomBigInteger coins = GAME_SERVICE.getValue(AppConstants.COINS_KEY);
-        CustomBigInteger clickValue = GAME_SERVICE.getValue(AppConstants.CLICK_VALUE_KEY);
-        CustomBigInteger autoClickValue = GAME_SERVICE.getValue(AppConstants.AUTO_CLICK_VALUE_KEY);
-
-        CustomBigInteger basicPrice = SHOP_SERVICE.getValue(AppConstants.UPGRADE_BASIC_KEY);
-        CustomBigInteger megaPrice = SHOP_SERVICE.getValue(AppConstants.UPGRADE_MEGA_KEY);
-        CustomBigInteger autoPrice = SHOP_SERVICE.getValue(AppConstants.UPGRADE_AUTO_KEY);
-        CustomBigInteger autoMegaAutoPrice = SHOP_SERVICE.getValue(AppConstants.UPGRADE_MEGA_AUTO_KEY);
-
-
-        // View Assignment
-        textCoins = findViewById(R.id.text_shop_coins);
-        textCoins.setText(coins.withSuffix("§"));
-        textClickValue = findViewById(R.id.text_click_value);
-        textClickValue.setText(clickValue.withSuffix("§/click"));
-        textAutoClickValue = findViewById(R.id.text_auto_click);
-        textAutoClickValue.setText(autoClickValue.withSuffix("§/s"));
-
         // Setting recycler view
         upgradesRecycler = findViewById(R.id.recycler_upgrades);
         upgradesRecycler.setLayoutManager(new GridLayoutManager(this, 1));
         upgradesRecycler.addItemDecoration(new UpgradeDecorator(8, 6, 0, 0));
         upgradesRecycler.addOnItemTouchListener(new RecyclerUpgradeClickListener(this, upgradesRecycler, this));
-
         upgradeList = new ArrayList<>();
+
+        // Getting prices for initial setting
+        CustomBigInteger basicPrice = SHOP_SERVICE.getValue(AppConstants.UPGRADE_BASIC_KEY);
+        CustomBigInteger megaPrice = SHOP_SERVICE.getValue(AppConstants.UPGRADE_MEGA_KEY);
+        CustomBigInteger autoPrice = SHOP_SERVICE.getValue(AppConstants.UPGRADE_AUTO_KEY);
+        CustomBigInteger autoMegaAutoPrice = SHOP_SERVICE.getValue(AppConstants.UPGRADE_MEGA_AUTO_KEY);
 
         // Generating upgrade options
         generateUpgradeButton(AppConstants.UPGRADE_BASIC_KEY, getString(R.string.shop_upgrade_basic_text), "+1", basicPrice);
@@ -80,6 +67,12 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
         generateUpgradeButton(AppConstants.UPGRADE_AUTO_KEY, getString(R.string.shop_upgrade_auto_text), "+1", autoPrice);
         generateUpgradeButton(AppConstants.UPGRADE_MEGA_AUTO_KEY, getString(R.string.shop_upgrade_mega_auto_text), "+0.35%", autoMegaAutoPrice);
 
+        // View Assignment
+        textCoins = findViewById(R.id.text_shop_coins);
+        textClickValue = findViewById(R.id.text_click_value);
+        textAutoClickValue = findViewById(R.id.text_auto_click);
+
+        updateValues();
         updateUI();
         new Thread(this::autoClickLoop).start();
     }
@@ -106,6 +99,8 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
             // Price
             upgradeList.get(position).setPrice(values.get(AppConstants.AUX_PRICE_KEY));
         }
+
+        updateValues();
 
         new Thread(this::updateDisabledButtons).start();
     }
@@ -137,7 +132,7 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
                 Thread.sleep(1000);
             } catch (InterruptedException ignored) {
             }
-            String coins = GAME_SERVICE.autoClickLoop();
+            String coins = GAME_SERVICE.calculateAutoCoins();
             runOnUiThread(() -> textCoins.setText(coins));
         }
     }
@@ -149,6 +144,12 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
         adapterUpgrade = new AdapterUpgrade(upgradeList);
         upgradesRecycler.setAdapter(adapterUpgrade);
         new Thread(this::updateDisabledButtons).start();
+    }
+
+    private void updateValues() {
+        textCoins.setText(GAME_SERVICE.getValue(AppConstants.COINS_KEY).withSuffix("§"));
+        textClickValue.setText(GAME_SERVICE.getValue(AppConstants.CLICK_VALUE_KEY).withSuffix("§/click"));
+        textAutoClickValue.setText(GAME_SERVICE.getValue(AppConstants.AUTO_CLICK_VALUE_KEY).withSuffix("§/s"));
     }
 
     /**

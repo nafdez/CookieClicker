@@ -53,6 +53,19 @@
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:layout_marginEnd="4dp"
+                android:contentDescription="@string/shop_coins_content_description"
+                android:onClick="returnOnClick"
+                app:srcCompat="@drawable/ic_gen_return" />
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/info_bar_child"
+            android:background="@drawable/child_info_bar">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="4dp"
                 android:contentDescription="@string/game_money_value_per_click_content_description"
                 app:srcCompat="@drawable/ic_gen_bucks" />
 

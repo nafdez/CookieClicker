@@ -2,7 +2,6 @@ package es.ignaciofp.contador.activities;
 
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -24,7 +23,6 @@ import es.ignaciofp.contador.utils.CustomBigInteger;
 public class GameActivity extends AppCompatActivity {
 
     private static final BigInteger GAME_BI_MAX_VALUE = new BigInteger("999999999999999999999999999999999"); // Hardcoded BigInteger limit
-    private SharedPreferences.Editor editor;
 
     // Services
     private GameService GAME_SERVICE;
@@ -41,11 +39,7 @@ public class GameActivity extends AppCompatActivity {
 
         GAME_SERVICE = GameService.getInstance(this);
 
-        // Getting prefs
-        // Shared preferences
-        SharedPreferences sharedPref = getPreferences(MODE_PRIVATE);
-        editor = sharedPref.edit();
-
+        // Setting variables to assign to it's views
         CustomBigInteger coins = GAME_SERVICE.getValue(AppConstants.COINS_KEY);
         CustomBigInteger clickValue = GAME_SERVICE.getValue(AppConstants.CLICK_VALUE_KEY);
         CustomBigInteger autoClickValue = GAME_SERVICE.getValue(AppConstants.AUTO_CLICK_VALUE_KEY);
@@ -112,6 +106,9 @@ public class GameActivity extends AppCompatActivity {
         finish();
     }
 
+    /**
+     * Starts all the necessary loops for the game to work
+     */
     private void gameLoop() {
         new Thread(this::coinRateLoop).start();
         new Thread(this::autoClickLoop).start();
@@ -129,7 +126,7 @@ public class GameActivity extends AppCompatActivity {
                 Thread.sleep(500);
                 runOnUiThread(this::updateClickImageView); // Updating the coin image
 
-                GAME_SERVICE.coinRateLoop();
+                GAME_SERVICE.coinRate();
 
                 //runOnUiThread(() -> textCoins.setText(GAME_SERVICE.getValue(AppConstants.COINS_KEY).withSuffix("§")));
                 runOnUiThread(() -> textCoinRateValue.setText(GAME_SERVICE.getValue(AppConstants.COIN_RATE_KEY).withSuffix("§/s"))); // Coin rate
@@ -149,7 +146,7 @@ public class GameActivity extends AppCompatActivity {
                 Thread.sleep(1000);
             } catch (InterruptedException ignored) {
             }
-            String coins = GAME_SERVICE.autoClickLoop();
+            String coins = GAME_SERVICE.calculateAutoCoins();
             runOnUiThread(() -> textCoins.setText(coins));
         }
     }
@@ -189,30 +186,57 @@ public class GameActivity extends AppCompatActivity {
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://revolut.me/ignaciyu00"));
                     startActivity(browserIntent);
                 })
-                .setPositiveButton("Ok", (dialog, which) -> {
+                .setPositiveButton(getString(R.string.gen_dialog_pos_button), (dialog, which) -> {
                     // do nothing
                 }).show();
     }
 
-    private void onGameEndDialogCreator() {
+    /**
+     * Called when the user clicks on the reset button. Just making sure the user clicked on purpose
+     * before resetting all values
+     *
+     * @param view
+     */
+    public void resetOnClick(View view) {
         AlertDialog.Builder dialogConstructor = new AlertDialog.Builder(this);
-        dialogConstructor.setMessage("Congratulations, you've finished the game but please, get a life")
-                .setTitle("Game end")
-                .setIcon(R.drawable.ic_info)
-                .setNegativeButton("Reset", (dialog, which) -> {
+        dialogConstructor.setTitle(getString(R.string.game_reset_dialog_title))
+                .setMessage(getString(R.string.game_reset_dialog_message))
+                .setIcon(R.drawable.ic_reset)
+                .setPositiveButton(getString(R.string.gen_dialog_pos_button), (dialog, which) -> {
                     resetValues();
                     recreate();
                 })
-                .setPositiveButton("Ok", (dialog, which) -> finish()).show();
+                .setNegativeButton(getString(R.string.gen_dialog_neg_button), (dialog, which) -> {
+                }).show();
     }
 
+    /**
+     * When the user reaches the limit on the game, a dialog is shown to inform the user and if he wants
+     * to reset the game or not (if not, you can't enter the game again)
+     */
+    private void onGameEndDialogCreator() {
+        AlertDialog.Builder dialogConstructor = new AlertDialog.Builder(this);
+        dialogConstructor.setMessage(getString(R.string.game_max_value_dialog_message))
+                .setTitle(getString(R.string.game_max_value_dialog_title))
+                .setIcon(R.drawable.ic_info)
+                .setPositiveButton(getString(R.string.gen_dialog_pos_button), (dialog, which) -> finish())
+                .setNegativeButton(getString(R.string.game_max_value_dialog_neg_button), (dialog, which) -> {
+                    resetValues();
+                    recreate();
+                }).show();
+    }
+
+    /**
+     * Calls resetData method of both GameService and ShopService to reset all values
+     */
     private void resetValues() {
         GAME_SERVICE.resetData(this);
         ShopService.getInstance(this).resetData(this);
     }
 
-    public void resetOnClick(View view) {
-        resetValues();
-        recreate();
+    public void returnOnClick(View view) {
+        Intent intent = new Intent(this, LaunchActivity.class);
+        startActivity(intent);
+        finish();
     }
 }
