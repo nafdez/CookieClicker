@@ -13,7 +13,6 @@ public class RecyclerUpgradeClickListener implements RecyclerView.OnItemTouchLis
 
     private final OnItemClickListener mListener;
     private final GestureDetector mGestureDetector;
-    private final Activity context;
 
     public interface OnItemClickListener {
         void onItemClick(View view, int position);
@@ -23,7 +22,6 @@ public class RecyclerUpgradeClickListener implements RecyclerView.OnItemTouchLis
 
     public RecyclerUpgradeClickListener(Context context, final RecyclerView recyclerView, OnItemClickListener listener) {
         mListener = listener;
-        this.context = (Activity) context;
         mGestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
             @Override
             public boolean onSingleTapUp(MotionEvent e) {

@@ -2,15 +2,9 @@ package es.ignaciofp.contador.services;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.ScaleAnimation;
-import android.widget.TextView;
 
-import java.lang.reflect.Field;
 import java.math.BigInteger;
 
-import es.ignaciofp.contador.R;
 import es.ignaciofp.contador.models.GameData;
 import es.ignaciofp.contador.utils.AppConstants;
 import es.ignaciofp.contador.utils.CustomBigInteger;
@@ -135,9 +129,8 @@ public class GameService {
     public String autoClickLoop() {
         while(GAME_DATA.getAutoClickValue().compareTo(BigInteger.valueOf(0)) <= 0);
         addCoins(GAME_DATA.getAutoClickValue());
-        String val = GAME_DATA.getCoins().withSuffix("§");
+        return GAME_DATA.getCoins().withSuffix("§");
         //new Thread(this::updateDisabledButtons).start();
-        return val;
     }
 
     ////////////////////////////////COINRATE////////////////////////////////////////
