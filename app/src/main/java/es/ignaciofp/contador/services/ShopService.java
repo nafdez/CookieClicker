@@ -2,6 +2,7 @@ package es.ignaciofp.contador.services;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.widget.Button;
 
 import java.math.BigDecimal;
@@ -9,6 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import es.ignaciofp.contador.R;
+import es.ignaciofp.contador.activities.GameActivity;
 import es.ignaciofp.contador.models.GameData;
 import es.ignaciofp.contador.models.ShopData;
 import es.ignaciofp.contador.utils.AppConstants;

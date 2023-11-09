@@ -1,6 +1,7 @@
 package es.ignaciofp.contador.activities;
 
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
@@ -16,10 +17,15 @@ import es.ignaciofp.contador.models.Ranking;
 
 public class RankingActivity extends AppCompatActivity {
 
+    private MediaPlayer mediaPlayer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ranking);
+
+        mediaPlayer = MediaPlayer.create(this, R.raw.main_theme);
+        mediaPlayer.start();
 
         ListView rankingListView = findViewById(R.id.listview_ranking);
 
@@ -33,6 +39,12 @@ public class RankingActivity extends AppCompatActivity {
 
         rankingListView.setAdapter(new AdapterRanking(this, R.layout.item_ranking, R.id.text_blank_ranking, rankingList));
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mediaPlayer.stop();
     }
 
     public void returnOnClick(View view) {

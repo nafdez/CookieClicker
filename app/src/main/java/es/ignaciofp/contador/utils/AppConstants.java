@@ -1,6 +1,13 @@
 package es.ignaciofp.contador.utils;
 
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.SoundPool;
+
 import java.math.BigInteger;
+
+import es.ignaciofp.contador.R;
+import es.ignaciofp.contador.activities.HomeActivity;
 
 public class AppConstants {
 
@@ -11,6 +18,13 @@ public class AppConstants {
     public static final CustomBigInteger DEFAULT_CLICK_VALUE = new CustomBigInteger("1");
     public static final CustomBigInteger DEFAULT_AUTO_CLICK_VALUE = new CustomBigInteger("0");
     public static final boolean DEFAULT_HAS_REACHED_MAX_VALUE = false;
+
+    // MEDIA
+    private static final SoundPool SOUND_POOL = new SoundPool(5,AudioManager.STREAM_MUSIC, 0);
+
+    // SOUNDS IDs
+    private static final int SOUND_COIN_CLICK_ID = SOUND_POOL.load(this, R.raw.coin_click, 1);
+    private static final int SOUND_UPGRADE_BUY_ID = SOUND_POOL.load(this, R.raw.upgrade_buy, 1);
 
     // SHOP DEFAULTS
     public static final CustomBigInteger UPGRADE_BASIC_BASE_PRICE = new CustomBigInteger("100");

@@ -2,6 +2,9 @@ package es.ignaciofp.contador.activities;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.SoundPool;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -29,6 +32,10 @@ public class GameActivity extends AppCompatActivity {
     private TextView textCoins;
     private TextView textCoinRateValue;
     private ImageView image_coin;
+
+    // Music
+    private MediaPlayer mediaPlayer;
+    SoundPool soundPool;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,12 +72,23 @@ public class GameActivity extends AppCompatActivity {
         updateClickImageView();
         if (GAME_SERVICE.hasReachedMaxValue()) onGameEndDialogCreator();
         gameLoop();
+
+        // Starting music
+        mediaPlayer = MediaPlayer.create(this, R.raw.main_theme);
+        mediaPlayer.start();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mediaPlayer.start();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         GAME_SERVICE.saveData(this);
+        mediaPlayer.stop();
     }
 
     /**
@@ -85,11 +103,15 @@ public class GameActivity extends AppCompatActivity {
         fade_in.setDuration(100);
         image_coin.startAnimation(fade_in);
 
+        int soundId = ;
+        soundPool.play(soundId, 1, 1, 1, 0, 1);
+
         CustomBigInteger updatedCoins = GAME_SERVICE.addCoins(GAME_SERVICE.getValue(AppConstants.CLICK_VALUE_KEY));
 
         // Updating the coins text view value
         textCoins.setText(updatedCoins.withSuffix("§"));
-        if (updatedCoins.compareTo(AppConstants.BIG_INTEGER_MAX_VALUE) >= 0) onGameEndDialogCreator();
+        if (updatedCoins.compareTo(AppConstants.BIG_INTEGER_MAX_VALUE) >= 0)
+            onGameEndDialogCreator();
         updateClickImageView();
     }
 

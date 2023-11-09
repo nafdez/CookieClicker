@@ -1,6 +1,7 @@
 package es.ignaciofp.contador.activities;
 
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -101,6 +102,7 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
         }
 
         updateValues();
+        MediaPlayer.create(this, R.raw.upgrade_buy).start();
 
         new Thread(this::updateDisabledButtons).start();
     }
