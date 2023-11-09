@@ -7,39 +7,45 @@
 
     <LinearLayout
         style="@style/generic_list_view_style"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        >
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_weight="1">
 
             <TextView
-                android:id="@+id/text_option_name"
+                android:id="@+id/text_ranking_name"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:textSize="20sp"/>
+                android:textSize="20sp" />
 
             <TextView
-                android:id="@+id/text_option_description"
+                android:id="@+id/text_ranking_date"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:textSize="14sp"/>
+                android:textSize="14sp" />
         </LinearLayout>
 
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/switch_option"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            />
+        <TextView
+            android:id="@+id/text_ranking_coins"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:gravity="center_vertical"
+            android:textSize="20sp" />
 
     </LinearLayout>
-
     <TextView
-        android:id="@+id/text_blank"
+        android:id="@+id/text_blank_ranking"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="0sp"

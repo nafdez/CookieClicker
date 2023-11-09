@@ -35,12 +35,12 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     /**
-     * Launches InfoActivity
+     * Launches RankingActivity
      *
      * @param view the view being clicked
      */
     public void launchInfoActivity(View view) {
-        startActivity(new Intent(this, InfoActivity.class));
+        startActivity(new Intent(this, RankingActivity.class));
     }
 
     /**

@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"
             android:autoSizeTextType="uniform"
             android:lines="1"
-            android:text="@string/launch_welcome_text"
+            android:text="@string/home_welcome_text"
             android:textSize="32sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -45,12 +45,12 @@
             style="@style/buttonPrimary"
             android:layout_marginBottom="2dp"
             android:onClick="launchGameActivity"
-            android:text="@string/launch_play_button_text" />
+            android:text="@string/home_play_button_text" />
 
         <Button
             style="@style/buttonSecondary"
             android:onClick="launchOptionsActivity"
-            android:text="@string/launch_options_button_text" />
+            android:text="@string/home_options_button_text" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -63,7 +63,7 @@
                 android:layout_marginEnd="4dp"
                 android:layout_weight="1"
                 android:onClick="launchInfoActivity"
-                android:text="@string/launch_info_button_text" />
+                android:text="@string/home_info_button_text" />
 
             <Button
                 style="@style/buttonTernary"
@@ -71,7 +71,7 @@
                 android:layout_marginStart="4dp"
                 android:layout_weight="1"
                 android:onClick="closeApp"
-                android:text="@string/launch_exit_button_text" />
+                android:text="@string/home_exit_button_text" />
         </LinearLayout>
 
     </LinearLayout>

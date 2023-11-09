@@ -5,30 +5,40 @@
     style="@style/background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.InfoActivity">
+    android:orientation="vertical"
+    tools:context=".activities.RankingActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center">
+        android:gravity="center"
+        android:orientation="horizontal">
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_margin="22dp"
-            android:text="@string/info_title"
+            android:layout_weight="1"
+            android:text="@string/ranking_title"
             android:textSize="32sp" />
 
         <ImageView
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_marginEnd="22dp"
             android:contentDescription="@string/shop_coins_content_description"
             android:onClick="returnOnClick"
             app:srcCompat="@drawable/ic_gen_return" />
     </LinearLayout>
+
+    <ListView
+        android:id="@+id/listview_ranking"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:divider="@null"
+        android:dividerHeight="0dp"
+        android:drawSelectorOnTop="false"/>
 
 
 </LinearLayout>

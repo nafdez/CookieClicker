@@ -12,19 +12,18 @@
 
     <string name="PREF_DARK_MODE" translatable="false">toggleTheme</string>
 
-
-    <string name="launch_welcome_text">Welcome to the best Cookie Clicker!</string>
-    <string name="launch_play_button_text">Play</string>
-    <string name="launch_options_button_text">Options</string>
-    <string name="launch_info_button_text">Info</string>
-    <string name="launch_exit_button_text">Exit</string>
+    <string name="home_welcome_text">Welcome to the best Cookie Clicker!</string>
+    <string name="home_play_button_text">Play</string>
+    <string name="home_options_button_text">Options</string>
+    <string name="home_info_button_text">Ranking</string>
+    <string name="home_exit_button_text">Exit</string>
 
     <string name="options_title">Options</string>
     <string name="options_theme_button_text">Toggle</string>
     <string name="options_theme_name_text">Dark mode</string>
     <string name="options_theme_description">Toggle between light and dark mode</string>
 
-    <string name="info_title">Ranking</string>
+    <string name="ranking_title">Ranking</string>
 
     <string name="game_coin_text">Touch the picture</string>
     <string name="game_coin_image_content_description">A coin</string>

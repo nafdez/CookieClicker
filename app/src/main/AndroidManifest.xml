@@ -16,7 +16,7 @@
             android:name=".activities.ShopActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.InfoActivity"
+            android:name=".activities.RankingActivity"
             android:exported="false" />
         <activity
             android:name=".activities.OptionsActivity"

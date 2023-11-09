@@ -32,8 +32,8 @@
                 android:textSize="32sp" />
 
             <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_marginEnd="22dp"
                 android:contentDescription="@string/shop_coins_content_description"
                 android:onClick="returnOnClick"

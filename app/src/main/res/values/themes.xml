@@ -79,7 +79,7 @@
         <item name="android:backgroundTint">@color/dark_moss_green</item>
     </style>
 
-    <style name="options">
+    <style name="generic_list_view_style">
         <item name="android:background">@drawable/options_shape</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -89,4 +89,5 @@
         <item name="android:paddingStart">22dp</item>
         <item name="android:paddingEnd">22dp</item>
     </style>
+
 </resources>
