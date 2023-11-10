@@ -46,4 +46,13 @@ public class Ranking {
     public String getCoins() {
         return coins;
     }
+
+    @Override
+    public String toString() {
+        return "Ranking{" +
+                "name='" + name + '\'' +
+                ", date='" + date + '\'' +
+                ", coins='" + coins + '\'' +
+                '}';
+    }
 }

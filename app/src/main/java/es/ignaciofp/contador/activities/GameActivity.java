@@ -1,6 +1,7 @@
 package es.ignaciofp.contador.activities;
 
 import android.app.AlertDialog;
+import android.app.Application;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -32,10 +33,6 @@ public class GameActivity extends AppCompatActivity {
     private TextView textCoins;
     private TextView textCoinRateValue;
     private ImageView image_coin;
-
-    // Music
-    private MediaPlayer mediaPlayer;
-    SoundPool soundPool;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,21 +71,27 @@ public class GameActivity extends AppCompatActivity {
         gameLoop();
 
         // Starting music
-        mediaPlayer = MediaPlayer.create(this, R.raw.main_theme);
-        mediaPlayer.start();
+        AppConstants.MP_MAIN_THEME.start();
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mediaPlayer.start();
+        AppConstants.MP_MAIN_THEME.start();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         GAME_SERVICE.saveData(this);
-        mediaPlayer.stop();
+        AppConstants.MP_MAIN_THEME.pause();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        AppConstants.MP_MAIN_THEME.stop();
     }
 
     /**
@@ -103,8 +106,7 @@ public class GameActivity extends AppCompatActivity {
         fade_in.setDuration(100);
         image_coin.startAnimation(fade_in);
 
-        int soundId = ;
-        soundPool.play(soundId, 1, 1, 1, 0, 1);
+        AppConstants.SOUND_POOL.play(AppConstants.SOUND_COIN_CLICK_ID, 1, 1, 0, 0, 1);
 
         CustomBigInteger updatedCoins = GAME_SERVICE.addCoins(GAME_SERVICE.getValue(AppConstants.CLICK_VALUE_KEY));
 
