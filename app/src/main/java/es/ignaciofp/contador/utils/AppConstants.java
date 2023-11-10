@@ -1,6 +1,5 @@
 package es.ignaciofp.contador.utils;
 
-import android.app.Application;
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -9,9 +8,10 @@ import android.media.SoundPool;
 import java.math.BigInteger;
 
 import es.ignaciofp.contador.R;
-import es.ignaciofp.contador.activities.HomeActivity;
 
-public class AppConstants extends Application {
+public class AppConstants {
+
+    private static AppConstants instance;
 
     public static final BigInteger BIG_INTEGER_MAX_VALUE = new BigInteger("999999999999999999999999999999999"); // Hardcoded BigInteger limit
 
@@ -22,12 +22,12 @@ public class AppConstants extends Application {
     public static final boolean DEFAULT_HAS_REACHED_MAX_VALUE = false;
 
     // MEDIA
-    public static final SoundPool SOUND_POOL = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
-    public static final MediaPlayer MP_MAIN_THEME = MediaPlayer.create(getContext(), R.raw.main_theme);
+    public static final SoundPool SOUND_POOL = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
+    private final MediaPlayer MP_MAIN_THEME;
 
     // SOUNDS IDs
-    public static final int SOUND_COIN_CLICK_ID = SOUND_POOL.load(getContext(), R.raw.coin_click, 1);
-    public static final int SOUND_UPGRADE_BUY_ID = SOUND_POOL.load(getContext(), R.raw.upgrade_buy, 1);
+    private final int SOUND_COIN_CLICK_ID;
+    private final int SOUND_UPGRADE_BUY_ID;
 
     // SHOP DEFAULTS
     public static final CustomBigInteger UPGRADE_BASIC_BASE_PRICE = new CustomBigInteger("100");
@@ -56,22 +56,28 @@ public class AppConstants extends Application {
     public static final String AUX_VALUE_KEY = "new_value";
     public static final String AUX_PRICE_KEY = "new_price";
 
-
-    // Necessary to use the application context for the music
-    private static Application sApplication;
-
-    public static Application getApplication() {
-        return sApplication;
+    private AppConstants(Context context) {
+        MP_MAIN_THEME = MediaPlayer.create(context, R.raw.main_theme);
+        SOUND_COIN_CLICK_ID = AppConstants.SOUND_POOL.load(context, R.raw.coin_click, 1);
+        SOUND_UPGRADE_BUY_ID = AppConstants.SOUND_POOL.load(context, R.raw.upgrade_buy, 1);
     }
 
-    public static Context getContext() {
-        return getApplication().getApplicationContext();
+    public static AppConstants getInstance(Context context) {
+        if (instance == null) {
+            instance = new AppConstants(context);
+        }
+        return instance;
     }
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        sApplication = this;
+    public MediaPlayer getMP_MAIN_THEME() {
+        return MP_MAIN_THEME;
     }
 
+    public int getSOUND_COIN_CLICK_ID() {
+        return SOUND_COIN_CLICK_ID;
+    }
+
+    public int getSOUND_UPGRADE_BUY_ID() {
+        return SOUND_UPGRADE_BUY_ID;
+    }
 }

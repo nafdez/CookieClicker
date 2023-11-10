@@ -2,7 +2,6 @@ package es.ignaciofp.contador.services;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.media.MediaPlayer;
 import android.widget.Button;
 
 import java.math.BigDecimal;
@@ -10,8 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import es.ignaciofp.contador.R;
-import es.ignaciofp.contador.activities.GameActivity;
 import es.ignaciofp.contador.models.GameData;
 import es.ignaciofp.contador.models.ShopData;
 import es.ignaciofp.contador.utils.AppConstants;
@@ -33,6 +30,9 @@ public class ShopService {
     private final String UPGRADE_AUTO_KEY = AppConstants.UPGRADE_AUTO_KEY;
     private final String UPGRADE_MEGA_AUTO_KEY = AppConstants.UPGRADE_MEGA_AUTO_KEY;
 
+    // Media
+    private final int SOUND_UPGRADE_BUY_ID;
+
     /**
      * Constructor of this class. It needs the context in order to initialize all the data.
      *
@@ -40,6 +40,9 @@ public class ShopService {
      */
     private ShopService(Context context) {
         recoverData(context);
+        // App constant values
+        AppConstants APP_CONSTANTS = AppConstants.getInstance(context);
+        SOUND_UPGRADE_BUY_ID = APP_CONSTANTS.getSOUND_UPGRADE_BUY_ID();
     }
 
     /**
@@ -155,7 +158,7 @@ public class ShopService {
                 data = new HashMap<>();
                 data.put(AppConstants.AUX_VALUE_KEY, newValue);
                 data.put(AppConstants.AUX_PRICE_KEY, newPrice);
-
+                AppConstants.SOUND_POOL.play(SOUND_UPGRADE_BUY_ID, 1, 1, 0, 0, 1);
             }
 
         } catch (IllegalAccessException ignored) {

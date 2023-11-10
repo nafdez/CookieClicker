@@ -1,7 +1,6 @@
 package es.ignaciofp.contador.activities;
 
 import android.content.Intent;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -30,6 +29,8 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
     // Services
     private ShopService SHOP_SERVICE;
     private GameService GAME_SERVICE;
+    private AppConstants APP_CONSTANTS;
+
 
     // Recycler view
     private ArrayList<Upgrade> upgradeList;
@@ -41,6 +42,8 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
     private TextView textClickValue;
     private TextView textAutoClickValue;
 
+    // Media
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +51,7 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
 
         SHOP_SERVICE = ShopService.getInstance(this);
         GAME_SERVICE = GameService.getInstance(this);
+        APP_CONSTANTS = AppConstants.getInstance(this);
 
         // Setting recycler view
         upgradesRecycler = findViewById(R.id.recycler_upgrades);
@@ -77,14 +81,14 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
         updateUI();
         new Thread(this::autoClickLoop).start();
         // Starting music
-        AppConstants.MP_MAIN_THEME.start();
+        APP_CONSTANTS.getMP_MAIN_THEME().start();
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        AppConstants.MP_MAIN_THEME.start();
+        APP_CONSTANTS.getMP_MAIN_THEME().start();
     }
 
     @Override
@@ -92,13 +96,13 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
         super.onPause();
         SHOP_SERVICE.saveData(this);
         GAME_SERVICE.saveData(this);
-        AppConstants.MP_MAIN_THEME.pause();
+        APP_CONSTANTS.getMP_MAIN_THEME().pause();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        AppConstants.MP_MAIN_THEME.stop();
+        APP_CONSTANTS.getMP_MAIN_THEME().stop();
     }
 
     /**
@@ -118,7 +122,6 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
         }
 
         updateValues();
-        MediaPlayer.create(this, R.raw.upgrade_buy).start();
 
         new Thread(this::updateDisabledButtons).start();
     }
