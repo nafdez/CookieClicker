@@ -24,4 +24,5 @@
     <string name="game_info_message_dialog">CookieClicker hecho para una práctica de PDMD en el ciclo de formación superior DAM</string>
     <string name="game_info_title_dialog">Información</string>
     <string name="game_info_donate_dialog">donar</string>
+    <string name="ranking_title">Clasificación</string>
 </resources>
