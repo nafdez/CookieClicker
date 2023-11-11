@@ -2,6 +2,7 @@ package es.ignaciofp.contador.services;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 
 import java.math.BigInteger;
 
@@ -124,6 +125,19 @@ public class GameService {
         String clickValue = prefs.getString(CLICK_VALUE_KEY, GAME_DATA.getClickValue().toString());
         String autoClickValue = prefs.getString(AUTO_CLICK_VALUE_KEY, GAME_DATA.getAutoClickValue().toString());
         boolean hasReachedMaxValue = prefs.getBoolean(HAS_REACHED_MAX_VALUE_KEY, GAME_DATA.hasReachedMaxValue());
+
+        GAME_DATA.setCoins(new CustomBigInteger(coins));
+        GAME_DATA.setClickValue(new CustomBigInteger(clickValue));
+        GAME_DATA.setAutoClickValue(new CustomBigInteger(autoClickValue));
+        GAME_DATA.setHasReachedMaxValue(hasReachedMaxValue);
+    }
+
+    private void recoverData(Bundle bundle) {
+        // If value doesn't exist in preferences then use the default values of the initialization of GameData
+        String coins = bundle.getString(COINS_KEY, GAME_DATA.getCoins().toString());
+        String clickValue = bundle.getString(CLICK_VALUE_KEY, GAME_DATA.getClickValue().toString());
+        String autoClickValue = bundle.getString(AUTO_CLICK_VALUE_KEY, GAME_DATA.getAutoClickValue().toString());
+        boolean hasReachedMaxValue = bundle.getBoolean(HAS_REACHED_MAX_VALUE_KEY, GAME_DATA.hasReachedMaxValue());
 
         GAME_DATA.setCoins(new CustomBigInteger(coins));
         GAME_DATA.setClickValue(new CustomBigInteger(clickValue));

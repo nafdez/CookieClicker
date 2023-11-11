@@ -23,7 +23,6 @@ public class AppConstants {
 
     // MEDIA
     public static final SoundPool SOUND_POOL = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
-    private final MediaPlayer MP_MAIN_THEME;
 
     // SOUNDS IDs
     private final int SOUND_COIN_CLICK_ID;
@@ -57,7 +56,6 @@ public class AppConstants {
     public static final String AUX_PRICE_KEY = "new_price";
 
     private AppConstants(Context context) {
-        MP_MAIN_THEME = MediaPlayer.create(context, R.raw.main_theme);
         SOUND_COIN_CLICK_ID = AppConstants.SOUND_POOL.load(context, R.raw.coin_click, 1);
         SOUND_UPGRADE_BUY_ID = AppConstants.SOUND_POOL.load(context, R.raw.upgrade_buy, 1);
     }
@@ -67,10 +65,6 @@ public class AppConstants {
             instance = new AppConstants(context);
         }
         return instance;
-    }
-
-    public MediaPlayer getMP_MAIN_THEME() {
-        return MP_MAIN_THEME;
     }
 
     public int getSOUND_COIN_CLICK_ID() {

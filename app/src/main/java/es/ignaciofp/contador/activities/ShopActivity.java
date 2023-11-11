@@ -80,15 +80,7 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
         updateValues();
         updateUI();
         new Thread(this::autoClickLoop).start();
-        // Starting music
-        APP_CONSTANTS.getMP_MAIN_THEME().start();
 
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        APP_CONSTANTS.getMP_MAIN_THEME().start();
     }
 
     @Override
@@ -96,13 +88,6 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
         super.onPause();
         SHOP_SERVICE.saveData(this);
         GAME_SERVICE.saveData(this);
-        APP_CONSTANTS.getMP_MAIN_THEME().pause();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        APP_CONSTANTS.getMP_MAIN_THEME().stop();
     }
 
     /**

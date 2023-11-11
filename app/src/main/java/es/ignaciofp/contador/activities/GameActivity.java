@@ -13,6 +13,8 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.math.BigInteger;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import es.ignaciofp.contador.R;
 import es.ignaciofp.contador.services.GameService;
@@ -24,7 +26,6 @@ public class GameActivity extends AppCompatActivity {
 
     // Services
     private GameService GAME_SERVICE;
-    private AppConstants APP_CONSTANTS;
 
     // Views
     private TextView textCoins;
@@ -32,7 +33,9 @@ public class GameActivity extends AppCompatActivity {
     private ImageView image_coin;
 
     // Media
-    public int SOUND_COIN_CLICK_ID;
+    private int SOUND_COIN_CLICK_ID;
+
+    private final ExecutorService EXECUTOR_POOL = Executors.newFixedThreadPool(1);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +43,7 @@ public class GameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_game);
 
         GAME_SERVICE = GameService.getInstance(this);
-        APP_CONSTANTS = AppConstants.getInstance(this);
+        AppConstants APP_CONSTANTS = AppConstants.getInstance(this);
         SOUND_COIN_CLICK_ID = APP_CONSTANTS.getSOUND_COIN_CLICK_ID();
 
         // Setting variables to assign to it's views
@@ -72,28 +75,18 @@ public class GameActivity extends AppCompatActivity {
         if (GAME_SERVICE.hasReachedMaxValue()) onGameEndDialogCreator();
         gameLoop();
 
-        // Starting music
-        APP_CONSTANTS.getMP_MAIN_THEME().start();
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        APP_CONSTANTS.getMP_MAIN_THEME().start();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         GAME_SERVICE.saveData(this);
-        APP_CONSTANTS.getMP_MAIN_THEME().pause();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        APP_CONSTANTS.getMP_MAIN_THEME().stop();
+        EXECUTOR_POOL.shutdown();
     }
 
     /**
@@ -108,7 +101,9 @@ public class GameActivity extends AppCompatActivity {
         fade_in.setDuration(100);
         image_coin.startAnimation(fade_in);
 
-        AppConstants.SOUND_POOL.play(SOUND_COIN_CLICK_ID, 1, 1, 0, 0, 1);
+        EXECUTOR_POOL.submit(() -> {
+            AppConstants.SOUND_POOL.play(SOUND_COIN_CLICK_ID, 1, 1, 0, 0, 1);
+        });
 
         CustomBigInteger updatedCoins = GAME_SERVICE.addCoins(GAME_SERVICE.getValue(AppConstants.CLICK_VALUE_KEY));
 
