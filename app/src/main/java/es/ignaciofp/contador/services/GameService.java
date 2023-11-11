@@ -64,6 +64,10 @@ public class GameService {
         return value;
     }
 
+    public void setPlayerData(String name){
+        GAME_DATA.setPlayerName(name);
+    }
+
     public boolean hasReachedMaxValue() {
         return GAME_DATA.hasReachedMaxValue();
     }

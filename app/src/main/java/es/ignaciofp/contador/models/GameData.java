@@ -12,6 +12,7 @@ import es.ignaciofp.contador.utils.CustomBigInteger;
 public class GameData implements Serializable {
 
     private static GameData instance;
+    private String playerName;
     private CustomBigInteger coins;
     private CustomBigInteger clickValue;
     private CustomBigInteger autoClickValue;
@@ -31,6 +32,14 @@ public class GameData implements Serializable {
         autoClickValue = AppConstants.DEFAULT_AUTO_CLICK_VALUE;
         coinRate = new CustomBigInteger("0");
         hasReachedMaxValue = AppConstants.DEFAULT_HAS_REACHED_MAX_VALUE;
+    }
+
+    public String getPlayerName() {
+        return playerName;
+    }
+
+    public void setPlayerName(String playerName) {
+        this.playerName = playerName;
     }
 
     public CustomBigInteger getCoins() {
