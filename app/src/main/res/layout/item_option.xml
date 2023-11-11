@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <LinearLayout
-        style="@style/options"
+        style="@style/generic_list_view_style"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

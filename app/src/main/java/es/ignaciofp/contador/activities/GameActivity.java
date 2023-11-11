@@ -3,6 +3,7 @@ package es.ignaciofp.contador.activities;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.SoundPool;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -14,6 +15,8 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.math.BigInteger;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import es.ignaciofp.contador.R;
 import es.ignaciofp.contador.utils.CustomBigInteger;
@@ -34,7 +37,14 @@ public class GameActivity extends AppCompatActivity {
     private CustomBigInteger autoClickValue;
     private CustomBigInteger coinRate = new CustomBigInteger("0");
     private CustomBigInteger basicPrice;
+    private CustomBigInteger megaPrice;
+    private CustomBigInteger autoPrice;
+    private CustomBigInteger megaAutoPrice;
     private boolean hasReachedMaxValue;
+
+    SoundPool soundPool;
+    int soundClickId;
+    private final ExecutorService EXECUTOR_POOL = Executors.newFixedThreadPool(1);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,9 +52,6 @@ public class GameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_game);
 
         // Getting prefs
-        // Shared preferences
-        SharedPreferences sharedPref = getPreferences(MODE_PRIVATE);
-        editor = sharedPref.edit();
 
         Bundle bundle = getIntent().getExtras();
 
@@ -53,14 +60,23 @@ public class GameActivity extends AppCompatActivity {
             coins = new CustomBigInteger(bundle.getString(getString(R.string.PREF_COINS), "0"));
             clickValue = new CustomBigInteger(bundle.getString(getString(R.string.PREF_CLICK_VALUE), "1"));
             autoClickValue = new CustomBigInteger(bundle.getString(getString(R.string.PREF_AUTO_CLICK_VALUE), "0"));
-            basicPrice = new CustomBigInteger(bundle.getString(getString(R.string.PREF_BASIC_PRICE), "100")); // Hardcoded por no dar mucha vuelta TODO:
-        } else {
-            coins = new CustomBigInteger(sharedPref.getString(getString(R.string.PREF_COINS), "0"));
-            clickValue = new CustomBigInteger(sharedPref.getString(getString(R.string.PREF_CLICK_VALUE), "1"));
-            autoClickValue = new CustomBigInteger(sharedPref.getString(getString(R.string.PREF_AUTO_CLICK_VALUE), "0"));
-            basicPrice = new CustomBigInteger(sharedPref.getString(getString(R.string.PREF_BASIC_PRICE), "100")); // Hardcoded por no dar mucha vuelta TODO:
+            basicPrice = new CustomBigInteger(bundle.getString(getString(R.string.PREF_BASIC_PRICE), "100")); // Hardcoded por no dar mucha vuelta
+            megaPrice = new CustomBigInteger(bundle.getString(getString(R.string.PREF_MEGA_PRICE), "1000")); // Hardcoded por no dar mucha vuelta
+            autoPrice = new CustomBigInteger(bundle.getString(getString(R.string.PREF_AUTO_PRICE), "450")); // Hardcoded por no dar mucha vuelta
+            megaAutoPrice = new CustomBigInteger(bundle.getString(getString(R.string.PREF_MEGA_AUTO_PRICE), "2670")); // Hardcoded por no dar mucha vuelta
+        } else{
+            coins = new CustomBigInteger("0");
+            clickValue = new CustomBigInteger("1");
+            autoClickValue = new CustomBigInteger("0");
+            basicPrice = new CustomBigInteger("100"); // Hardcoded por no dar mucha vuelta
+            megaPrice = new CustomBigInteger("1000"); // Hardcoded por no dar mucha vuelta
+            autoPrice = new CustomBigInteger("450"); // Hardcoded por no dar mucha vuelta
+            megaAutoPrice = new CustomBigInteger("2670"); // Hardcoded por no dar much
         }
-        hasReachedMaxValue = sharedPref.getBoolean("PREF_HAS_MAX_VALUE", false);
+        hasReachedMaxValue = false;
+
+        soundPool = new SoundPool.Builder().setMaxStreams(1).build();
+        soundClickId = soundPool.load(this, R.raw.sound_coin_click, 1);
 
         // View assignment
         TextView textClickValue = findViewById(R.id.text_click_value);
@@ -87,13 +103,9 @@ public class GameActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        editor.putString(getString(R.string.PREF_COINS), coins.toString());
-        editor.putString(getString(R.string.PREF_CLICK_VALUE), clickValue.toString());
-        editor.putString(getString(R.string.PREF_AUTO_CLICK_VALUE), autoClickValue.toString());
-        editor.putBoolean("PREF_HAS_MAX_VALUE", hasReachedMaxValue);
-        editor.apply();
+    protected void onStop() {
+        super.onStop();
+        EXECUTOR_POOL.shutdown();
     }
 
     /**
@@ -103,13 +115,17 @@ public class GameActivity extends AppCompatActivity {
      * @param view the view that has been clicked
      */
     public void addOnClick(View view) {
+        EXECUTOR_POOL.submit(() -> {
+            soundPool.play(soundClickId, 1, 1, 0, 0, 1);
+
+            // Image animation
+            ScaleAnimation fade_in = new ScaleAnimation(0.7f, 1.2f, 0.7f, 1.2f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+            fade_in.setDuration(100);
+            image_coin.startAnimation(fade_in);
+        });
+
         coins = coins.add(clickValue);
         coinRate = coinRate.add(clickValue);
-
-        // Image animation
-        ScaleAnimation fade_in = new ScaleAnimation(0.7f, 1.2f, 0.7f, 1.2f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        fade_in.setDuration(100);
-        image_coin.startAnimation(fade_in);
 
         // Updating the coins text view value
         textCoins.setText(coins.withSuffix("§"));
@@ -127,6 +143,10 @@ public class GameActivity extends AppCompatActivity {
         intent.putExtra(getString(R.string.PREF_COINS), coins.toString());
         intent.putExtra(getString(R.string.PREF_CLICK_VALUE), clickValue.toString());
         intent.putExtra(getString(R.string.PREF_AUTO_CLICK_VALUE), autoClickValue.toString());
+        intent.putExtra(getString(R.string.PREF_BASIC_PRICE), basicPrice.toString());
+        intent.putExtra(getString(R.string.PREF_MEGA_PRICE), megaPrice.toString());
+        intent.putExtra(getString(R.string.PREF_AUTO_PRICE), autoPrice.toString());
+        intent.putExtra(getString(R.string.PREF_MEGA_AUTO_PRICE), megaAutoPrice.toString());
         startActivity(intent);
         finish();
     }
@@ -210,16 +230,13 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void resetValues() {
-        editor.putString(getString(R.string.PREF_COINS), "0");
-        editor.putString(getString(R.string.PREF_CLICK_VALUE), "1");
-        editor.putString(getString(R.string.PREF_AUTO_CLICK_VALUE), "0");
-        editor.putString(getString(R.string.PREF_BASIC_PRICE), "100");
-        editor.putString(getString(R.string.PREF_MEGA_PRICE), "1000");
-        editor.putString(getString(R.string.PREF_AUTO_PRICE), "450");
-        editor.putString(getString(R.string.PREF_MEGA_AUTO_PRICE), "2670");
-        editor.putBoolean("PREF_HAS_MAX_VALUE", false);
-        hasReachedMaxValue = false;
-        editor.commit();
-        editor.apply();
+        recreate();
     }
+
+    public void returnOnClick(View view) {
+        Intent intent = new Intent(this, HomeActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
 }

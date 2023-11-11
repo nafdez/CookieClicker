@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. -->
     <!-- Theme.Material3.DayNight.NoActionBar -->
     <style name="Base.Theme.Contador" parent="Theme.Material3.DayNight.NoActionBar">
@@ -79,7 +79,7 @@
         <item name="android:backgroundTint">@color/dark_moss_green</item>
     </style>
 
-    <style name="options">
+    <style name="generic_list_view_style">
         <item name="android:background">@drawable/options_shape</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>

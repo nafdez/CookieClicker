@@ -39,4 +39,5 @@
     <string name="game_info_message_dialog">This a basic CookieClicker project for an android course</string>
     <string name="game_info_title_dialog">Info</string>
     <string name="game_info_donate_dialog">donate</string>
+    <string name="ranking_title">Ranking</string>
 </resources>

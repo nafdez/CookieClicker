@@ -26,11 +26,12 @@
 
             <LinearLayout
                 style="@style/info_bar_child"
-                android:background="@drawable/child_info_bar">
+                android:background="@drawable/child_info_bar"
+                android:layout_weight="0">
 
                 <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:layout_marginEnd="4dp"
                     android:contentDescription="@string/shop_coins_content_description"
                     android:onClick="returnOnClick"
@@ -44,7 +45,7 @@
                 <ImageView
 
                     android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_height="48dp"
                     android:layout_marginEnd="4dp"
                     android:contentDescription="@string/shop_coins_content_description"
                     app:srcCompat="@drawable/ic_gen_coin_level_3" />
@@ -61,7 +62,7 @@
 
                 <ImageView
                     android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_height="48dp"
                     android:layout_marginEnd="4dp"
                     android:contentDescription="@string/game_money_value_per_click_content_description"
                     app:srcCompat="@drawable/ic_gen_bucks" />
@@ -77,7 +78,7 @@
 
                 <ImageView
                     android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_height="48dp"
                     android:layout_marginEnd="4dp"
                     android:contentDescription="@string/game_auto_click_content_description"
                     app:srcCompat="@drawable/ic_gen_robot_money" />

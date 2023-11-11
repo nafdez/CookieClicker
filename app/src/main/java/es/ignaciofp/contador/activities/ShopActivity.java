@@ -2,6 +2,8 @@ package es.ignaciofp.contador.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
@@ -20,6 +22,8 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import es.ignaciofp.contador.R;
 import es.ignaciofp.contador.adapters.AdapterUpgrade;
@@ -29,8 +33,6 @@ import es.ignaciofp.contador.utils.RecyclerUpgradeClickListener;
 import es.ignaciofp.contador.utils.UpgradeDecorator;
 
 public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeClickListener.OnItemClickListener {
-
-    private SharedPreferences.Editor editor;
 
     // Recycler view
     private ArrayList<Upgrade> upgradeList;
@@ -44,10 +46,10 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
     private final CustomBigInteger megaAutoBasePrice = new CustomBigInteger("2670");
 
     // Actual prices
-    private CustomBigInteger basicPrice = basicBasePrice;
-    private CustomBigInteger megaPrice = megaBasePrice;
-    private CustomBigInteger autoPrice = autoBasePrice;
-    private CustomBigInteger megaAutoPrice = megaAutoBasePrice;
+    private CustomBigInteger basicPrice;
+    private CustomBigInteger megaPrice;
+    private CustomBigInteger autoPrice;
+    private CustomBigInteger megaAutoPrice;
 
     // Values
     private CustomBigInteger coins;
@@ -59,21 +61,38 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
     private TextView textClickValue;
     private TextView textAutoClickValue;
 
+    SoundPool soundPool;
+    int soundUpgradeId;
+    private final ExecutorService EXECUTOR_POOL = Executors.newFixedThreadPool(1);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shop);
 
-        // Shared preferences
-        SharedPreferences sharedPref = getPreferences(MODE_PRIVATE);
-        editor = sharedPref.edit();
-
         // Getting values from bundle
         Bundle bundle = getIntent().getExtras();
 
-        coins = new CustomBigInteger(Objects.requireNonNull(bundle).getString(getString(R.string.PREF_COINS), "0"));
-        clickValue = new CustomBigInteger(Objects.requireNonNull(bundle).getString(getString(R.string.PREF_CLICK_VALUE), "1"));
-        autoClickValue = new CustomBigInteger(Objects.requireNonNull(bundle).getString(getString(R.string.PREF_AUTO_CLICK_VALUE), "0"));
+        if(bundle != null) {
+            coins = new CustomBigInteger(Objects.requireNonNull(bundle).getString(getString(R.string.PREF_COINS), "0"));
+            clickValue = new CustomBigInteger(Objects.requireNonNull(bundle).getString(getString(R.string.PREF_CLICK_VALUE), "1"));
+            autoClickValue = new CustomBigInteger(Objects.requireNonNull(bundle).getString(getString(R.string.PREF_AUTO_CLICK_VALUE), "0"));
+            basicPrice = new CustomBigInteger(Objects.requireNonNull(bundle).getString(getString(R.string.PREF_BASIC_PRICE), basicBasePrice.toString()));
+            megaPrice = new CustomBigInteger(Objects.requireNonNull(bundle).getString(getString(R.string.PREF_MEGA_PRICE), megaBasePrice.toString()));
+            autoPrice = new CustomBigInteger(Objects.requireNonNull(bundle).getString(getString(R.string.PREF_AUTO_PRICE), autoBasePrice.toString()));
+            megaAutoPrice = new CustomBigInteger(Objects.requireNonNull(bundle).getString(getString(R.string.PREF_MEGA_AUTO_PRICE), megaAutoBasePrice.toString()));
+        } else {
+            coins = new CustomBigInteger("0");
+            clickValue = new CustomBigInteger("1");
+            autoClickValue = new CustomBigInteger("0");
+            basicPrice = basicBasePrice;
+            megaPrice = megaBasePrice;
+            autoPrice = autoBasePrice;
+            megaAutoPrice = megaAutoBasePrice;
+        }
+
+        soundPool = new SoundPool.Builder().setMaxStreams(1).build();
+        soundUpgradeId = soundPool.load(this, R.raw.sound_upgrade_buy, 1);
 
         // View Assignment
         textCoins = findViewById(R.id.text_shop_coins);
@@ -82,12 +101,6 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
         textClickValue.setText(clickValue.withSuffix("§/click"));
         textAutoClickValue = findViewById(R.id.text_auto_click);
         textAutoClickValue.setText(autoClickValue.withSuffix("§/s"));
-
-        // Restoring prices
-        basicPrice = new CustomBigInteger(sharedPref.getString(getString(R.string.PREF_BASIC_PRICE), basicBasePrice.toString()));
-        megaPrice = new CustomBigInteger(sharedPref.getString(getString(R.string.PREF_MEGA_PRICE), megaBasePrice.toString()));
-        autoPrice = new CustomBigInteger(sharedPref.getString(getString(R.string.PREF_AUTO_PRICE), autoBasePrice.toString()));
-        megaAutoPrice = new CustomBigInteger(sharedPref.getString(getString(R.string.PREF_MEGA_AUTO_PRICE), megaAutoBasePrice.toString()));
 
         // Setting recycler view
         upgradesRecycler = findViewById(R.id.recycler_upgrades);
@@ -110,7 +123,6 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
     @Override
     protected void onPause() {
         super.onPause();
-        savePrefs();
     }
 
     /**
@@ -175,23 +187,11 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
         intent.putExtra(getString(R.string.PREF_CLICK_VALUE), clickValue.toString());
         intent.putExtra(getString(R.string.PREF_AUTO_CLICK_VALUE), autoClickValue.toString());
         intent.putExtra(getString(R.string.PREF_BASIC_PRICE), basicPrice.toString());
+        intent.putExtra(getString(R.string.PREF_MEGA_PRICE), megaPrice.toString());
+        intent.putExtra(getString(R.string.PREF_AUTO_PRICE), autoPrice.toString());
+        intent.putExtra(getString(R.string.PREF_MEGA_AUTO_PRICE), megaAutoPrice.toString());
         startActivity(intent);
-        savePrefs();
         finish();
-    }
-
-    /**
-     * Saves all the prices and click values to the sharedPrefs
-     */
-    public void savePrefs() {
-        editor.putString(getString(R.string.PREF_COINS), coins.toString());
-        editor.putString(getString(R.string.PREF_CLICK_VALUE), clickValue.toString());
-        editor.putString(getString(R.string.PREF_AUTO_CLICK_VALUE), autoClickValue.toString());
-        editor.putString(getString(R.string.PREF_BASIC_PRICE), basicPrice.toString());
-        editor.putString(getString(R.string.PREF_MEGA_PRICE), megaPrice.toString());
-        editor.putString(getString(R.string.PREF_AUTO_PRICE), autoPrice.toString());
-        editor.putString(getString(R.string.PREF_MEGA_AUTO_PRICE), megaAutoPrice.toString());
-        editor.apply();
     }
 
     /**
@@ -241,6 +241,9 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
 
     private CustomBigInteger[] onPurchaseAction(Button button, TextView infoTextView, String msg, CustomBigInteger actualClickValue, CustomBigInteger price, CustomBigInteger basePrice, BigDecimal priceFactor, BigDecimal valueFactor) {
         if (coins.compareTo(price) >= 0) {
+            EXECUTOR_POOL.submit(() -> {
+                soundPool.play(soundUpgradeId, 1, 1, 1, 0, 1);
+            });
             coins = coins.subtract(price);
 
             price = basePrice.add(new BigDecimal(price).multiply(priceFactor).toBigInteger());
@@ -250,9 +253,6 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
             button.setText(price.withSuffix("§"));
             infoTextView.setText(actualClickValue.withSuffix(msg));
 
-            ScaleAnimation fade_in = new ScaleAnimation(0.7f, 1.0f, 0.7f, 1.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-            fade_in.setDuration(100);
-            button.startAnimation(fade_in);
             new Thread(this::updateDisabledButtons).start();
         }
         return new CustomBigInteger[]{actualClickValue, price};
@@ -261,6 +261,9 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
     // -1 <; 0 ==; 1 >;
     private CustomBigInteger[] onPurchaseAction(Button button, TextView infoTextView, String msg, CustomBigInteger actualClickValue, CustomBigInteger price, CustomBigInteger basePrice, BigDecimal priceFactor, BigInteger toAddValue) {
         if (coins.compareTo(price) >= 0) {
+            EXECUTOR_POOL.submit(() -> {
+               soundPool.play(soundUpgradeId, 1, 1, 1, 0, 1);
+            });
             coins = coins.subtract(price);
 
             price = basePrice.add(new BigDecimal(price).divide(priceFactor, 0, RoundingMode.CEILING).toBigInteger());
@@ -270,9 +273,6 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
             button.setText(price.withSuffix("§"));
             infoTextView.setText(actualClickValue.withSuffix(msg));
 
-            ScaleAnimation fade_in = new ScaleAnimation(0.7f, 1.0f, 0.7f, 1.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-            fade_in.setDuration(100);
-            button.startAnimation(fade_in);
             new Thread(this::updateDisabledButtons).start();
         }
         return new CustomBigInteger[]{actualClickValue, price};

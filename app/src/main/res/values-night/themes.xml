@@ -79,7 +79,7 @@
         <item name="android:backgroundTint">@color/buttonShoppingEnabledDark</item>
     </style>
 
-    <style name="options">
+    <style name="generic_list_view_style">
         <item name="android:background">@drawable/options_shape_dark</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
