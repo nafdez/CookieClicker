@@ -101,10 +101,10 @@ public class GameActivity extends AppCompatActivity {
         if (hasReachedMaxValue) onGameEndDialogCreator();
         gameLoop();
     }
-
+    
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onDestroy() {
+        super.onDestroy();
         EXECUTOR_POOL.shutdown();
     }
 
