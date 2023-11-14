@@ -1,7 +1,9 @@
 package es.ignaciofp.contador.activities;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ListView;
 
@@ -111,5 +113,10 @@ public class OptionsActivity extends AppCompatActivity implements CompoundButton
             // Setting theme to light mode
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         }
+    }
+
+    public void returnOnClick(View view) {
+        startActivity(new Intent(this, HomeActivity.class));
+        finish();
     }
 }
