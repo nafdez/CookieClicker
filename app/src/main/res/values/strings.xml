@@ -16,7 +16,7 @@
     <string name="launch_welcome_text">Welcome to the best Cookie Clicker!</string>
     <string name="launch_play_button_text">Play</string>
     <string name="launch_options_button_text">Options</string>
-    <string name="launch_info_button_text">Info</string>
+    <string name="launch_info_button_text">Ranking</string>
     <string name="launch_exit_button_text">Exit</string>
 
     <string name="options_title">Options</string>
@@ -40,4 +40,6 @@
     <string name="game_info_title_dialog">Info</string>
     <string name="game_info_donate_dialog">donate</string>
     <string name="ranking_title">Ranking</string>
+    <string name="auth_play_button_text">Play now!</string>
+    <string name="auth_hint_input_text">Username</string>
 </resources>

@@ -17,11 +17,11 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     /**
-     * Launches GameActivity
+     * Launches AuthActivity
      * @param view the view being clicked
      */
-    public void launchGameActivity(View view) {
-        startActivity(new Intent(this, GameActivity.class));
+    public void launchAuthActivity(View view) {
+        startActivity(new Intent(this, AuthActivity.class));
     }
 
     /**

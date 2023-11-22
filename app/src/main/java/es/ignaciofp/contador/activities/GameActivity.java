@@ -19,12 +19,17 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import es.ignaciofp.contador.R;
+import es.ignaciofp.contador.models.User;
+import es.ignaciofp.contador.services.GameService;
+import es.ignaciofp.contador.utils.AppConstants;
 import es.ignaciofp.contador.utils.CustomBigInteger;
 
 public class GameActivity extends AppCompatActivity {
 
     private static final BigInteger GAME_BI_MAX_VALUE = new BigInteger("999999999999999999999999999999999"); // Hardcoded BigInteger limit
     private SharedPreferences.Editor editor;
+
+    private GameService gameService;
 
     // Views
     private TextView textCoins;
@@ -56,23 +61,27 @@ public class GameActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
 
         // Bundle is null always but when coming back from the shop
-        if (bundle != null) {
-            coins = new CustomBigInteger(bundle.getString(getString(R.string.PREF_COINS), "0"));
-            clickValue = new CustomBigInteger(bundle.getString(getString(R.string.PREF_CLICK_VALUE), "1"));
-            autoClickValue = new CustomBigInteger(bundle.getString(getString(R.string.PREF_AUTO_CLICK_VALUE), "0"));
-            basicPrice = new CustomBigInteger(bundle.getString(getString(R.string.PREF_BASIC_PRICE), "100")); // Hardcoded por no dar mucha vuelta
-            megaPrice = new CustomBigInteger(bundle.getString(getString(R.string.PREF_MEGA_PRICE), "1000")); // Hardcoded por no dar mucha vuelta
-            autoPrice = new CustomBigInteger(bundle.getString(getString(R.string.PREF_AUTO_PRICE), "450")); // Hardcoded por no dar mucha vuelta
-            megaAutoPrice = new CustomBigInteger(bundle.getString(getString(R.string.PREF_MEGA_AUTO_PRICE), "2670")); // Hardcoded por no dar mucha vuelta
-        } else{
-            coins = new CustomBigInteger("0");
-            clickValue = new CustomBigInteger("1");
-            autoClickValue = new CustomBigInteger("0");
-            basicPrice = new CustomBigInteger("100"); // Hardcoded por no dar mucha vuelta
-            megaPrice = new CustomBigInteger("1000"); // Hardcoded por no dar mucha vuelta
-            autoPrice = new CustomBigInteger("450"); // Hardcoded por no dar mucha vuelta
-            megaAutoPrice = new CustomBigInteger("2670"); // Hardcoded por no dar much
+        if(bundle != null) {
+            User user = (User) bundle.getSerializable(AppConstants.USER_KEY);
+            gameService = GameService.getInstance(this, user);
         }
+//        if (bundle != null) {
+//            coins = new CustomBigInteger(bundle.getString(getString(R.string.PREF_COINS), "0"));
+//            clickValue = new CustomBigInteger(bundle.getString(getString(R.string.PREF_CLICK_VALUE), "1"));
+//            autoClickValue = new CustomBigInteger(bundle.getString(getString(R.string.PREF_AUTO_CLICK_VALUE), "0"));
+//            basicPrice = new CustomBigInteger(bundle.getString(getString(R.string.PREF_BASIC_PRICE), "100")); // Hardcoded por no dar mucha vuelta
+//            megaPrice = new CustomBigInteger(bundle.getString(getString(R.string.PREF_MEGA_PRICE), "1000")); // Hardcoded por no dar mucha vuelta
+//            autoPrice = new CustomBigInteger(bundle.getString(getString(R.string.PREF_AUTO_PRICE), "450")); // Hardcoded por no dar mucha vuelta
+//            megaAutoPrice = new CustomBigInteger(bundle.getString(getString(R.string.PREF_MEGA_AUTO_PRICE), "2670")); // Hardcoded por no dar mucha vuelta
+//        } else{
+//            coins = new CustomBigInteger("0");
+//            clickValue = new CustomBigInteger("1");
+//            autoClickValue = new CustomBigInteger("0");
+//            basicPrice = new CustomBigInteger("100"); // Hardcoded por no dar mucha vuelta
+//            megaPrice = new CustomBigInteger("1000"); // Hardcoded por no dar mucha vuelta
+//            autoPrice = new CustomBigInteger("450"); // Hardcoded por no dar mucha vuelta
+//            megaAutoPrice = new CustomBigInteger("2670"); // Hardcoded por no dar much
+//        }
         hasReachedMaxValue = false;
 
         soundPool = new SoundPool.Builder().setMaxStreams(1).build();

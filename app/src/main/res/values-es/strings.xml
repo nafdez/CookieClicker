@@ -19,10 +19,12 @@
     <string name="launch_welcome_text">¡Bienvenido al mejor Cookie Clicker!</string>
     <string name="launch_play_button_text">Jugar</string>
     <string name="launch_options_button_text">Opciones</string>
-    <string name="launch_info_button_text">Info</string>
+    <string name="launch_info_button_text">Clasificación</string>
     <string name="launch_exit_button_text">Salir</string>
     <string name="game_info_message_dialog">CookieClicker hecho para una práctica de PDMD en el ciclo de formación superior DAM</string>
     <string name="game_info_title_dialog">Información</string>
     <string name="game_info_donate_dialog">donar</string>
     <string name="ranking_title">Clasificación</string>
+    <string name="auth_play_button_text">Juega ahora</string>
+    <string name="auth_hint_input_text">Nombre de usuario</string>
 </resources>

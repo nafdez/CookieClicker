@@ -44,7 +44,7 @@
         <Button
             style="@style/buttonPrimary"
             android:layout_marginBottom="2dp"
-            android:onClick="launchGameActivity"
+            android:onClick="launchAuthActivity"
             android:text="@string/launch_play_button_text" />
 
         <Button
