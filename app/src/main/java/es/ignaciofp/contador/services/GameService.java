@@ -13,7 +13,7 @@ public class GameService {
     private static GameService instance;
     private User user;
     private UserService userService;
-    private CustomBigInteger coinRate;
+    private CustomBigInteger coinRate = new CustomBigInteger("0");
 
     public GameService(Context context, User user) {
         this.user = user;
@@ -25,6 +25,14 @@ public class GameService {
             instance = new GameService(context, user);
         }
         return instance;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public CustomBigInteger getCoinRate() {
+        return coinRate;
     }
 
     /**

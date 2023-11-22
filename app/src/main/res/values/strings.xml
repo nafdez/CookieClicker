@@ -42,4 +42,9 @@
     <string name="ranking_title">Ranking</string>
     <string name="auth_play_button_text">Play now!</string>
     <string name="auth_hint_input_text">Username</string>
+    <string name="gen_dialog_pos_button">Ok</string>
+    <string name="game_reset_dialog_title">Reset</string>
+    <string name="gen_dialog_neg_button">Cancel</string>
+    <string name="game_reset_dialog_message">Are you sure you wanna reset all your data?</string>
+    <string name="game_max_value_dialog_message">Congratulations, you\'ve finished the game but please, get a life</string>
 </resources>

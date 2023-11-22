@@ -28,33 +28,21 @@ import java.util.concurrent.Executors;
 import es.ignaciofp.contador.R;
 import es.ignaciofp.contador.adapters.AdapterUpgrade;
 import es.ignaciofp.contador.models.Upgrade;
+import es.ignaciofp.contador.models.User;
+import es.ignaciofp.contador.services.GameService;
+import es.ignaciofp.contador.utils.AppConstants;
 import es.ignaciofp.contador.utils.CustomBigInteger;
 import es.ignaciofp.contador.utils.RecyclerUpgradeClickListener;
 import es.ignaciofp.contador.utils.UpgradeDecorator;
 
 public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeClickListener.OnItemClickListener {
 
+    private GameService gameService;
+
     // Recycler view
     private ArrayList<Upgrade> upgradeList;
     private AdapterUpgrade adapterUpgrade;
     private RecyclerView upgradesRecycler;
-
-    // Base prices
-    private final CustomBigInteger basicBasePrice = new CustomBigInteger("100");
-    private final CustomBigInteger megaBasePrice = new CustomBigInteger("1000");
-    private final CustomBigInteger autoBasePrice = new CustomBigInteger("450");
-    private final CustomBigInteger megaAutoBasePrice = new CustomBigInteger("2670");
-
-    // Actual prices
-    private CustomBigInteger basicPrice;
-    private CustomBigInteger megaPrice;
-    private CustomBigInteger autoPrice;
-    private CustomBigInteger megaAutoPrice;
-
-    // Values
-    private CustomBigInteger coins;
-    private CustomBigInteger clickValue;
-    private CustomBigInteger autoClickValue;
 
     // Views
     TextView textCoins;
@@ -70,37 +58,19 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shop);
 
-        // Getting values from bundle
-        Bundle bundle = getIntent().getExtras();
-
-        if(bundle != null) {
-            coins = new CustomBigInteger(Objects.requireNonNull(bundle).getString(getString(R.string.PREF_COINS), "0"));
-            clickValue = new CustomBigInteger(Objects.requireNonNull(bundle).getString(getString(R.string.PREF_CLICK_VALUE), "1"));
-            autoClickValue = new CustomBigInteger(Objects.requireNonNull(bundle).getString(getString(R.string.PREF_AUTO_CLICK_VALUE), "0"));
-            basicPrice = new CustomBigInteger(Objects.requireNonNull(bundle).getString(getString(R.string.PREF_BASIC_PRICE), basicBasePrice.toString()));
-            megaPrice = new CustomBigInteger(Objects.requireNonNull(bundle).getString(getString(R.string.PREF_MEGA_PRICE), megaBasePrice.toString()));
-            autoPrice = new CustomBigInteger(Objects.requireNonNull(bundle).getString(getString(R.string.PREF_AUTO_PRICE), autoBasePrice.toString()));
-            megaAutoPrice = new CustomBigInteger(Objects.requireNonNull(bundle).getString(getString(R.string.PREF_MEGA_AUTO_PRICE), megaAutoBasePrice.toString()));
-        } else {
-            coins = new CustomBigInteger("0");
-            clickValue = new CustomBigInteger("1");
-            autoClickValue = new CustomBigInteger("0");
-            basicPrice = basicBasePrice;
-            megaPrice = megaBasePrice;
-            autoPrice = autoBasePrice;
-            megaAutoPrice = megaAutoBasePrice;
-        }
+        gameService = GameService.getInstance(this, null);
+        User user = gameService.getUser();
 
         soundPool = new SoundPool.Builder().setMaxStreams(1).build();
         soundUpgradeId = soundPool.load(this, R.raw.sound_upgrade_buy, 1);
 
         // View Assignment
         textCoins = findViewById(R.id.text_shop_coins);
-        textCoins.setText(coins.withSuffix("§"));
+        textCoins.setText(user.getCoins().withSuffix("§"));
         textClickValue = findViewById(R.id.text_click_value);
-        textClickValue.setText(clickValue.withSuffix("§/click"));
+        textClickValue.setText(user.getClickValue().withSuffix("§/click"));
         textAutoClickValue = findViewById(R.id.text_auto_click);
-        textAutoClickValue.setText(autoClickValue.withSuffix("§/s"));
+        textAutoClickValue.setText(user.getAutoClickValue().withSuffix("§/s"));
 
         // Setting recycler view
         upgradesRecycler = findViewById(R.id.recycler_upgrades);
@@ -111,10 +81,10 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
         upgradeList = new ArrayList<>();
 
         // Generating upgrade options
-        generateUpgradeButton("basic", getString(R.string.shop_upgrade_basic_text), "+1", basicPrice);
-        generateUpgradeButton("auto", getString(R.string.shop_upgrade_auto_text), "+1", autoPrice);
-        generateUpgradeButton("mega", getString(R.string.shop_upgrade_mega_text), "+0.35%", megaPrice);
-        generateUpgradeButton("mega_auto", getString(R.string.shop_upgrade_mega_auto_text), "+0.35%", megaAutoPrice);
+        generateUpgradeButton("basic", getString(R.string.shop_upgrade_basic_text), "+1", user.getBasicPrice());
+        generateUpgradeButton("auto", getString(R.string.shop_upgrade_auto_text), "+1", user.getAutoPrice());
+        generateUpgradeButton("mega", getString(R.string.shop_upgrade_mega_text), "+0.35%", user.getMegaPrice());
+        generateUpgradeButton("mega_auto", getString(R.string.shop_upgrade_mega_auto_text), "+0.35%", user.getMegaAutoPrice());
 
         updateUI();
         gameLoop();
@@ -123,6 +93,12 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
     @Override
     protected void onPause() {
         super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        gameService.saveData();
     }
 
     /**
@@ -138,30 +114,32 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
         CustomBigInteger[] values;
         CustomBigInteger newPrice = new CustomBigInteger("0");
 
+        User user = gameService.getUser();
+
         switch (button.getTag().toString()) {
             case "basic":
-                values = onPurchaseAction(button, textClickValue, "§/click", clickValue, basicPrice, basicBasePrice, new BigDecimal("1.03"), new BigInteger("1"));
-                clickValue = values[0];
-                basicPrice = values[1];
-                newPrice = basicPrice;
+                values = onPurchaseAction(button, textClickValue, "§/click", user.getClickValue(), user.getBasicPrice(), AppConstants.DEFAULT_BASIC_PRICE, new BigDecimal("1.03"), new BigInteger("1"));
+                user.setClickValue(values[0]);
+                user.setBasicPrice(values[1]);
+                newPrice = user.getBasicPrice();
                 break;
             case "mega":
-                values = onPurchaseAction(button, textClickValue, "§/click", clickValue, megaPrice, megaBasePrice, new BigDecimal("1.07"), new BigDecimal("1.35"));
-                clickValue = values[0];
-                megaPrice = values[1];
-                newPrice = megaPrice;
+                values = onPurchaseAction(button, textClickValue, "§/click", user.getClickValue(), user.getMegaPrice(), AppConstants.DEFAULT_MEGA_PRICE, new BigDecimal("1.07"), new BigDecimal("1.35"));
+                user.setClickValue(values[0]);
+                user.setMegaPrice(values[1]);
+                newPrice = user.getMegaPrice();
                 break;
             case "auto":
-                values = onPurchaseAction(button, textAutoClickValue, "§/s", autoClickValue, autoPrice, autoBasePrice, new BigDecimal("1.05"), new BigInteger("1"));
-                autoClickValue = values[0];
-                autoPrice = values[1];
-                newPrice = autoPrice;
+                values = onPurchaseAction(button, textAutoClickValue, "§/s", user.getAutoClickValue(), user.getAutoPrice(), AppConstants.DEFAULT_AUTO_PRICE, new BigDecimal("1.05"), new BigInteger("1"));
+                user.setAutoClickValue(values[0]);
+                user.setAutoPrice(values[1]);
+                newPrice = user.getAutoPrice();
                 break;
             case "mega_auto":
-                values = onPurchaseAction(button, textAutoClickValue, "§/s", autoClickValue, megaAutoPrice, megaAutoBasePrice, new BigDecimal("1.08"), new BigDecimal("1.35"));
-                autoClickValue = values[0];
-                megaAutoPrice = values[1];
-                newPrice = megaAutoPrice;
+                values = onPurchaseAction(button, textAutoClickValue, "§/s", user.getAutoClickValue(), user.getMegaAutoPrice(), AppConstants.DEFAULT_MEGA_AUTO_PRICE, new BigDecimal("1.08"), new BigDecimal("1.35"));
+                user.setAutoClickValue(values[0]);
+                user.setMegaAutoPrice(values[1]);
+                newPrice = user.getMegaAutoPrice();
                 break;
         }
 
@@ -183,13 +161,6 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
      */
     public void returnOnClick(View view) {
         Intent intent = new Intent(this, GameActivity.class);
-        intent.putExtra(getString(R.string.PREF_COINS), coins.toString());
-        intent.putExtra(getString(R.string.PREF_CLICK_VALUE), clickValue.toString());
-        intent.putExtra(getString(R.string.PREF_AUTO_CLICK_VALUE), autoClickValue.toString());
-        intent.putExtra(getString(R.string.PREF_BASIC_PRICE), basicPrice.toString());
-        intent.putExtra(getString(R.string.PREF_MEGA_PRICE), megaPrice.toString());
-        intent.putExtra(getString(R.string.PREF_AUTO_PRICE), autoPrice.toString());
-        intent.putExtra(getString(R.string.PREF_MEGA_AUTO_PRICE), megaAutoPrice.toString());
         startActivity(intent);
         finish();
     }
@@ -199,13 +170,14 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
      */
     @SuppressWarnings("BusyWait")
     private void gameLoop() {
+        User user = gameService.getUser();
         new Thread(() -> {
             while (true) {
                 try {
                     Thread.sleep(1000);
-                    if (autoClickValue.compareTo(BigInteger.valueOf(0)) > 0) {
-                        coins = coins.add(autoClickValue);
-                        runOnUiThread(() -> textCoins.setText(coins.withSuffix("§")));
+                    if (user.getAutoClickValue().compareTo(BigInteger.valueOf(0)) > 0) {
+                        user.setCoins(user.getCoins().add(user.getAutoClickValue()));
+                        runOnUiThread(() -> textCoins.setText(user.getCoins().withSuffix("§")));
                         new Thread(this::updateDisabledButtons).start();
                     }
                 } catch (InterruptedException e) {
@@ -240,16 +212,17 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
     }
 
     private CustomBigInteger[] onPurchaseAction(Button button, TextView infoTextView, String msg, CustomBigInteger actualClickValue, CustomBigInteger price, CustomBigInteger basePrice, BigDecimal priceFactor, BigDecimal valueFactor) {
-        if (coins.compareTo(price) >= 0) {
+        User user = gameService.getUser();
+        if (user.getCoins().compareTo(price) >= 0) {
             EXECUTOR_POOL.submit(() -> {
                 soundPool.play(soundUpgradeId, 1, 1, 1, 0, 1);
             });
-            coins = coins.subtract(price);
+            user.setCoins(user.getCoins().subtract(price));
 
             price = basePrice.add(new BigDecimal(price).multiply(priceFactor).toBigInteger());
             actualClickValue = CustomBigInteger.toCustomBigInteger(new BigDecimal(actualClickValue).multiply(valueFactor));
 
-            textCoins.setText(coins.withSuffix("§"));
+            textCoins.setText(user.getCoins().withSuffix("§"));
             button.setText(price.withSuffix("§"));
             infoTextView.setText(actualClickValue.withSuffix(msg));
 
@@ -260,16 +233,17 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
 
     // -1 <; 0 ==; 1 >;
     private CustomBigInteger[] onPurchaseAction(Button button, TextView infoTextView, String msg, CustomBigInteger actualClickValue, CustomBigInteger price, CustomBigInteger basePrice, BigDecimal priceFactor, BigInteger toAddValue) {
-        if (coins.compareTo(price) >= 0) {
+        User user = gameService.getUser();
+        if (user.getCoins().compareTo(price) >= 0) {
             EXECUTOR_POOL.submit(() -> {
                soundPool.play(soundUpgradeId, 1, 1, 1, 0, 1);
             });
-            coins = coins.subtract(price);
+            user.setCoins(user.getCoins().subtract(price));
 
             price = basePrice.add(new BigDecimal(price).divide(priceFactor, 0, RoundingMode.CEILING).toBigInteger());
             actualClickValue = actualClickValue.add(toAddValue);
 
-            textCoins.setText(coins.withSuffix("§"));
+            textCoins.setText(user.getCoins().withSuffix("§"));
             button.setText(price.withSuffix("§"));
             infoTextView.setText(actualClickValue.withSuffix(msg));
 
@@ -279,9 +253,10 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
     }
 
     private void updateDisabledButtons() {
+        User user = gameService.getUser();
         for (int i = 0; i < upgradeList.size(); i++) {
             Upgrade upgrade = upgradeList.get(i);
-            if (coins.compareTo(upgrade.getPrice()) >= 0) {
+            if (user.getCoins().compareTo(upgrade.getPrice()) >= 0) {
                 final int position = i;
                 runOnUiThread(() -> {
                     upgrade.setEnabled(true);
