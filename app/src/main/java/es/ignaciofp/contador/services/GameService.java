@@ -53,6 +53,7 @@ public class GameService {
         user.setMegaPrice(AppConstants.DEFAULT_MEGA_PRICE);
         user.setAutoPrice(AppConstants.DEFAULT_AUTO_PRICE);
         user.setMegaAutoPrice(AppConstants.DEFAULT_MEGA_AUTO_PRICE);
+        user.setHasMaxValue(false);
     }
 
     /**

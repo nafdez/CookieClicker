@@ -36,6 +36,11 @@ public class UserService {
         return userList.isEmpty() ? null : userList.get(0);
     }
 
+    public User getUserByNameAndPassword(String name, String password) {
+        ArrayList<User> userList = dbHandler.readUsers(DBHandler.NAME_COLUMN + "='" + name + "' AND " + DBHandler.PASSWORD_COLUMN + "='" + password + "'");
+        return userList.isEmpty()? null : userList.get(0);
+    }
+
     public void updateUser(User user) {
         dbHandler.updateUser(user);
     }

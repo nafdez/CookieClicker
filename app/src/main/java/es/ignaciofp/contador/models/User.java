@@ -9,6 +9,7 @@ public class User implements Serializable {
 
     private String id;
     private String name;
+    private String password;
 
     // GAME DATA
     private CustomBigInteger coins;
@@ -20,14 +21,16 @@ public class User implements Serializable {
     private CustomBigInteger megaPrice;
     private CustomBigInteger autoPrice;
     private CustomBigInteger megaAutoPrice;
+    private Boolean hasMaxValue;
 
-    public User(String name) {
-        this(null, name, AppConstants.DEFAULT_COINS, AppConstants.DEFAULT_CLICK_VALUE, AppConstants.DEFAULT_AUTO_CLICK_VALUE, AppConstants.DEFAULT_BASIC_PRICE, AppConstants.DEFAULT_MEGA_PRICE, AppConstants.DEFAULT_AUTO_PRICE, AppConstants.DEFAULT_MEGA_AUTO_PRICE);
+    public User(String name, String password) {
+        this(null, name, password, AppConstants.DEFAULT_COINS, AppConstants.DEFAULT_CLICK_VALUE, AppConstants.DEFAULT_AUTO_CLICK_VALUE, AppConstants.DEFAULT_BASIC_PRICE, AppConstants.DEFAULT_MEGA_PRICE, AppConstants.DEFAULT_AUTO_PRICE, AppConstants.DEFAULT_MEGA_AUTO_PRICE, false);
     }
 
-    public User(String id, String name, CustomBigInteger coins, CustomBigInteger clickValue, CustomBigInteger autoClickValue, CustomBigInteger basicPrice, CustomBigInteger megaPrice, CustomBigInteger autoPrice, CustomBigInteger megaAutoPrice) {
+    public User(String id, String name, String password, CustomBigInteger coins, CustomBigInteger clickValue, CustomBigInteger autoClickValue, CustomBigInteger basicPrice, CustomBigInteger megaPrice, CustomBigInteger autoPrice, CustomBigInteger megaAutoPrice, boolean hasMaxValue) {
         this.id = id;
         this.name = name;
+        this.password = password;
         this.coins = coins;
         this.clickValue = clickValue;
         this.autoClickValue = autoClickValue;
@@ -35,6 +38,7 @@ public class User implements Serializable {
         this.megaPrice = megaPrice;
         this.autoPrice = autoPrice;
         this.megaAutoPrice = megaAutoPrice;
+        this.hasMaxValue = hasMaxValue;
     }
 
     public String getId() {
@@ -51,6 +55,14 @@ public class User implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public CustomBigInteger getCoins() {
@@ -107,5 +119,13 @@ public class User implements Serializable {
 
     public void setMegaAutoPrice(CustomBigInteger megaAutoPrice) {
         this.megaAutoPrice = megaAutoPrice;
+    }
+
+    public Boolean getHasMaxValue() {
+        return hasMaxValue;
+    }
+
+    public void setHasMaxValue(Boolean hasMaxValue) {
+        this.hasMaxValue = hasMaxValue;
     }
 }

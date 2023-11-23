@@ -5,6 +5,7 @@
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
         <item name="fontFamily">@font/acme</item>
+        <item name="android:statusBarColor">@color/cambridge_blue</item>
     </style>
 
     <style name="Theme.Contador" parent="Base.Theme.Contador" />

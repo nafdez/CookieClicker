@@ -91,14 +91,16 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onStop() {
+        super.onStop();
+        gameService.saveData();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        gameService.saveData();
+        soundPool.stop(soundUpgradeId);
+        soundPool.release();
     }
 
     /**

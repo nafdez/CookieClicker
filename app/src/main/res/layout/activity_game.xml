@@ -19,7 +19,7 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.295" />
+        app:layout_constraintVertical_bias="0.395" />
 
     <ImageView
         android:id="@+id/image_actionable_coins"
@@ -48,8 +48,8 @@
 
         <LinearLayout
             style="@style/info_bar_child"
-            android:background="@drawable/child_info_bar"
-            android:layout_weight="0">
+            android:layout_weight="0"
+            android:background="@drawable/child_info_bar">
 
             <ImageView
                 android:layout_width="48dp"
@@ -114,6 +114,7 @@
     </LinearLayout>
 
     <ImageView
+        android:id="@+id/imageView3"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:onClick="shopImageOnClick"
@@ -122,11 +123,10 @@
         app:layout_constraintHorizontal_bias="0.044"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.148"
+        app:layout_constraintVertical_bias="0.137"
         app:srcCompat="@drawable/ic_gen_money_bag" />
 
     <ImageView
-        android:id="@+id/imageView"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:onClick="infoImageOnClick"
@@ -135,7 +135,19 @@
         app:layout_constraintHorizontal_bias="0.956"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.148"
+        app:layout_constraintVertical_bias="0.137"
         app:srcCompat="@drawable/ic_info" />
 
+    <ImageView
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="12dp"
+        android:onClick="resetOnClick"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView3"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintHorizontal_bias="0.044"
+        app:srcCompat="@drawable/ic_reset" />
 </androidx.constraintlayout.widget.ConstraintLayout>

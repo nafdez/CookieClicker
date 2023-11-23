@@ -47,4 +47,7 @@
     <string name="game_max_value_dialog_message">Congratulations, you\'ve finished the game but please, get a life</string>
     <string name="options_music_name">Music</string>
     <string name="options_music_description">Turn music ON/OFF</string>
+    <string name="game_max_value_dialog_title">Game end</string>
+    <string name="game_max_value_dialog_neg_button">Reset</string>
+    <string name="auth_hint_password_input_text">Password</string>
 </resources>

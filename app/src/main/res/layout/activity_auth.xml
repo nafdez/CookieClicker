@@ -7,6 +7,16 @@
     android:layout_height="match_parent"
     tools:context=".activities.AuthActivity">
 
+    <TextView
+        android:id="@+id/authTitle"
+        style="@style/textview_style"
+        android:layout_marginBottom="48dp"
+        android:text="Sign in or sign up"
+        android:textSize="28sp"
+        app:layout_constraintBottom_toTopOf="@+id/nameInputView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/nameInputView"
         android:layout_width="343dp"
@@ -19,22 +29,44 @@
         android:textColor="@color/drab_dark_brown"
         android:textColorHint="@color/battleship_gray"
         android:textSize="16sp"
-
         app:counterTextColor="@color/drab_dark_brown"
-        app:layout_constraintBottom_toBottomOf="parent"
+
+        app:layout_constraintBottom_toTopOf="@+id/passwordInputView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/passwordInputView"
+        android:layout_width="343dp"
+        android:layout_height="48dp"
+        android:background="@drawable/input_text_shape"
+
+        android:hint="@string/auth_hint_password_input_text"
+        android:layout_marginTop="16dp"
+        android:paddingStart="13dp"
+        android:paddingEnd="13dp"
+        android:textColor="@color/drab_dark_brown"
+        android:textColorHint="@color/battleship_gray"
+        android:textSize="16sp"
+        app:counterTextColor="@color/drab_dark_brown"
+
+        app:layout_constraintBottom_toTopOf="@+id/playBtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nameInputView" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/playBtn"
         style="@style/buttonPrimary"
+        android:layout_marginTop="48dp"
 
         android:text="@string/auth_play_button_text"
 
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nameInputView" />
+        app:layout_constraintTop_toBottomOf="@+id/passwordInputView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

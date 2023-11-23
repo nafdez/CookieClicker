@@ -4,6 +4,7 @@
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
         <item name="fontFamily">@font/acme</item>
+        <item name="android:statusBarColor">@color/backgroundGenericDark</item>
     </style>
 
     <style name="Theme.Contador" parent="Base.Theme.Contador" />

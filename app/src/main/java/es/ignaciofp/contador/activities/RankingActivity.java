@@ -28,6 +28,9 @@ public class RankingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ranking);
 
+        mediaPlayer = MediaPlayer.create(this, R.raw.ranking_theme);
+        mediaPlayer.setLooping(true);
+
         RANKING_SERVICE = RankingService.getInstance(this);
 
         ListView rankingListView = findViewById(R.id.listview_ranking);
@@ -42,21 +45,21 @@ public class RankingActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         SharedPreferences sharedPref = getSharedPreferences(AppConstants.OPTIONS_PREF_KEY, MODE_PRIVATE);
-        mediaPlayer = MediaPlayer.create(this, R.raw.ranking_theme);
         if (sharedPref.getBoolean(AppConstants.OPTIONS_MUSIC_TAG, true)) {
             mediaPlayer.start();
         }
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        mediaPlayer.stop();
+    protected void onStop() {
+        super.onStop();
+        mediaPlayer.pause();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mediaPlayer.stop();
         mediaPlayer.release();
     }
 
