@@ -3,9 +3,11 @@ package es.ignaciofp.contador.activities;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
@@ -38,6 +40,7 @@ public class GameActivity extends AppCompatActivity {
 
     SoundPool soundPool;
     int soundClickId;
+    private MediaPlayer mediaPlayer;
     private final ExecutorService EXECUTOR_POOL = Executors.newFixedThreadPool(1);
 
     @Override
@@ -87,10 +90,29 @@ public class GameActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        SharedPreferences sharedPref = getSharedPreferences(AppConstants.OPTIONS_PREF_KEY, MODE_PRIVATE);
+        mediaPlayer = MediaPlayer.create(this, R.raw.main_theme);
+        if (sharedPref.getBoolean(AppConstants.OPTIONS_MUSIC_TAG, true)) {
+            mediaPlayer.start();
+        }
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mediaPlayer.stop();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
+        mediaPlayer.release();
         EXECUTOR_POOL.shutdown();
         gameService.saveData();
+        gameService.resetData();
     }
 
     /*  *//**
@@ -376,7 +398,7 @@ public class GameActivity extends AppCompatActivity {
      * Calls resetData method of both GameService and ShopService to reset all values
      */
     private void resetValues() {
-        gameService.resetData(this);
+        gameService.resetData();
         recreate();
     }
 

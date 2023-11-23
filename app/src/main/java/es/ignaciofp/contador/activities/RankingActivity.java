@@ -1,6 +1,7 @@
 package es.ignaciofp.contador.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
@@ -14,6 +15,7 @@ import es.ignaciofp.contador.R;
 import es.ignaciofp.contador.adapters.AdapterRanking;
 import es.ignaciofp.contador.models.Ranking;
 import es.ignaciofp.contador.services.RankingService;
+import es.ignaciofp.contador.utils.AppConstants;
 
 public class RankingActivity extends AppCompatActivity {
 
@@ -28,9 +30,6 @@ public class RankingActivity extends AppCompatActivity {
 
         RANKING_SERVICE = RankingService.getInstance(this);
 
-        mediaPlayer = MediaPlayer.create(this, R.raw.main_theme);
-        mediaPlayer.start();
-
         ListView rankingListView = findViewById(R.id.listview_ranking);
 
         List<Ranking> rankingList = RANKING_SERVICE.getRankingList();
@@ -40,9 +39,25 @@ public class RankingActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        SharedPreferences sharedPref = getSharedPreferences(AppConstants.OPTIONS_PREF_KEY, MODE_PRIVATE);
+        mediaPlayer = MediaPlayer.create(this, R.raw.ranking_theme);
+        if (sharedPref.getBoolean(AppConstants.OPTIONS_MUSIC_TAG, true)) {
+            mediaPlayer.start();
+        }
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
         mediaPlayer.stop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mediaPlayer.release();
     }
 
     public void returnOnClick(View view) {

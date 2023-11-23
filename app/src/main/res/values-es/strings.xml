@@ -27,4 +27,11 @@
     <string name="ranking_title">Clasificación</string>
     <string name="auth_play_button_text">Juega ahora</string>
     <string name="auth_hint_input_text">Nombre de usuario</string>
+    <string name="gen_dialog_pos_button">Vale</string>
+    <string name="game_reset_dialog_title">Reestablecer</string>
+    <string name="gen_dialog_neg_button">Cancelar</string>
+    <string name="game_reset_dialog_message">¿Estás seguro de querer empezar a jugar desde el principio? Esta acción no se puede deshacer.</string>
+    <string name="game_max_value_dialog_message">¡Felicidades! Has completado el juego. Por favor, proceda a tocar un poco de hierba.</string>
+    <string name="options_music_name">Música</string>
+    <string name="options_music_description">Apagar/Encender la música</string>
 </resources>

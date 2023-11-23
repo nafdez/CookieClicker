@@ -19,4 +19,9 @@ public class AppConstants {
 
     // KEYS
     public static final String USER_KEY = "user_key";
+
+    // OPTIONS TAGS AND KEYS
+    public static final String OPTIONS_PREF_KEY = "options_key";
+    public static final String OPTIONS_TOGGLE_THEME_TAG = "toggleTheme";
+    public static final String OPTIONS_MUSIC_TAG = "music";
 }

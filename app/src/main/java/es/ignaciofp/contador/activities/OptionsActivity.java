@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -16,29 +17,35 @@ import java.util.List;
 import es.ignaciofp.contador.R;
 import es.ignaciofp.contador.adapters.AdapterOptions;
 import es.ignaciofp.contador.models.Option;
+import es.ignaciofp.contador.utils.AppConstants;
 
 public class OptionsActivity extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener {
 
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor editor;
     private List<Option> optionList;
-    boolean checkedDefaultValue = false;
+
+    // Tags
+    private final String TOGGLE_THEME_TAG = AppConstants.OPTIONS_TOGGLE_THEME_TAG;
+    private final String MUSIC_TAG = AppConstants.OPTIONS_MUSIC_TAG;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_options);
 
-        sharedPref = getPreferences(MODE_PRIVATE);
+        sharedPref = getSharedPreferences(AppConstants.OPTIONS_PREF_KEY, MODE_PRIVATE);
         editor = sharedPref.edit();
 
         ListView optionListView = findViewById(R.id.listview_options);
 
         optionList = new ArrayList<>();
 
-        addOption(getResources().getString(R.string.options_theme_name_text), getResources().getString(R.string.options_theme_description), getResources().getString(R.string.PREF_DARK_MODE));
-        addOption("Sample name", "Sample desc", "sampleSwitch1");
-        addOption("Sample name", "Sample desc", "sampleSwitch2");
+        addOption(getResources().getString(R.string.options_theme_name_text), getResources().getString(R.string.options_theme_description), TOGGLE_THEME_TAG, false);
+        addOption(getResources().getString(R.string.options_music_name), getResources().getString(R.string.options_music_description), MUSIC_TAG, true);
+        addOption("Sample name", "Sample desc", "sampleSwitch2", false);
+
+//        optionList.get(0).setChecked(true);
 
         optionListView.setAdapter(new AdapterOptions(this, R.layout.item_option, R.id.text_blank, optionList));
 
@@ -62,9 +69,12 @@ public class OptionsActivity extends AppCompatActivity implements CompoundButton
     @Override
     public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
         switch (compoundButton.getTag().toString()) {
-            case "toggleTheme":
+            case TOGGLE_THEME_TAG:
                 toggleTheme(isChecked);
                 toggleChecked(compoundButton, isChecked);
+                break;
+            case MUSIC_TAG:
+                Toast.makeText(this, isChecked? "Music ON" : "Music OFF", Toast.LENGTH_SHORT).show();
                 break;
         }
         toggleChecked(compoundButton, isChecked);
@@ -78,7 +88,7 @@ public class OptionsActivity extends AppCompatActivity implements CompoundButton
      * @param desc description of the option
      * @param tag tag of the option
      */
-    private void addOption(String name, String desc, String tag) {
+    private void addOption(String name, String desc, String tag, boolean checkedDefaultValue) {
         boolean isChecked = sharedPref.getBoolean(tag, checkedDefaultValue);
 
         //TODO: Make sure that each option does what it says if "isChecked" is true

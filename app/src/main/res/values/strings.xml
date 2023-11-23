@@ -10,8 +10,6 @@
     <string name="PREF_AUTO_PRICE" translatable="false">autoPrice</string>
     <string name="PREF_MEGA_AUTO_PRICE" translatable="false">megaAutoPrice</string>
 
-    <string name="PREF_DARK_MODE" translatable="false">toggleTheme</string>
-
 
     <string name="launch_welcome_text">Welcome to the best Cookie Clicker!</string>
     <string name="launch_play_button_text">Play</string>
@@ -47,4 +45,6 @@
     <string name="gen_dialog_neg_button">Cancel</string>
     <string name="game_reset_dialog_message">Are you sure you wanna reset all your data?</string>
     <string name="game_max_value_dialog_message">Congratulations, you\'ve finished the game but please, get a life</string>
+    <string name="options_music_name">Music</string>
+    <string name="options_music_description">Turn music ON/OFF</string>
 </resources>

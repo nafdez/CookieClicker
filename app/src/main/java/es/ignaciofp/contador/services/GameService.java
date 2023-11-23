@@ -45,7 +45,7 @@ public class GameService {
     /**
      * Resets all the data from the user
      */
-    public void resetData(Context context) {
+    public void resetData() {
         user.setCoins(AppConstants.DEFAULT_COINS);
         user.setClickValue(AppConstants.DEFAULT_CLICK_VALUE);
         user.setAutoClickValue(AppConstants.DEFAULT_AUTO_CLICK_VALUE);
