@@ -73,7 +73,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
         db.insert(TABLE_NAME, null, values);
 
-        db.close();
+//        db.close();
     }
 
     public ArrayList<User> readUsers(String filter) {
