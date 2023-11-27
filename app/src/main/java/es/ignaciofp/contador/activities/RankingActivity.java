@@ -31,6 +31,7 @@ public class RankingActivity extends AppCompatActivity {
         mediaPlayer = MediaPlayer.create(this, R.raw.ranking_theme);
         mediaPlayer.setLooping(true);
 
+        RankingService.resetInstance();
         RANKING_SERVICE = RankingService.getInstance(this);
 
         ListView rankingListView = findViewById(R.id.listview_ranking);

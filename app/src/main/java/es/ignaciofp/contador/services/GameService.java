@@ -3,6 +3,8 @@ package es.ignaciofp.contador.services;
 import android.content.Context;
 
 import java.math.BigInteger;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import es.ignaciofp.contador.models.User;
 import es.ignaciofp.contador.utils.AppConstants;
@@ -10,21 +12,28 @@ import es.ignaciofp.contador.utils.CustomBigInteger;
 
 public class GameService {
 
+    Context context;
     private static GameService instance;
-    private User user;
-    private UserService userService;
+    private final User user;
+    private final UserService userService;
     private CustomBigInteger coinRate = new CustomBigInteger("0");
+    private final ExecutorService EXECUTOR_LOOP_POOL = Executors.newSingleThreadExecutor();
 
     public GameService(Context context, User user) {
         this.user = user;
         this.userService = UserService.getInstance(context);
+        Context applicationContext = context.getApplicationContext();
     }
 
     public static GameService getInstance(Context context, User user) {
-        if(instance == null) {
+        if (instance == null) {
             instance = new GameService(context, user);
         }
         return instance;
+    }
+
+    public static void resetInstance() {
+        instance = null;
     }
 
     public User getUser() {
@@ -38,8 +47,8 @@ public class GameService {
     /**
      * Saves the current state of the game to the database.
      */
-    public void saveData() {
-        userService.updateUser(user);
+    public boolean saveData() {
+        return userService.updateUser(user);
     }
 
     /**
@@ -60,18 +69,17 @@ public class GameService {
      * Each second adds the auto click value to the coins.
      */
     @SuppressWarnings("all")
-    public String calculateAutoCoins() {
-        while (user.getAutoClickValue().compareTo(BigInteger.valueOf(0)) <= 0) ;
-        addCoins(user.getAutoClickValue());
-        return user.getCoins().withSuffix("§");
+    public CustomBigInteger calculateAutoCoins() {
+        return addCoins(user.getAutoClickValue());
     }
 
     ////////////////////////////////COINRATE////////////////////////////////////////
-    public void coinRate() {
+    public CustomBigInteger calculateCoinRate() {
         if (user.getAutoClickValue().compareTo(BigInteger.valueOf(0)) > 0) { // Auto-click
             coinRate = coinRate.add(user.getAutoClickValue());
+            return coinRate;
         }
-
+        return new CustomBigInteger("0");
     }
 
     public void resetCoinRate() {
@@ -88,5 +96,4 @@ public class GameService {
     private void setCoinRate(CustomBigInteger val) {
         coinRate = val;
     }
-
 }

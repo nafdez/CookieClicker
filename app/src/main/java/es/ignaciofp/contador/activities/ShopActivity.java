@@ -1,15 +1,12 @@
 package es.ignaciofp.contador.activities;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.media.SoundPool;
 import android.os.Bundle;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.ScaleAnimation;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -21,7 +18,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Objects;
+import java.util.concurrent.AbstractExecutorService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -37,6 +34,7 @@ import es.ignaciofp.contador.utils.UpgradeDecorator;
 
 public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeClickListener.OnItemClickListener {
 
+    private static final ExecutorService EXECUTOR_LOOP_POOL = Executors.newFixedThreadPool(2);
     private GameService gameService;
 
     // Recycler view
@@ -87,13 +85,14 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
         generateUpgradeButton("mega_auto", getString(R.string.shop_upgrade_mega_auto_text), "+0.35%", user.getMegaAutoPrice());
 
         updateUI();
-        gameLoop();
+        initializeLoop();
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-        gameService.saveData();
+    protected void onPause() {
+        super.onPause();
+        if(gameService.saveData())
+            Toast.makeText(this, "Game saved", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -101,6 +100,9 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
         super.onDestroy();
         soundPool.stop(soundUpgradeId);
         soundPool.release();
+        EXECUTOR_LOOP_POOL.shutdown();
+        EXECUTOR_POOL.shutdown();
+        EXECUTOR_LOOP_POOL.shutdownNow();
     }
 
     /**
@@ -167,26 +169,23 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
         finish();
     }
 
-    /**
-     * Each second adds the auto click value to the coins.
-     */
-    @SuppressWarnings("BusyWait")
-    private void gameLoop() {
-        User user = gameService.getUser();
-        new Thread(() -> {
-            while (true) {
-                try {
+    @SuppressWarnings("all")
+    private void initializeLoop() {
+        EXECUTOR_LOOP_POOL.submit(() -> {
+            try {
+                while (true) {
+                    runOnUiThread(() -> textCoins.setText(gameService.calculateAutoCoins().withSuffix("§")));
                     Thread.sleep(1000);
-                    if (user.getAutoClickValue().compareTo(BigInteger.valueOf(0)) > 0) {
-                        user.setCoins(user.getCoins().add(user.getAutoClickValue()));
-                        runOnUiThread(() -> textCoins.setText(user.getCoins().withSuffix("§")));
-                        new Thread(this::updateDisabledButtons).start();
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
                 }
+            } catch (InterruptedException ignored) {}
+        });
+
+        EXECUTOR_LOOP_POOL.submit(() -> {
+            while(true) {
+                Thread.sleep(1000);
+                updateDisabledButtons();
             }
-        }).start();
+        });
     }
 
     /**

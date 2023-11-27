@@ -7,11 +7,13 @@ import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -40,7 +42,9 @@ public class GameActivity extends AppCompatActivity {
     SoundPool soundPool;
     int soundClickId;
     private MediaPlayer mediaPlayer;
-    private final ExecutorService EXECUTOR_POOL = Executors.newFixedThreadPool(1);
+    private final ExecutorService EXECUTOR_MUSIC_POOL = Executors.newFixedThreadPool(1);
+    private final ExecutorService EXECUTOR_LOOP_POOL = Executors.newFixedThreadPool(2);
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,9 +53,9 @@ public class GameActivity extends AppCompatActivity {
 
         Bundle bundle = getIntent().getExtras();
 
-        // Bundle is null always but when coming back from the shop
         User user;
         if (bundle != null) {
+            GameService.resetInstance();
             user = (User) bundle.getSerializable(AppConstants.USER_KEY);
             gameService = GameService.getInstance(this, user);
         } else {
@@ -59,6 +63,7 @@ public class GameActivity extends AppCompatActivity {
             user = gameService.getUser();
         }
 
+        // Initialization of sound and music
         soundPool = new SoundPool.Builder().setMaxStreams(1).build();
         soundClickId = soundPool.load(this, R.raw.sound_coin_click, 1);
         mediaPlayer = MediaPlayer.create(this, R.raw.main_theme);
@@ -85,9 +90,12 @@ public class GameActivity extends AppCompatActivity {
 
         updateClickImageView();
         if (user.getHasMaxValue()) onGameEndDialogCreator();
-        gameLoop();
+        initializeLoop();
     }
 
+    /**
+     * Based on the user choose of setting the music on or off, starts or doesn't start the music.
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -97,13 +105,27 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Saves the game state of the user to the database and pauses the music.
+     */
     @Override
     protected void onStop() {
         super.onStop();
-        gameService.saveData();
         mediaPlayer.pause();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d("GameActivity", "SAVING ON PAUSE");
+        if(gameService.saveData())
+            Toast.makeText(this, "Game saved", Toast.LENGTH_SHORT).show();
+        Log.d("GameActivity", "SAVING FINISH");
+    }
+
+    /**
+     * Releases all the resources used by this activity.
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -111,7 +133,25 @@ public class GameActivity extends AppCompatActivity {
         mediaPlayer.release();
         soundPool.stop(soundClickId);
         soundPool.release();
-        EXECUTOR_POOL.shutdown();
+        EXECUTOR_MUSIC_POOL.shutdown();
+        EXECUTOR_LOOP_POOL.shutdown();
+        EXECUTOR_LOOP_POOL.shutdownNow();
+    }
+
+    @SuppressWarnings("all")
+    private void initializeLoop() {
+        EXECUTOR_LOOP_POOL.submit(() -> {
+            try {
+                while (true) {
+                    runOnUiThread(() -> textCoinRateValue.setText(gameService.calculateCoinRate().withSuffix("§/s"))); // Coin rate
+                    runOnUiThread(this::updateClickImageView); // Updating the coin image
+                    runOnUiThread(() -> textCoins.setText(gameService.calculateAutoCoins().withSuffix("§")));
+                    Thread.sleep(100);
+                    gameService.resetCoinRate();
+                    Thread.sleep(900);
+                }
+            } catch (InterruptedException ignored) {}
+        });
     }
 
     /**
@@ -121,7 +161,7 @@ public class GameActivity extends AppCompatActivity {
      * @param view the view that has been clicked
      */
     public void addOnClick(View view) {
-        EXECUTOR_POOL.submit(() -> {
+        EXECUTOR_MUSIC_POOL.submit(() -> {
             soundPool.play(soundClickId, 1, 1, 0, 0, 1);
 
             // Image animation
@@ -151,50 +191,6 @@ public class GameActivity extends AppCompatActivity {
         Intent intent = new Intent(this, ShopActivity.class);
         startActivity(intent);
         finish();
-    }
-
-    /**
-     * Starts all the necessary loops for the game to work
-     */
-    private void gameLoop() {
-        new Thread(this::coinRateLoop).start();
-        new Thread(this::autoClickLoop).start();
-    }
-
-    /**
-     * Each seconds checks the quantity of coins and updates the coin image accordingly.
-     * Also within the same second adds to the coins the amount of them being auto-generated and
-     * calculates the amount of money is being added up each second.
-     */
-    @SuppressWarnings("BusyWait")
-    private void coinRateLoop() {
-        while (true) {
-            try {
-                Thread.sleep(500);
-                runOnUiThread(this::updateClickImageView); // Updating the coin image
-
-                gameService.coinRate();
-
-                runOnUiThread(() -> textCoinRateValue.setText(gameService.getCoinRate().withSuffix("§/s"))); // Coin rate
-
-                Thread.sleep(500);
-
-                gameService.resetCoinRate();
-            } catch (InterruptedException ignored) {
-            }
-        }
-    }
-
-    @SuppressWarnings("BusyWait")
-    private void autoClickLoop() {
-        while (true) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException ignored) {
-            }
-            String coins = gameService.calculateAutoCoins();
-            runOnUiThread(() -> textCoins.setText(coins));
-        }
     }
 
     /**
@@ -241,7 +237,7 @@ public class GameActivity extends AppCompatActivity {
      */
     public void resetOnClick(View view) {
         AlertDialog.Builder dialogConstructor = new AlertDialog.Builder(this);
-        dialogConstructor.setTitle(getString(R.string.game_reset_dialog_title)).setMessage(getString(R.string.game_reset_dialog_message)).setIcon(R.drawable.ic_reset).setPositiveButton(getString(R.string.gen_dialog_pos_button), (dialog, which) -> {
+        dialogConstructor.setTitle(getString(R.string.game_reset_dialog_title)).setMessage(getString(R.string.game_reset_dialog_message)).setIcon(R.drawable.ic_gen_reset).setPositiveButton(getString(R.string.gen_dialog_pos_button), (dialog, which) -> {
             resetValues();
             recreate();
         }).setNegativeButton(getString(R.string.gen_dialog_neg_button), (dialog, which) -> {
@@ -269,6 +265,11 @@ public class GameActivity extends AppCompatActivity {
         recreate();
     }
 
+    /**
+     * Called when the user clicks on the return button. Goes back to the HomeActivity
+     *
+     * @param view the view where it's being called
+     */
     public void returnOnClick(View view) {
         Intent intent = new Intent(this, HomeActivity.class);
         startActivity(intent);

@@ -50,4 +50,6 @@
     <string name="game_max_value_dialog_title">Game end</string>
     <string name="game_max_value_dialog_neg_button">Reset</string>
     <string name="auth_hint_password_input_text">Password</string>
+    <string name="auth_title_text">Authentication</string>
+    <string name="auth_description_text">Login or sign-up. Note that all spaces will be removed from the username.</string>
 </resources>

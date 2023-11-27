@@ -49,7 +49,8 @@
         <LinearLayout
             style="@style/info_bar_child"
             android:layout_weight="0"
-            android:background="@drawable/child_info_bar">
+            android:background="@drawable/child_info_bar"
+            >
 
             <ImageView
                 android:layout_width="48dp"
@@ -149,5 +150,5 @@
         app:layout_constraintTop_toBottomOf="@+id/imageView3"
         app:layout_constraintVertical_bias="0"
         app:layout_constraintHorizontal_bias="0.044"
-        app:srcCompat="@drawable/ic_reset" />
+        app:srcCompat="@drawable/ic_gen_reset" />
 </androidx.constraintlayout.widget.ConstraintLayout>

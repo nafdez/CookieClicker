@@ -3,6 +3,7 @@ package es.ignaciofp.contador.services;
 import android.content.Context;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import es.ignaciofp.contador.models.User;
 import es.ignaciofp.contador.utils.DBHandler;
@@ -27,23 +28,17 @@ public class UserService {
         dbHandler.addUser(user);
     }
 
-    public User getUserById(int id) {
-        return dbHandler.readUsers(DBHandler.ID_COLUMN + "='" + id + "'").get(0);
-    }
-
     public User getUserByName(String name) {
         ArrayList<User> userList = dbHandler.readUsers(DBHandler.NAME_COLUMN + "='" + name +"'");
         return userList.isEmpty() ? null : userList.get(0);
     }
 
-    public User getUserByNameAndPassword(String name, String password) {
-        ArrayList<User> userList = dbHandler.readUsers(DBHandler.NAME_COLUMN + "='" + name + "' AND " + DBHandler.PASSWORD_COLUMN + "='" + password + "'");
-        return userList.isEmpty()? null : userList.get(0);
+    public List<User> getTop50Users() {
+        return dbHandler.readUsers("1=1 order by " + DBHandler.COINS_COLUMN + " desc limit 50");
     }
 
-    public void updateUser(User user) {
-        dbHandler.updateUser(user);
+    public boolean updateUser(User user) {
+        return dbHandler.updateUser(user);
     }
-
 
 }

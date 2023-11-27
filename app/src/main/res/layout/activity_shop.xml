@@ -27,7 +27,8 @@
             <LinearLayout
                 style="@style/info_bar_child"
                 android:background="@drawable/child_info_bar"
-                android:layout_weight="0">
+                android:layout_weight="0"
+                >
 
                 <ImageView
                     android:layout_width="48dp"

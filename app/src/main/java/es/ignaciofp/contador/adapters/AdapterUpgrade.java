@@ -18,7 +18,7 @@ import es.ignaciofp.contador.models.Upgrade;
 
 public class AdapterUpgrade extends RecyclerView.Adapter<AdapterUpgrade.ViewHolderUpgrade> {
 
-    ArrayList<Upgrade> upgradeList;
+    final ArrayList<Upgrade> upgradeList;
 
     public AdapterUpgrade(ArrayList<Upgrade> upgradeList) {
         this.upgradeList = upgradeList;
@@ -43,9 +43,9 @@ public class AdapterUpgrade extends RecyclerView.Adapter<AdapterUpgrade.ViewHold
 
     public static class ViewHolderUpgrade extends RecyclerView.ViewHolder {
 
-        TextView name;
-        TextView description;
-        MaterialButton button;
+        final TextView name;
+        final TextView description;
+        final MaterialButton button;
 
         public ViewHolderUpgrade(@NonNull View itemView) {
             super(itemView);

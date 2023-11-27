@@ -13,7 +13,6 @@ public class RecyclerUpgradeClickListener implements RecyclerView.OnItemTouchLis
 
     private final OnItemClickListener mListener;
     private final GestureDetector mGestureDetector;
-    private final Activity context;
 
     public interface OnItemClickListener {
         void onItemClick(View view, int position);
@@ -23,15 +22,15 @@ public class RecyclerUpgradeClickListener implements RecyclerView.OnItemTouchLis
 
     public RecyclerUpgradeClickListener(Context context, final RecyclerView recyclerView, OnItemClickListener listener) {
         mListener = listener;
-        this.context = (Activity) context;
+        Activity context1 = (Activity) context;
         mGestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
             @Override
-            public boolean onSingleTapUp(MotionEvent e) {
+            public boolean onSingleTapUp(@NonNull MotionEvent e) {
                 return true;
             }
 
             @Override
-            public void onLongPress(MotionEvent e) {
+            public void onLongPress(@NonNull MotionEvent e) {
                 View child = recyclerView.findChildViewUnder(e.getX(), e.getY());
                 if (child!= null && mListener!= null) {
                     mListener.onLongItemClick(child, recyclerView.getChildAdapterPosition(child));

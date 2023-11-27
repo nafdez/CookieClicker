@@ -6,6 +6,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.text.DateFormat;
+import java.time.DateTimeException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import es.ignaciofp.contador.models.User;
@@ -19,7 +24,8 @@ public class DBHandler extends SQLiteOpenHelper {
     public static final String ID_COLUMN = "_id";
     public static final String NAME_COLUMN = "name";
     public static final String PASSWORD_COLUMN = "password";
-    private static final String COINS_COLUMN = "coins";
+    public static final String LAST_SAVE_DATE_COLUMN = "lastSaveDate";
+    public static final String COINS_COLUMN = "coins";
     private static final String CLICK_VALUE_COLUMN = "clickValue";
     private static final String AUTO_CLICK_VALUE_COLUMN = "autoClickValue";
     private static final String BASIC_PRICE_COLUMN = "basicPrice";
@@ -38,14 +44,15 @@ public class DBHandler extends SQLiteOpenHelper {
                 + ID_COLUMN + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + NAME_COLUMN + " TEXT, "
                 + PASSWORD_COLUMN + " TEXT, "
-                + COINS_COLUMN + " INTEGER, "
-                + CLICK_VALUE_COLUMN + " INTEGER, "
-                + AUTO_CLICK_VALUE_COLUMN + " INTEGER, "
-                + BASIC_PRICE_COLUMN + " INTEGER, "
-                + MEGA_PRICE_COLUMN + " INTEGER, "
-                + AUTO_PRICE_COLUMN + " INTEGER, "
-                + MEGA_AUTO_PRICE_COLUMN + " INTEGER,"
-                + HAS_MAX_VALUE_COLUMN + " INTEGER"
+                + LAST_SAVE_DATE_COLUMN + " TEXT, "
+                + COINS_COLUMN + " TEXT, "
+                + CLICK_VALUE_COLUMN + " TEXT, "
+                + AUTO_CLICK_VALUE_COLUMN + " TEXT, "
+                + BASIC_PRICE_COLUMN + " TEXT, "
+                + MEGA_PRICE_COLUMN + " TEXT, "
+                + AUTO_PRICE_COLUMN + " TEXT, "
+                + MEGA_AUTO_PRICE_COLUMN + " TEXT,"
+                + HAS_MAX_VALUE_COLUMN + " TEXT"
                 + ")";
         db.execSQL(query);
     }
@@ -57,11 +64,14 @@ public class DBHandler extends SQLiteOpenHelper {
     }
 
     public void addUser(User user) {
+        user.updateUserLastUpdate();
+
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
         values.put(NAME_COLUMN, user.getName());
         values.put(PASSWORD_COLUMN, user.getPassword());
+        values.put(LAST_SAVE_DATE_COLUMN, user.getLastSaveDate());
         values.put(COINS_COLUMN, user.getCoins().toString());
         values.put(CLICK_VALUE_COLUMN, user.getClickValue().toString());
         values.put(AUTO_CLICK_VALUE_COLUMN, user.getAutoClickValue().toString());
@@ -73,7 +83,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
         db.insert(TABLE_NAME, null, values);
 
-//        db.close();
+        db.close();
     }
 
     public ArrayList<User> readUsers(String filter) {
@@ -92,25 +102,30 @@ public class DBHandler extends SQLiteOpenHelper {
                 users.add(new User(cursor.getString(0),
                         cursor.getString(1),
                         cursor.getString(2),
-                        new CustomBigInteger(cursor.getString(3)),
+                        cursor.getString(3),
                         new CustomBigInteger(cursor.getString(4)),
                         new CustomBigInteger(cursor.getString(5)),
                         new CustomBigInteger(cursor.getString(6)),
                         new CustomBigInteger(cursor.getString(7)),
                         new CustomBigInteger(cursor.getString(8)),
                         new CustomBigInteger(cursor.getString(9)),
-                        Boolean.parseBoolean(cursor.getString(10))));
+                        new CustomBigInteger(cursor.getString(10)),
+                        Boolean.parseBoolean(cursor.getString(11))));
             } while (cursor.moveToNext()); // Setting cursor to next position
         }
         cursor.close();
+        db.close();
         return users;
     }
 
-    public void updateUser(User user) {
+    public boolean updateUser(User user) {
+        user.updateUserLastUpdate();
+
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
         values.put(NAME_COLUMN, user.getName());
+        values.put(LAST_SAVE_DATE_COLUMN, user.getLastSaveDate());
         values.put(COINS_COLUMN, user.getCoins().toString());
         values.put(CLICK_VALUE_COLUMN, user.getClickValue().toString());
         values.put(AUTO_CLICK_VALUE_COLUMN, user.getAutoClickValue().toString());
@@ -120,9 +135,10 @@ public class DBHandler extends SQLiteOpenHelper {
         values.put(MEGA_AUTO_PRICE_COLUMN, user.getMegaAutoPrice().toString());
         values.put(HAS_MAX_VALUE_COLUMN, user.getHasMaxValue().toString());
 
-        db.update(TABLE_NAME, values, ID_COLUMN + " = " + user.getId(), null);
+        int result = db.update(TABLE_NAME, values, ID_COLUMN + " = " + user.getId(), null);
 
         db.close();
+        return result > 0;
     }
 
 }

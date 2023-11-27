@@ -61,7 +61,7 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        String username = nameInputTxt.getText().toString();
+        String username = nameInputTxt.getText().toString().toLowerCase().replaceAll("\\s+", "");
         String password = encryptPassword(passwordInputTxt.getText().toString());
 
         // If any of the EditTexts are empty, doesn't continue executing the code

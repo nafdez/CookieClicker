@@ -14,6 +14,7 @@
     <color name="orange_peel">#FF9F1C</color>
     <color name="battleship_gray">#868D8E</color>
     <color name="honeydew">#DFECE2</color>
+    <color name="textview_color">#050505</color>
 
     <!--
     <color name="backgroundColor">#8DC4B7</color>

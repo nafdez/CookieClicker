@@ -37,4 +37,6 @@
     <string name="game_max_value_dialog_title">Final del juego</string>
     <string name="game_max_value_dialog_neg_button">Reestablecer</string>
     <string name="auth_hint_password_input_text">Contraseña</string>
+    <string name="auth_title_text">Autenticación</string>
+    <string name="auth_description_text">Regístrate o inicia sesión. Todos los espacios incluido en el nombre de usuario serán eliminados.</string>
 </resources>

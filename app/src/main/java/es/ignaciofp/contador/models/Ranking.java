@@ -46,6 +46,7 @@ public class Ranking {
         return coins;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "Ranking{" + "name='" + name + '\'' + ", date='" + date + '\'' + ", coins='" + coins + '\'' + '}';
