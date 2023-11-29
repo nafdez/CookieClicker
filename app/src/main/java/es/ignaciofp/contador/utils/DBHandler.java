@@ -6,11 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import java.text.DateFormat;
-import java.time.DateTimeException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import es.ignaciofp.contador.models.User;
@@ -40,20 +35,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String query = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "("
-                + ID_COLUMN + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + NAME_COLUMN + " TEXT, "
-                + PASSWORD_COLUMN + " TEXT, "
-                + LAST_SAVE_DATE_COLUMN + " TEXT, "
-                + COINS_COLUMN + " TEXT, "
-                + CLICK_VALUE_COLUMN + " TEXT, "
-                + AUTO_CLICK_VALUE_COLUMN + " TEXT, "
-                + BASIC_PRICE_COLUMN + " TEXT, "
-                + MEGA_PRICE_COLUMN + " TEXT, "
-                + AUTO_PRICE_COLUMN + " TEXT, "
-                + MEGA_AUTO_PRICE_COLUMN + " TEXT,"
-                + HAS_MAX_VALUE_COLUMN + " TEXT"
-                + ")";
+        String query = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(" + ID_COLUMN + " INTEGER PRIMARY KEY AUTOINCREMENT, " + NAME_COLUMN + " TEXT, " + PASSWORD_COLUMN + " TEXT, " + LAST_SAVE_DATE_COLUMN + " TEXT, " + COINS_COLUMN + " TEXT, " + CLICK_VALUE_COLUMN + " TEXT, " + AUTO_CLICK_VALUE_COLUMN + " TEXT, " + BASIC_PRICE_COLUMN + " TEXT, " + MEGA_PRICE_COLUMN + " TEXT, " + AUTO_PRICE_COLUMN + " TEXT, " + MEGA_AUTO_PRICE_COLUMN + " TEXT," + HAS_MAX_VALUE_COLUMN + " TEXT" + ")";
         db.execSQL(query);
     }
 
@@ -96,21 +78,10 @@ public class DBHandler extends SQLiteOpenHelper {
         ArrayList<User> users = new ArrayList<>();
 
         // Setting cursor to first position
-        if(cursor.moveToFirst()) {
+        if (cursor.moveToFirst()) {
             do {
                 // Adding users to the list
-                users.add(new User(cursor.getString(0),
-                        cursor.getString(1),
-                        cursor.getString(2),
-                        cursor.getString(3),
-                        new CustomBigInteger(cursor.getString(4)),
-                        new CustomBigInteger(cursor.getString(5)),
-                        new CustomBigInteger(cursor.getString(6)),
-                        new CustomBigInteger(cursor.getString(7)),
-                        new CustomBigInteger(cursor.getString(8)),
-                        new CustomBigInteger(cursor.getString(9)),
-                        new CustomBigInteger(cursor.getString(10)),
-                        Boolean.parseBoolean(cursor.getString(11))));
+                users.add(new User(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), new CustomBigInteger(cursor.getString(4)), new CustomBigInteger(cursor.getString(5)), new CustomBigInteger(cursor.getString(6)), new CustomBigInteger(cursor.getString(7)), new CustomBigInteger(cursor.getString(8)), new CustomBigInteger(cursor.getString(9)), new CustomBigInteger(cursor.getString(10)), Boolean.parseBoolean(cursor.getString(11))));
             } while (cursor.moveToNext()); // Setting cursor to next position
         }
         cursor.close();

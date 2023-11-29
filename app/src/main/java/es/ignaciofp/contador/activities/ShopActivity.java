@@ -18,7 +18,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.concurrent.AbstractExecutorService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -34,7 +33,8 @@ import es.ignaciofp.contador.utils.UpgradeDecorator;
 
 public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeClickListener.OnItemClickListener {
 
-    private static final ExecutorService EXECUTOR_LOOP_POOL = Executors.newFixedThreadPool(2);
+    private final ExecutorService EXECUTOR_LOOP_POOL = Executors.newFixedThreadPool(2); // GameLoop
+    private final ExecutorService EXECUTOR_POOL = Executors.newFixedThreadPool(1); // Sonidos
     private GameService gameService;
 
     // Recycler view
@@ -49,7 +49,6 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
 
     SoundPool soundPool;
     int soundUpgradeId;
-    private final ExecutorService EXECUTOR_POOL = Executors.newFixedThreadPool(1);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,8 +90,7 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
     @Override
     protected void onPause() {
         super.onPause();
-        if(gameService.saveData())
-            Toast.makeText(this, "Game saved", Toast.LENGTH_SHORT).show();
+        if (gameService.saveData()) Toast.makeText(this, "Game saved", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -100,8 +98,7 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
         super.onDestroy();
         soundPool.stop(soundUpgradeId);
         soundPool.release();
-        EXECUTOR_LOOP_POOL.shutdown();
-        EXECUTOR_POOL.shutdown();
+        EXECUTOR_POOL.shutdownNow();
         EXECUTOR_LOOP_POOL.shutdownNow();
     }
 
@@ -177,11 +174,12 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
                     runOnUiThread(() -> textCoins.setText(gameService.calculateAutoCoins().withSuffix("§")));
                     Thread.sleep(1000);
                 }
-            } catch (InterruptedException ignored) {}
+            } catch (InterruptedException ignored) {
+            }
         });
 
         EXECUTOR_LOOP_POOL.submit(() -> {
-            while(true) {
+            while (true) {
                 Thread.sleep(1000);
                 updateDisabledButtons();
             }
@@ -237,7 +235,7 @@ public class ShopActivity extends AppCompatActivity implements RecyclerUpgradeCl
         User user = gameService.getUser();
         if (user.getCoins().compareTo(price) >= 0) {
             EXECUTOR_POOL.submit(() -> {
-               soundPool.play(soundUpgradeId, 1, 1, 1, 0, 1);
+                soundPool.play(soundUpgradeId, 1, 1, 1, 0, 1);
             });
             user.setCoins(user.getCoins().subtract(price));
 
