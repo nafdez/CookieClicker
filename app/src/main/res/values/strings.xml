@@ -52,4 +52,10 @@
     <string name="auth_hint_password_input_text">Password</string>
     <string name="auth_title_text">Authentication</string>
     <string name="auth_description_text">Login or sign-up. Note that all spaces will be removed from the username.</string>
+    <string name="savegame_succesfully_toast">Game saved!</string>
+    <string name="savegame_error_toast">Unable to save the game</string>
+    <string name="auth_incorrect_password_toast">Username or password are incorrect</string>
+    <string name="auth_create_user_error_toast">There was an error creating the user, try again</string>
+    <string name="auth_login_user_toast">Loggin into</string>
+    <string name="auth_creating_user_toast">Creating new user</string>
 </resources>

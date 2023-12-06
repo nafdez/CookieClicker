@@ -45,7 +45,7 @@ public class DBHandler extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public void addUser(User user) {
+    public boolean addUser(User user) {
         user.updateUserLastUpdate();
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -63,9 +63,12 @@ public class DBHandler extends SQLiteOpenHelper {
         values.put(MEGA_AUTO_PRICE_COLUMN, user.getMegaAutoPrice().toString());
         values.put(HAS_MAX_VALUE_COLUMN, user.getHasMaxValue().toString());
 
-        db.insert(TABLE_NAME, null, values);
-
+        long id = db.insert(TABLE_NAME, null, values);
+        if (id == -1)
+            return false; // If there has been an error then doesn't set the user id and return false
+        user.setId(id);
         db.close();
+        return true;
     }
 
     public ArrayList<User> readUsers(String filter) {
@@ -81,7 +84,7 @@ public class DBHandler extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 // Adding users to the list
-                users.add(new User(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), new CustomBigInteger(cursor.getString(4)), new CustomBigInteger(cursor.getString(5)), new CustomBigInteger(cursor.getString(6)), new CustomBigInteger(cursor.getString(7)), new CustomBigInteger(cursor.getString(8)), new CustomBigInteger(cursor.getString(9)), new CustomBigInteger(cursor.getString(10)), Boolean.parseBoolean(cursor.getString(11))));
+                users.add(new User(cursor.getLong(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), new CustomBigInteger(cursor.getString(4)), new CustomBigInteger(cursor.getString(5)), new CustomBigInteger(cursor.getString(6)), new CustomBigInteger(cursor.getString(7)), new CustomBigInteger(cursor.getString(8)), new CustomBigInteger(cursor.getString(9)), new CustomBigInteger(cursor.getString(10)), Boolean.parseBoolean(cursor.getString(11))));
             } while (cursor.moveToNext()); // Setting cursor to next position
         }
         cursor.close();

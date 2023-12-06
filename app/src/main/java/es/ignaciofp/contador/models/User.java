@@ -9,7 +9,7 @@ import es.ignaciofp.contador.utils.CustomBigInteger;
 
 public class User implements Serializable {
 
-    private String id;
+    private long id;
     private String name;
     private String password;
     private String lastSaveDate;
@@ -27,10 +27,10 @@ public class User implements Serializable {
     private Boolean hasMaxValue;
 
     public User(String name, String password) {
-        this(null, name, password, null, AppConstants.DEFAULT_COINS, AppConstants.DEFAULT_CLICK_VALUE, AppConstants.DEFAULT_AUTO_CLICK_VALUE, AppConstants.DEFAULT_BASIC_PRICE, AppConstants.DEFAULT_MEGA_PRICE, AppConstants.DEFAULT_AUTO_PRICE, AppConstants.DEFAULT_MEGA_AUTO_PRICE, false);
+        this(0, name, password, null, AppConstants.DEFAULT_COINS, AppConstants.DEFAULT_CLICK_VALUE, AppConstants.DEFAULT_AUTO_CLICK_VALUE, AppConstants.DEFAULT_BASIC_PRICE, AppConstants.DEFAULT_MEGA_PRICE, AppConstants.DEFAULT_AUTO_PRICE, AppConstants.DEFAULT_MEGA_AUTO_PRICE, false);
     }
 
-    public User(String id, String name, String password, String lastSaveDate, CustomBigInteger coins, CustomBigInteger clickValue, CustomBigInteger autoClickValue, CustomBigInteger basicPrice, CustomBigInteger megaPrice, CustomBigInteger autoPrice, CustomBigInteger megaAutoPrice, boolean hasMaxValue) {
+    public User(long id, String name, String password, String lastSaveDate, CustomBigInteger coins, CustomBigInteger clickValue, CustomBigInteger autoClickValue, CustomBigInteger basicPrice, CustomBigInteger megaPrice, CustomBigInteger autoPrice, CustomBigInteger megaAutoPrice, boolean hasMaxValue) {
         this.id = id;
         this.name = name;
         this.password = password;
@@ -45,11 +45,11 @@ public class User implements Serializable {
         this.hasMaxValue = hasMaxValue;
     }
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(long id) {
         this.id = id;
     }
 

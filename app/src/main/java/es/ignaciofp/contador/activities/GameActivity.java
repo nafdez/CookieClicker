@@ -7,7 +7,6 @@ import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
@@ -117,10 +116,10 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d("GameActivity", "SAVING ON PAUSE");
-        if(gameService.saveData())
-            Toast.makeText(this, "Game saved", Toast.LENGTH_SHORT).show();
-        Log.d("GameActivity", "SAVING FINISH");
+        if (gameService.saveData())
+            Toast.makeText(this, getString(R.string.savegame_succesfully_toast), Toast.LENGTH_SHORT).show();
+        else
+            Toast.makeText(this, getString(R.string.savegame_error_toast), Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -150,7 +149,8 @@ public class GameActivity extends AppCompatActivity {
                     gameService.resetCoinRate();
                     Thread.sleep(900);
                 }
-            } catch (InterruptedException ignored) {}
+            } catch (InterruptedException ignored) {
+            }
         });
     }
 

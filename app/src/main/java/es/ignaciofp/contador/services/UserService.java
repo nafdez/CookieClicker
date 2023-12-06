@@ -24,8 +24,8 @@ public class UserService {
         return instance;
     }
 
-    public void addUser(User user) {
-        dbHandler.addUser(user);
+    public boolean addUser(User user) {
+        return dbHandler.addUser(user);
     }
 
     public User getUserByName(String name) {

@@ -39,4 +39,10 @@
     <string name="auth_hint_password_input_text">Contraseña</string>
     <string name="auth_title_text">Autenticación</string>
     <string name="auth_description_text">Regístrate o inicia sesión. Todos los espacios incluido en el nombre de usuario serán eliminados.</string>
+    <string name="savegame_succesfully_toast">Partida guardada</string>
+    <string name="savegame_error_toast">No se ha podido guardar la partida</string>
+    <string name="auth_incorrect_password_toast">El usuario o la contraseña son incorrectos</string>
+    <string name="auth_create_user_error_toast">Ha sucedido un error al crear el usuario, inténtalo de nuevo</string>
+    <string name="auth_login_user_toast">"Iniciando sesión "</string>
+    <string name="auth_creating_user_toast">Creando nuevo usuario</string>
 </resources>

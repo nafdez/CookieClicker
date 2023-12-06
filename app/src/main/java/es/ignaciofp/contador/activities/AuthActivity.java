@@ -74,14 +74,17 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
         // If the user doesn't exist, it creates a new user
         if (user != null) {
             if (!user.getPassword().equals(password)) {
-                Toast.makeText(this, "Username or password are incorrect", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.auth_incorrect_password_toast), Toast.LENGTH_SHORT).show();
                 return;
             }
-            Toast.makeText(this, "Logging into " + username, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.auth_login_user_toast) + username, Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this, "Creating new user.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.auth_creating_user_toast), Toast.LENGTH_SHORT).show();
             user = new User(username, password);
-            userService.addUser(user);
+            if (!userService.addUser(user)) {
+                Toast.makeText(this, getString(R.string.auth_create_user_error_toast), Toast.LENGTH_SHORT).show();
+                return;
+            };
         }
 
         Intent intent = new Intent(this, GameActivity.class);
