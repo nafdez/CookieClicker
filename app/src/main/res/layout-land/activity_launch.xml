@@ -11,14 +11,14 @@
         android:layout_width="162dp"
         android:layout_height="154dp"
         android:src="@mipmap/ic_launcher_monochrome"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
-        app:layout_constraintVertical_bias="0.95"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.95" />
 
     <LinearLayout
-        android:id="@+id/linearLayout2"
+        android:id="@+id/linearLayout3"
         android:layout_width="343dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -26,7 +26,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.75">
+        app:layout_constraintVertical_bias="0.85">
 
         <TextView
             android:layout_width="wrap_content"
@@ -75,5 +75,6 @@
         </LinearLayout>
 
     </LinearLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

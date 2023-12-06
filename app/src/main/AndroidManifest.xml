@@ -36,8 +36,7 @@
         <activity
             android:name=".activities.GameActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:exported="true"
-            android:screenOrientation="portrait" />
+            android:exported="true" />
     </application>
 
 </manifest>

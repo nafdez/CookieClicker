@@ -16,10 +16,9 @@
         android:textSize="48sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.395" />
+        app:layout_constraintVertical_bias="0.1"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
     <ImageView
         android:id="@+id/image_actionable_coins"
@@ -30,12 +29,12 @@
         android:src="@drawable/ic_gen_coin_level_1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_coins"
-        app:layout_constraintVertical_bias="0.455" />
+        app:layout_constraintVertical_bias="0.55"
+        app:layout_constraintTop_toBottomOf="@+id/text_coins" />
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
@@ -49,8 +48,7 @@
         <LinearLayout
             style="@style/info_bar_child"
             android:layout_weight="0"
-            android:background="@drawable/child_info_bar"
-            >
+            android:background="@drawable/child_info_bar">
 
             <ImageView
                 android:layout_width="48dp"
@@ -118,37 +116,34 @@
         android:id="@+id/imageView3"
         android:layout_width="48dp"
         android:layout_height="48dp"
+        android:layout_marginTop="22dp"
+        android:layout_marginStart="32dp"
         android:onClick="shopImageOnClick"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.044"
+
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.137"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
         app:srcCompat="@drawable/ic_gen_money_bag" />
 
     <ImageView
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:onClick="infoImageOnClick"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.956"
+        android:layout_marginTop="22dp"
+        android:layout_marginStart="32dp"
+        android:onClick="resetOnClick"
+
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.137"
-        app:srcCompat="@drawable/ic_info" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView3"
+        app:srcCompat="@drawable/ic_gen_reset" />
 
     <ImageView
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_marginTop="12dp"
-        android:onClick="resetOnClick"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="22dp"
+        android:layout_marginEnd="32dp"
+        android:onClick="infoImageOnClick"
+
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView3"
-        app:layout_constraintVertical_bias="0"
-        app:layout_constraintHorizontal_bias="0.044"
-        app:srcCompat="@drawable/ic_gen_reset" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+        app:srcCompat="@drawable/ic_info" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

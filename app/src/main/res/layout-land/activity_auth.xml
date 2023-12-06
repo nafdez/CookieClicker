@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.AuthActivity"
+    android:padding="22dp">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:src="@drawable/ic_gen_login"
+        app:layout_constraintBottom_toTopOf="@+id/materialDivider"
+        app:layout_constraintEnd_toStartOf="@+id/nameInputView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/authTitle"
+        style="@style/textview_style"
+        android:layout_marginEnd="52dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/auth_title_text"
+        android:textSize="28sp"
+        app:layout_constraintBottom_toTopOf="@+id/nameInputView"
+        app:layout_constraintEnd_toEndOf="@+id/nameInputView"
+        app:layout_constraintStart_toStartOf="@+id/nameInputView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/nameInputView"
+        android:layout_width="343dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="52dp"
+
+        android:background="@drawable/input_text_shape"
+        android:hint="@string/auth_hint_input_text"
+        android:paddingStart="13dp"
+        android:paddingEnd="13dp"
+        android:textColor="@color/drab_dark_brown"
+        android:textColorHint="@color/battleship_gray"
+        android:textSize="16sp"
+
+        app:counterTextColor="@color/drab_dark_brown"
+        app:layout_constraintBottom_toTopOf="@+id/passwordInputView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/authTitle" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/passwordInputView"
+        android:layout_width="343dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="16dp"
+
+        android:layout_marginEnd="52dp"
+        android:background="@drawable/input_text_shape"
+        android:hint="@string/auth_hint_password_input_text"
+        android:paddingStart="13dp"
+        android:paddingEnd="13dp"
+        android:textColor="@color/drab_dark_brown"
+        android:textColorHint="@color/battleship_gray"
+        android:textSize="16sp"
+        app:counterTextColor="@color/drab_dark_brown"
+        app:layout_constraintBottom_toTopOf="@+id/playBtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nameInputView" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/playBtn"
+        style="@style/buttonPrimary"
+        android:layout_marginTop="48dp"
+
+        android:layout_marginEnd="52dp"
+        android:text="@string/auth_play_button_text"
+        app:layout_constraintBottom_toTopOf="@id/materialDivider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/passwordInputView" />
+
+    <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/materialDivider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="8dp"
+
+        app:dividerColor="@color/textview_color"
+        app:layout_constraintBottom_toTopOf="@+id/desc"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/desc"
+        android:layout_width="343dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="-14dp"
+        android:text="@string/auth_description_text"
+        android:textAlignment="center"
+        android:textSize="12sp"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
