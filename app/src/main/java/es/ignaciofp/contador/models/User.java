@@ -7,7 +7,7 @@ import java.time.format.DateTimeFormatter;
 import es.ignaciofp.contador.utils.AppConstants;
 import es.ignaciofp.contador.utils.CustomBigInteger;
 
-public class User implements Serializable {
+public class User implements Serializable, Comparable<User> {
 
     private long id;
     private String name;
@@ -43,6 +43,11 @@ public class User implements Serializable {
         this.autoPrice = autoPrice;
         this.megaAutoPrice = megaAutoPrice;
         this.hasMaxValue = hasMaxValue;
+    }
+
+    @Override
+    public int compareTo(User o) {
+        return o.coins.compareTo(coins);
     }
 
     public long getId() {

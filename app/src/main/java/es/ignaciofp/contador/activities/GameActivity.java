@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.DrawableRes;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.math.BigInteger;
@@ -42,7 +43,7 @@ public class GameActivity extends AppCompatActivity {
     int soundClickId;
     private MediaPlayer mediaPlayer;
     private final ExecutorService EXECUTOR_MUSIC_POOL = Executors.newFixedThreadPool(1);
-    private final ExecutorService EXECUTOR_LOOP_POOL = Executors.newFixedThreadPool(2);
+    private final ExecutorService EXECUTOR_POOL = Executors.newFixedThreadPool(2);
 
 
     @Override
@@ -87,7 +88,7 @@ public class GameActivity extends AppCompatActivity {
             textCoins.setText(user.getCoins().withSuffix("§"));
         }
 
-        updateClickImageView();
+        checkClickImageView();
         if (user.getHasMaxValue()) onGameEndDialogCreator();
         initializeLoop();
     }
@@ -113,6 +114,9 @@ public class GameActivity extends AppCompatActivity {
         mediaPlayer.pause();
     }
 
+    /**
+     * Saves the game state of the user to the database and informs the user if it was successful or not
+     */
     @Override
     protected void onPause() {
         super.onPause();
@@ -133,21 +137,29 @@ public class GameActivity extends AppCompatActivity {
         soundPool.stop(soundClickId);
         soundPool.release();
         EXECUTOR_MUSIC_POOL.shutdown();
-        EXECUTOR_LOOP_POOL.shutdown();
-        EXECUTOR_LOOP_POOL.shutdownNow();
+        EXECUTOR_POOL.shutdown();
+        EXECUTOR_POOL.shutdownNow();
     }
 
+    /**
+     * Main gameloop, updates the coinrate and calculates the autoclick rate.
+     */
     @SuppressWarnings("all")
     private void initializeLoop() {
-        EXECUTOR_LOOP_POOL.submit(() -> {
+        EXECUTOR_POOL.submit(() -> {
             try {
                 while (true) {
-                    runOnUiThread(() -> textCoinRateValue.setText(gameService.calculateCoinRate().withSuffix("§/s"))); // Coin rate
-                    runOnUiThread(this::updateClickImageView); // Updating the coin image
-                    runOnUiThread(() -> textCoins.setText(gameService.calculateAutoCoins().withSuffix("§")));
-                    Thread.sleep(100);
-                    gameService.resetCoinRate();
-                    Thread.sleep(900);
+                    // Getting all values before setting the text so the calculation is done on
+                    // this thread
+                    String coinRate = gameService.calculateCoinRate().withSuffix("§/s");
+                    String autoCoins = gameService.calculateAutoCoins().withSuffix("§");
+
+                    // Setting value's texts on UI Thread
+                    runOnUiThread(() -> textCoinRateValue.setText(coinRate)); // Coin rate
+                    runOnUiThread(() -> textCoins.setText(autoCoins)); // AutoClick added coins
+                    checkClickImageView(); // Updating the coin image
+                    gameService.resetCoinRate(); // Setting to 0 the coin rate so we can calculate the next second
+                    Thread.sleep(1000);
                 }
             } catch (InterruptedException ignored) {
             }
@@ -160,26 +172,44 @@ public class GameActivity extends AppCompatActivity {
      *
      * @param view the view that has been clicked
      */
-    public void addOnClick(View view) {
-        EXECUTOR_MUSIC_POOL.submit(() -> {
-            soundPool.play(soundClickId, 1, 1, 0, 0, 1);
-
-            // Image animation
-            ScaleAnimation fade_in = new ScaleAnimation(0.7f, 1.2f, 0.7f, 1.2f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-            fade_in.setDuration(100);
-            image_coin.startAnimation(fade_in);
-        });
-
+    public void coinOnClick(View view) {
         // Updating the coins value
         CustomBigInteger updatedCoins = gameService.addCoins(gameService.getUser().getClickValue());
 
         // Updating the coins text view value
         textCoins.setText(updatedCoins.withSuffix("§"));
-        if (updatedCoins.compareTo(AppConstants.BIG_INTEGER_MAX_VALUE) >= 0) {
+
+        // Playing coin click sound
+        EXECUTOR_MUSIC_POOL.submit(() -> {
+            soundPool.play(soundClickId, 1, 1, 0, 0, 1);
+        });
+
+        // Image animation
+        EXECUTOR_POOL.submit(this::animateCoinImageView);
+
+        // Checking max value on the coins
+        checkHasReachedMaxValue(updatedCoins);
+    }
+
+    /**
+     * Checks if user has reached imposed big integer limit and if so, displays a dialog
+     *
+     * @param val value being checked
+     */
+    private void checkHasReachedMaxValue(CustomBigInteger val) {
+        if (val.compareTo(AppConstants.BIG_INTEGER_MAX_VALUE) >= 0) {
             gameService.getUser().setHasMaxValue(true);
             onGameEndDialogCreator();
         }
-        updateClickImageView();
+    }
+
+    /**
+     * Animating image view coin
+     */
+    private void animateCoinImageView() {
+        ScaleAnimation fade_in = new ScaleAnimation(0.7f, 1.2f, 0.7f, 1.2f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        fade_in.setDuration(100);
+        image_coin.startAnimation(fade_in);
     }
 
     /**
@@ -197,18 +227,27 @@ public class GameActivity extends AppCompatActivity {
      * Makes a scale dividing the price of the basic upgrade prices and depending how many coins
      * the user has sets an image. Just a visual reminder of how much buying power the user has.
      */
-    private void updateClickImageView() {
+    private void checkClickImageView() {
         User user = gameService.getUser();
         CustomBigInteger coins = user.getCoins();
         CustomBigInteger basicPrice = user.getBasicPrice();
 
         if (coins.compareTo(basicPrice.divide(new BigInteger("2"))) < 0) { // Basic image
-            image_coin.setImageResource(R.drawable.ic_gen_coin_level_1);
+            updateClickImageView(R.drawable.ic_gen_coin_level_1);
         } else if (coins.compareTo(basicPrice) < 0) { // Upper half image
-            image_coin.setImageResource(R.drawable.ic_gen_coin_level_2);
+            updateClickImageView(R.drawable.ic_gen_coin_level_2);
         } else { // Over basic price image
-            image_coin.setImageResource(R.drawable.ic_gen_coin_level_3);
+            updateClickImageView(R.drawable.ic_gen_coin_level_3);
         }
+    }
+
+    /**
+     * Updates the click image view
+     *
+     * @param drawable the drawable to set in the image view
+     */
+    private void updateClickImageView(@DrawableRes int drawable) {
+        runOnUiThread(() -> image_coin.setImageResource(drawable));
     }
 
     /**

@@ -29,12 +29,12 @@ public class UserService {
     }
 
     public User getUserByName(String name) {
-        ArrayList<User> userList = dbHandler.readUsers(DBHandler.NAME_COLUMN + "='" + name +"'");
+        ArrayList<User> userList = dbHandler.readUsers(DBHandler.NAME_COLUMN + "='" + name + "'");
         return userList.isEmpty() ? null : userList.get(0);
     }
 
-    public List<User> getTop50Users() {
-        return dbHandler.readUsers("1=1 order by " + DBHandler.COINS_COLUMN + " desc limit 50");
+    public List<User> getTop25Users() {
+        return dbHandler.readUsers("1=1 limit 25");
     }
 
     public boolean updateUser(User user) {

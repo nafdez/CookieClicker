@@ -25,7 +25,7 @@
         android:layout_width="176dp"
         android:layout_height="246dp"
         android:contentDescription="@string/game_coin_image_content_description"
-        android:onClick="addOnClick"
+        android:onClick="coinOnClick"
         android:src="@drawable/ic_gen_coin_level_1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

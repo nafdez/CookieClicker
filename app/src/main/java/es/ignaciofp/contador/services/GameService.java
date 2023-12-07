@@ -2,7 +2,6 @@ package es.ignaciofp.contador.services;
 
 import android.content.Context;
 
-import java.math.BigInteger;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -66,34 +65,47 @@ public class GameService {
     }
 
     /**
-     * Each second adds the auto click value to the coins.
+     * Adds to the user coins the value of the auto click.
+     *
+     * @return the current coins of the user
      */
-    @SuppressWarnings("all")
     public CustomBigInteger calculateAutoCoins() {
+        setCoinRate(coinRate.add(user.getAutoClickValue()));
         return addCoins(user.getAutoClickValue());
     }
 
-    ////////////////////////////////COINRATE////////////////////////////////////////
-    public CustomBigInteger calculateCoinRate() {
-        if (user.getAutoClickValue().compareTo(BigInteger.valueOf(0)) > 0) { // Auto-click
-            coinRate = coinRate.add(user.getAutoClickValue());
-            return coinRate;
-        }
-        return new CustomBigInteger("0");
+    /**
+     * Adds the given value to the user coins and to the coin-rate for later use.
+     *
+     * @param val value being added to coins
+     * @return the current coins of the user
+     */
+    public CustomBigInteger addCoins(CustomBigInteger val) {
+        user.setCoins(user.getCoins().add(val)); // Adding coins
+        setCoinRate(coinRate.add(val)); // Adding to coin rate
+        return user.getCoins();
     }
 
+    ////////////////////////////////COINRATE////////////////////////////////////////
+
+    /**
+     * Calculates the coin rate
+     *
+     * @return the current coin rate
+     */
+    public CustomBigInteger calculateCoinRate() {
+        setCoinRate(coinRate.add(user.getAutoClickValue()));
+        return coinRate;
+    }
+
+    /**
+     * Sets the coin rate to 0
+     */
     public void resetCoinRate() {
         coinRate = new CustomBigInteger("0");
     }
 
-    // TODO: Doc
-    public CustomBigInteger addCoins(CustomBigInteger val) {
-        user.setCoins(user.getCoins().add(val)); // Adding coins
-        coinRate = coinRate.add(val); // Adding to coin rate
-        return user.getCoins();
-    }
-
-    private void setCoinRate(CustomBigInteger val) {
+    private synchronized void setCoinRate(CustomBigInteger val) {
         coinRate = val;
     }
 }

@@ -19,7 +19,11 @@ public class RankingService {
     private RankingService(Context context) {
         USER_SERVICE = UserService.getInstance(context);
 
-        for (User user : USER_SERVICE.getTop50Users()) {
+        List<User> users = new ArrayList<>();
+
+        USER_SERVICE.getTop25Users().stream().sorted().forEach(users::add);
+
+        for (User user : users) {
             addToRankingList(new Ranking(user.getName(), user.getLastSaveDate(), user.getCoins().withSuffix("§")));
         }
     }
