@@ -68,6 +68,7 @@
         android:layout_marginTop="16dp"
 
         android:background="@drawable/input_text_shape"
+        android:inputType="textPassword"
         android:hint="@string/auth_hint_password_input_text"
         android:paddingStart="13dp"
         android:paddingEnd="13dp"
